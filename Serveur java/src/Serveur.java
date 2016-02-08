@@ -1,4 +1,3 @@
-package com.example.jojo.serveur;
 
 import java.util.ArrayList;
 

@@ -14,7 +14,7 @@ public class ThreadChat{
 	public Socket soc;
 	
 
-	public ThreadChat(final Socket socket,final ServeurChat serveur, final String etiquette) {
+	public ThreadChat(final Socket socket,final Partie serveur, final String etiquette) {
 		soc=socket;
 		Runnable runnable = new Runnable() {
 			String deco=new String("");
@@ -85,7 +85,7 @@ public class ThreadChat{
 				int i = 0;
 				try {
 					while ((line = reader.readLine()) != null) {
-						System.out.println("test"+line);
+						System.out.println("test : "+line);
 					}
 					System.out.println("étiquette :"+etiquette);
 					/*serveur.envoi_liste().remove(etiquette);

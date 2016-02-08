@@ -1,4 +1,3 @@
-package com.example.jojo.serveur;
 
 /**
  * Created by jojo on 03/02/2016.

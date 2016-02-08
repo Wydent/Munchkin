@@ -1,6 +1,13 @@
-package com.example.jojo.serveur;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by jojo on 02/02/2016.
@@ -14,8 +21,30 @@ public class Partie {
     int tourjoueur;
     ArrayList<Participation> liste_participants;
 
+    
+    static final int PORT = 6666;
+	public HashMap<String,ThreadChat> chat=new HashMap<String,ThreadChat>();
+	
+	
     public Partie(){
-
+    	try {
+    	String etiquette=new String("");
+		ServerSocket serverSocket = new ServerSocket(PORT);
+		System.out.println("Serveur prêt ");
+		while (true) {
+			System.out.println("Serveur en Attente");
+			Socket socket = serverSocket.accept();
+			System.out.println(new Date() + " Client connecté");
+			InputStream stream = socket.getInputStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+			etiquette=reader.readLine();
+			System.out.println(etiquette);
+			
+			chat.put(etiquette,new ThreadChat(socket,this,etiquette));
+		}
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
     }
     public Partie(ArrayList<Joueur> joueurs, ArrayList<Carte> paquet_donjons, ArrayList<Carte> paquet_tresors, ArrayList<Carte> defausse_donjons, ArrayList<Carte> defausse_tresors, int tourjoueur, ArrayList<Participation> liste_participants) {
         this.joueurs = joueurs;
@@ -25,6 +54,7 @@ public class Partie {
         this.defausse_tresors = defausse_tresors;
         this.tourjoueur = tourjoueur;
         this.liste_participants = liste_participants;
+        
     }
 
     public ArrayList<Joueur> getJoueurs() {
@@ -82,4 +112,33 @@ public class Partie {
     public void setListe_participants(ArrayList<Participation> liste_participants) {
         this.liste_participants = liste_participants;
     }
+    
+    public HashMap<String,ThreadChat> envoi_liste(){
+		return chat;
+	}
+    public void piocher(int nombrecarte, String paquet,Joueur j){
+    	for(int i=0;i<nombrecarte;i++){
+    		if(paquet.equals("tresor")){
+    			j.addCarteMain(paquet_tresors.get(0));
+    			paquet_tresors.remove(0);
+    		}
+    		else if(paquet.equals("donjon")){
+    			j.addCarteMain(paquet_donjons.get(0));
+    			paquet_donjons.remove(0);
+    		}
+    	}
+    }
+
+    public boolean findepartie(){
+    	boolean b=false;
+    	for(int i=0;i<joueurs.size();i++){
+    		if(joueurs.get(i).getNiveau()>=10){
+    			b=true;
+    		}
+    	}
+    	return b;
+    }
+	public static void main(String[] args) {
+		new Partie();
+	}
 }

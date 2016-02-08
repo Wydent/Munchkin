@@ -1,5 +1,6 @@
-package com.example.jojo.serveur;
 
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
@@ -10,10 +11,10 @@ public class Carte {
     String nom;
     String description;
     String moment;
-    ArrayList<Effet> effects;
+    ArrayList<Method> effects;
     String type;
 
-    public Carte(String nom, String description, String moment, ArrayList<Effet> effects, String type) {
+    public Carte(String nom, String description, String moment, ArrayList<Method> effects, String type) {
         this.nom = nom;
         this.description = description;
         this.moment = moment;
@@ -53,11 +54,11 @@ public class Carte {
         this.moment = moment;
     }
 
-    public ArrayList<Effet> getEffects() {
+    public ArrayList<Method> getEffects() {
         return effects;
     }
 
-    public void setEffects(ArrayList<Effet> effects) {
+    public void setEffects(ArrayList<Method> effects) {
         this.effects = effects;
     }
 

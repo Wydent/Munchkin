@@ -1,4 +1,3 @@
-package com.example.jojo.serveur;
 
 import java.util.ArrayList;
 
@@ -77,6 +76,17 @@ public class Joueur {
 
     public ArrayList<Carte> getMain() {
         return main;
+    }
+    public void addCarteMain(Carte c){
+    	main.add(c);
+    }
+    
+    public void removeCarteMain(Carte c){
+    	main.remove(c);
+    }
+    
+    public void getCarteMain(int index){
+    	main.get(index);
     }
 
     public void setMain(ArrayList<Carte> main) {

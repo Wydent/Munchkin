@@ -1,6 +1,7 @@
-package com.example.jojo.serveur;
 
 
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 public class Classe extends Carte {
     ArrayList action;
 
-    public Classe(String nom, String description, String moment, ArrayList<Effet> effects, String type, ArrayList action) {
+    public Classe(String nom, String description, String moment, ArrayList<Method> effects, String type, ArrayList action) {
         super(nom, description, moment, effects, type);
         this.action = action;
     }

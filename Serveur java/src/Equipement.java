@@ -1,5 +1,5 @@
-package com.example.jojo.serveur;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class Equipement extends Carte {
 
-    public Equipement( String nom, String description, String moment, ArrayList<Effet> effects, String type, String partie_corps, boolean gros, ArrayList<String> contraintes) {
+    public Equipement( String nom, String description, String moment, ArrayList<Method> effects, String type, String partie_corps, boolean gros, ArrayList<String> contraintes) {
         super( nom, description, moment, effects, type);
         this.partie_corps = partie_corps;
         this.gros = gros;

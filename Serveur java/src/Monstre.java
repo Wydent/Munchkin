@@ -1,5 +1,5 @@
-package com.example.jojo.serveur;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
@@ -11,7 +11,7 @@ public class Monstre extends Carte{
     int recompense_niveau;
     int recompense_tresors;
 
-    public Monstre(String nom, String description, String moment, ArrayList<Effet> effects, String type, int recompense_tresors, int recompense_niveau, Effet incident_facheux, int niveau) {
+    public Monstre(String nom, String description, String moment, ArrayList<Method> effects, String type, int recompense_tresors, int recompense_niveau, Effet incident_facheux, int niveau) {
         super(nom, description, moment, effects, type);
         this.recompense_tresors = recompense_tresors;
         this.recompense_niveau = recompense_niveau;
