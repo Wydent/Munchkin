@@ -19,16 +19,17 @@ public class Partie {
     ArrayList<Carte> defausse_donjons;
     ArrayList<Carte> defausse_tresors;
     int tourjoueur;
+    String EtatPartie;
     ArrayList<Participation> liste_participants;
 
     
     static final int PORT = 6666;
-	public HashMap<String,ThreadChat> chat=new HashMap<String,ThreadChat>();
+	public HashMap<String,ThreadChat> ListeThreads=new HashMap<String,ThreadChat>();
 	
 	
     public Partie(){
     	try {
-    	String etiquette=new String("");
+    	String nomJoueur=new String("");
 		ServerSocket serverSocket = new ServerSocket(PORT);
 		System.out.println("Serveur prêt ");
 		while (true) {
@@ -37,10 +38,14 @@ public class Partie {
 			System.out.println(new Date() + " Client connecté");
 			InputStream stream = socket.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-			etiquette=reader.readLine();
-			System.out.println(etiquette);
-			
-			chat.put(etiquette,new ThreadChat(socket,this,etiquette));
+			nomJoueur=reader.readLine();
+			//Verification nom de joueur non utilis�
+			if (! ListeThreads.containsKey(nomJoueur)){
+				System.out.println(nomJoueur);
+				ListeThreads.put(nomJoueur,new ThreadChat(socket,this,nomJoueur));
+				Joueur j= new Joueur(nomJoueur);
+				joueurs.add(j);
+			}			
 		}
     	} catch (IOException e) {
     		e.printStackTrace();
@@ -113,8 +118,8 @@ public class Partie {
         this.liste_participants = liste_participants;
     }
     
-    public HashMap<String,ThreadChat> envoi_liste(){
-		return chat;
+    public HashMap<String,ThreadChat> getListeThreads(){
+		return ListeThreads;
 	}
     public void piocher(int nombrecarte, String paquet,Joueur j){
     	for(int i=0;i<nombrecarte;i++){
@@ -129,15 +134,59 @@ public class Partie {
     	}
     }
 
-    public boolean findepartie(){
-    	boolean b=false;
+    public int finDePartie(){
+    	int numeroJoueurGagnant=-1;
     	for(int i=0;i<joueurs.size();i++){
     		if(joueurs.get(i).getNiveau()>=10){
-    			b=true;
+    			numeroJoueurGagnant=i;
     		}
     	}
-    	return b;
+    	return numeroJoueurGagnant;
     }
+    
+    public void JouerCarte(Joueur j, Carte c, Joueur cible){
+    	if (j.getMain().contains(c)){
+    		if ((c.getMoment()=="Tout") || (EtatPartie==c.getMoment())) {
+    			if (c instanceof Monstre) {
+    				
+    			}
+    			else if (c instanceof Equipement) {
+    				Equipement equ=(Equipement)c;
+    				j.getEquipements().add(equ);
+    			}
+    			else if (c instanceof Malediction) {
+    				Malediction mal=(Malediction)c;
+    				mal.setCible(cible);
+    				mal.setTempsRestant(mal.getTempsInitial());
+    				cible.getMaledictions().add(mal);
+    			}
+    			else if (c instanceof Classe) {
+    				Classe cla=(Classe)c;
+    				int nb_classes_possibles=1;
+    				/*if (j.EstSuperMunchKin()){ //<-- jojo tu peux rajouter l'attribut superMunchKin au joueur?
+    					nb_classes_possibles=2;
+    				}
+    				*/
+    				if (j.getClasses().size()<nb_classes_possibles){
+    					j.getClasses().add(cla);
+    				}
+    			} 
+    			/*else if (c instanceof Race) {
+    				
+    			}
+    			*/
+    		}
+    		
+    	}
+    	else //Envoi d'un message d'erreur comme quoi la carte n'est pas dans sa main.
+    	{
+    		ListeThreads.get(j.getNom());
+    	}
+    	
+    	
+    }
+    
+    
 	public static void main(String[] args) {
 		new Partie();
 	}

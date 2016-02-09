@@ -14,18 +14,18 @@ public class ThreadChat{
 	public Socket soc;
 	
 
-	public ThreadChat(final Socket socket,final Partie serveur, final String etiquette) {
+	public ThreadChat(final Socket socket,final Partie serveur, final String nomJoueur) {
 		soc=socket;
 		Runnable runnable = new Runnable() {
 			String deco=new String("");
 			InputStream stream = null;
 			String lui=new String("");
-			HashMap<String,ThreadChat> v=serveur.envoi_liste();
+			HashMap<String,ThreadChat> ListeThreads=serveur.getListeThreads();
 			
 			
 			
 			public void envoi_liste(){
-				for(ThreadChat tc:v.values()){
+				for(ThreadChat tc:ListeThreads.values()){
 					PrintWriter writer = null;
 					try {
 						writer = new PrintWriter(tc.soc.getOutputStream());
@@ -33,7 +33,7 @@ public class ThreadChat{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					writer.println("liste:"+v.keySet());
+					writer.println("liste:"+ListeThreads.keySet());
 					writer.flush();
 				}
 			}
@@ -41,7 +41,7 @@ public class ThreadChat{
 			
 			public void envoi_message(String message){
 
-				for(ThreadChat tc:v.values()){
+				for(ThreadChat tc:ListeThreads.values()){
 					PrintWriter writer = null;
 					try {
 						writer = new PrintWriter(tc.soc.getOutputStream());
@@ -61,7 +61,7 @@ public class ThreadChat{
 				}
 				if(line.contains("connecté")){
 					if(!deco.equals("")){
-						v.remove(deco);
+						ListeThreads.remove(deco);
 					}
 					
 				}
@@ -87,7 +87,7 @@ public class ThreadChat{
 							envoi_message("actionClicPiocheDonjon");
 						}
 					}
-					System.out.println("étiquette : "+etiquette);
+					System.out.println("nomJoueur : "+nomJoueur);
 					/*serveur.envoi_liste().remove(etiquette);
 					envoi_liste();*/
 					
