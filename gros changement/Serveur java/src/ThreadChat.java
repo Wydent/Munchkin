@@ -14,7 +14,7 @@ public class ThreadChat{
 	public Socket soc;
 	
 
-	public ThreadChat(final Socket socket,final ServeurChat serveur, final String etiquette) {
+	public ThreadChat(final Socket socket,final Partie serveur, final String etiquette) {
 		soc=socket;
 		Runnable runnable = new Runnable() {
 			String deco=new String("");

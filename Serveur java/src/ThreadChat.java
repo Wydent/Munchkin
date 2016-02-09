@@ -70,9 +70,6 @@ public class ThreadChat{
 			
 			
 			public void run() {
-
-
-				
 				try {
 					stream = socket.getInputStream();
 				} catch (IOException e) {
@@ -85,9 +82,12 @@ public class ThreadChat{
 				int i = 0;
 				try {
 					while ((line = reader.readLine()) != null) {
-						System.out.println("test : "+line);
+						System.out.println("Client dit : "+line);
+						if(line.equals("clicPiocheDonjon")) {
+							envoi_message("actionClicPiocheDonjon");
+						}
 					}
-					System.out.println("étiquette :"+etiquette);
+					System.out.println("étiquette : "+etiquette);
 					/*serveur.envoi_liste().remove(etiquette);
 					envoi_liste();*/
 					
