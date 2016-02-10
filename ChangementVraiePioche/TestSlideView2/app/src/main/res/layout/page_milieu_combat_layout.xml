@@ -1,0 +1,135 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@android:color/holo_purple"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/nomMonstre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mr Nono" />
+
+        <TextView
+            android:id="@+id/levelMonstre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="lvl 6"
+            android:textColor="@android:color/holo_orange_light" />
+
+        <TextView
+            android:id="@+id/attaqueMonstre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10"
+            android:textColor="@android:color/holo_green_light" />
+
+        <TextView
+            android:id="@+id/infoBulleMonstre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/infobulle"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="Maxime a joué la carte Môman !"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@android:color/holo_red_light"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/nomJoueur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kévin" />
+
+        <TextView
+            android:id="@+id/levelJoueur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="lvl 1"
+            android:textColor="@android:color/holo_orange_light" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/raceJoueur"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Race : Nain"
+                android:textColor="@android:color/holo_blue_dark" />
+
+            <TextView
+                android:id="@+id/classeJoueur"
+                android:layout_toRightOf="@id/raceJoueur"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Classe : Prêtre"
+                android:textColor="@android:color/holo_blue_dark" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/attaqueJoueur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3"
+            android:textColor="@android:color/holo_green_light" />
+
+        <TextView
+            android:id="@+id/infoBulleJoueur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/infobulle"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="Kévin demande de l'aide..."
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/boutonCombattre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Combattre"/>
+
+            <Button
+                android:id="@+id/boutonFuir"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fuir"
+                android:layout_toRightOf="@id/boutonCombattre"/>
+
+            <Button
+                android:id="@+id/boutonAide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aide"
+                android:layout_toRightOf="@id/boutonFuir"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
