@@ -61,6 +61,10 @@ public class Carte {
     public void setEffects(ArrayList<Method> effects) {
         this.effects = effects;
     }
+    
+    public void ajouterEffect(Method effect) {
+        effects.add(effect);
+    }
 
     public String getType() {
         return type;
@@ -69,5 +73,25 @@ public class Carte {
     public void setType(String type) {
         this.type = type;
     }
+
+	public int getRecompense_tresors() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public int getRecompense_niveau() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public Method getIncident_facheux() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getNiveau() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 }
