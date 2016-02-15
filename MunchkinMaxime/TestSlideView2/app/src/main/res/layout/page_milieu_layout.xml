@@ -1,0 +1,99 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/testLayoutMilieu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/auTourDe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center_horizontal"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/infoBulle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/infobulle"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white"
+            android:visibility="invisible" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/fond_image_pioche"
+            android:gravity="center_horizontal">
+
+            <ImageView
+                android:id="@+id/imagePioche"
+                android:layout_width="100dp"
+                android:layout_height="160dp"
+                android:scaleType="centerCrop" />
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/boutonOk"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="OK" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imagePiocheDonjon"
+                android:layout_width="80dp"
+                android:layout_height="120dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:onClick="test"
+                android:scaleType="centerCrop"
+                android:src="@drawable/porte_donjon" />
+
+            <ImageView
+                android:id="@+id/imageDefausseDonjon"
+                android:layout_width="80dp"
+                android:layout_height="120dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image_test" />
+
+            <ImageView
+                android:id="@+id/imagePiocheTresor"
+                android:layout_width="80dp"
+                android:layout_height="120dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/tresor" />
+
+            <ImageView
+                android:id="@+id/imageDefausseTresor"
+                android:layout_width="80dp"
+                android:layout_height="120dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image_test" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>
