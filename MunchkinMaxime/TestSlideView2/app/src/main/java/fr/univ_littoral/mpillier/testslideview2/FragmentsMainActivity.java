@@ -10,11 +10,15 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -22,8 +26,16 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.ScaleAnimation;
+import android.view.animation.Transformation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 public class FragmentsMainActivity extends FragmentActivity {
@@ -43,6 +55,13 @@ public class FragmentsMainActivity extends FragmentActivity {
     Handler handlerTest;
 
     List fragments = null;
+
+    //paramètres listener
+    public View.OnLongClickListener longClickListner;
+    LinearLayout panel1, panel2, panel3, panel4, panel5, panel6;
+    TextView text1, text2, text3, text4, text5;
+    View openLayout;
+    int nbPanels = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +142,19 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                     }
 
+                    if (line.contains("afficherAccordeon")) {
+
+                        afficherAccordeon(line);
+
+                    }
+
+                    if(line.contains("animationAccordeon")) {
+
+                        System.out.println("ca passe animation accordeon");
+                        animerAccordeon(nbPanels);
+
+                    }
+
                 }
 
             } catch (UnknownHostException e1) {
@@ -130,6 +162,278 @@ public class FragmentsMainActivity extends FragmentActivity {
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
+        }
+
+        public void afficherAccordeon(final String line) {
+
+            nbPanels ++;
+
+            System.out.println("ca passe");
+
+            // variables servant la conversion px -> dp
+            final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
+            final int padding = (int) (10 * scale + 0.5f);
+            final int height = (int) (40 * scale + 0.5f);
+            final int heightImage = (int) (120 * scale + 0.5f);
+            final int widthImage = (int) (80 * scale + 0.5f);
+
+            // variables
+            final String nomJoueur = line.split("-")[1];
+            String sexeJoueur = line.split("-")[2];
+            int niveauJoueur = Integer.parseInt(line.split("-")[3]);
+            int attaqueJoueur = Integer.parseInt(line.split("-")[4]);
+
+            final int nombreClasses = Integer.parseInt(line.split("-")[5].substring(0, line.split("-")[5].indexOf("classe[")));
+            System.out.println("nombreClasses : "+nombreClasses);
+
+            int nombreRaces = Integer.parseInt(line.split("]-")[1].substring(0, line.split("]-")[1].indexOf("race[")));
+            System.out.println("nombreRaces : "+nombreRaces);
+
+            int nombreEquipements = Integer.parseInt(line.split("]-")[2].substring(0, line.split("]-")[2].indexOf("equipement[")));
+            System.out.println("nombreEquipements : "+nombreEquipements);
+
+            int nombreMaledictions;
+            if(line.contains("malediction")) {
+                nombreMaledictions = Integer.parseInt(line.split("]-")[3].substring(0, line.split("]-")[3].indexOf("malediction[")));
+                System.out.println("nombreMaledictions : "+nombreMaledictions);
+            }
+
+            String[] attributsClasse = line.substring(line.indexOf("classe[") + 7, line.indexOf("]")).split("-");
+            String[] attributsRace = line.substring(line.indexOf("race[") + 5, line.indexOf("]", line.indexOf("race[") + 5)).split("-");
+            String[] attributsEquipement = line.substring(line.indexOf("equipement[") + 11, line.indexOf("]", line.indexOf("equipement[") + 11)).split("-");
+            String[] attributsMalediction = line.substring(line.indexOf("malediction[") + 12, line.indexOf("]", line.indexOf("malediction[") + 12)).split("-");
+
+            final String nomClasse = attributsClasse[0];
+            String descriptionClasse = attributsClasse[1];
+
+            String nomRace = attributsRace[0];
+            String descriptionRace = attributsRace[1];
+
+            String nomEquipement = attributsEquipement[0];
+            String descriptionEquipement = attributsEquipement[1];
+            String partieCorpsEquipement = attributsEquipement[2];
+            String grosEquipement = attributsEquipement[3];
+
+            String nomMalediction = attributsMalediction[0];
+            String descriptionMalediction = attributsClasse[1];
+
+            runOnUiThread(new Runnable() {
+                              @Override
+                              public void run() {
+
+                                  // implémentation de l'accordéon
+                                  final LinearLayout layoutAccordeon = (LinearLayout) findViewById(R.id.layoutAccordeon);
+                                  final LinearLayout layoutTest = new LinearLayout(getApplicationContext());
+                                  layoutTest.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                                  layoutTest.setGravity(Gravity.CENTER);
+                                  layoutTest.setOrientation(LinearLayout.VERTICAL);
+                                  layoutTest.setVisibility(View.VISIBLE);
+                                  layoutAccordeon.addView(layoutTest);
+
+                                  final TextView tvTest = new TextView(getApplicationContext());
+                                  LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, height);
+                                  //lp.setMargins(0, padding, 0, 0);
+                                  tvTest.setLayoutParams(lp);
+                                  tvTest.setPadding(padding, padding, padding, padding);
+                                  tvTest.setBackgroundColor(Color.parseColor("black"));
+                                  tvTest.setTextColor(Color.parseColor("white"));
+                                  tvTest.setText(nomJoueur);
+                                  tvTest.setId(nbPanels);
+                                  tvTest.setVisibility(View.VISIBLE);
+                                  layoutTest.addView(tvTest);
+
+                                  final LinearLayout layoutInterne = new LinearLayout(getApplicationContext());
+                                  layoutInterne.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                                  layoutInterne.setId(100 + nbPanels);
+                                  System.out.println("id : " + layoutInterne.getId());
+                                  layoutInterne.setOrientation(LinearLayout.VERTICAL);
+                                  layoutInterne.setVisibility(View.GONE);
+                                  layoutTest.addView(layoutInterne);
+
+                                  final ImageView imageJoueur = new ImageView(getApplicationContext());
+                                  imageJoueur.setId(new Integer(2));
+                                  lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                  lp.setMargins(padding, padding, padding, padding);
+                                  imageJoueur.setLayoutParams(lp);
+                                  imageJoueur.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                  imageJoueur.setImageResource(R.drawable.image_test);
+                                  layoutInterne.addView(imageJoueur);
+
+                                  final TextView tvTitreRaceClasse = new TextView(getApplicationContext());
+                                  lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                  lp.setMargins(padding, padding, padding, padding);
+                                  tvTitreRaceClasse.setLayoutParams(lp);
+                                  tvTitreRaceClasse.setText("Race(s) et Classe(s) : ");
+                                  tvTitreRaceClasse.setTextColor(Color.parseColor("black"));
+                                  layoutInterne.addView(tvTitreRaceClasse);
+                                  System.out.println("race et classe fait");
+
+                                  final LinearLayout layoutMultiImages = new LinearLayout(getApplicationContext());
+                                  layoutMultiImages.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                                  layoutMultiImages.setOrientation(LinearLayout.HORIZONTAL);
+                                  layoutInterne.addView(layoutMultiImages);
+                                  System.out.println("layout multi-images fait");
+
+                                  for(int i = 0; i < nombreClasses; i ++) {
+
+                                      final ImageView imageClasse = new ImageView(getApplicationContext());
+                                      imageJoueur.setId(new Integer(3)+i);
+                                      lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      lp.setMargins(padding, padding, padding ,padding);
+                                      imageClasse.setLayoutParams(lp);
+                                      imageClasse.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                      imageClasse.setImageResource(getResources().getIdentifier(nomClasse, "drawable", getPackageName()));
+                                      layoutMultiImages.addView(imageClasse);
+
+                                  }
+
+                                  System.out.println("images fait");
+                              }
+                          }
+            );
+        }
+
+        public void animerAccordeon(final int nbPanels) {
+
+            for(int i = 1; i <= nbPanels; i ++){
+
+                System.out.println("easy");
+                int id = getApplicationContext().getResources().getIdentifier(""+i, "id", getApplicationContext().getPackageName());
+                System.out.println("id : " + id);
+
+                TextView textView = (TextView) findViewById(id);
+
+                System.out.println("textview id : "+textView.getId());
+
+                textView.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+
+                        System.out.println("clic !");
+                        hideOthers(v, nbPanels);
+                    }
+                });
+
+            }
+        }
+
+        private void hideThemAll() {
+
+            System.out.println("easy 3");
+
+            if (openLayout == null) return;
+
+            for(int i = 0; i < nbPanels; i++) {
+
+                int idPanel = getApplicationContext().getResources().getIdentifier(""+10+i, "id", getApplicationContext().getPackageName());
+                LinearLayout panel = (LinearLayout) findViewById(idPanel);
+
+                if (openLayout == panel)
+                    panel.startAnimation(new ScaleAnimToHide(1.0f, 1.0f, 1.0f, 0.0f, 500, panel, true));
+            }
+        }
+
+        private void hideOthers(View layoutView, int nbPanels) {
+            {
+                int v;
+
+                System.out.println("easy 2 ");
+
+                for(int i = 1; i <= nbPanels; i++) {
+
+                    int idPanel = getApplicationContext().getResources().getIdentifier(""+10+i, "id", getApplicationContext().getPackageName());
+                    int idTextView = getApplicationContext().getResources().getIdentifier(""+i, "id", getApplicationContext().getPackageName());
+                    LinearLayout panel = (LinearLayout) findViewById(idPanel);
+
+                    if (layoutView.getId() == idTextView) {
+                        v = panel.getVisibility();
+                        hideThemAll();
+                        if (v != View.VISIBLE) {
+                            panel.startAnimation(new ScaleAnimToShow(1.0f, 1.0f, 1.0f, 0.0f, 500, panel, true));
+                        }
+                    }
+                }
+            }
+        }
+
+        public class ScaleAnimToHide extends ScaleAnimation {
+
+            private View mView;
+
+            private LinearLayout.LayoutParams mLayoutParams;
+
+            private int mMarginBottomFromY, mMarginBottomToY;
+
+            private boolean mVanishAfter = false;
+
+            public ScaleAnimToHide(float fromX, float toX, float fromY, float toY, int duration, View view, boolean vanishAfter) {
+                super(fromX, toX, fromY, toY);
+                setDuration(duration);
+                openLayout = null;
+                mView = view;
+                mVanishAfter = vanishAfter;
+                mLayoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+                int height = mView.getHeight();
+                mMarginBottomFromY = (int) (height * fromY) + mLayoutParams.bottomMargin - height;
+                mMarginBottomToY = (int) (0 - ((height * toY) + mLayoutParams.bottomMargin)) - height;
+
+                Log.v("CZ", "height..." + height + " , mMarginBottomFromY...." + mMarginBottomFromY + " , mMarginBottomToY.." + mMarginBottomToY);
+            }
+
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                super.applyTransformation(interpolatedTime, t);
+                if (interpolatedTime < 1.0f) {
+                    int newMarginBottom = mMarginBottomFromY + (int) ((mMarginBottomToY - mMarginBottomFromY) * interpolatedTime);
+                    mLayoutParams.setMargins(mLayoutParams.leftMargin, mLayoutParams.topMargin, mLayoutParams.rightMargin, newMarginBottom);
+                    mView.getParent().requestLayout();
+                    //Log.v("CZ","newMarginBottom..." + newMarginBottom + " , mLayoutParams.topMargin..." + mLayoutParams.topMargin);
+                } else if (mVanishAfter) {
+                    mView.setVisibility(View.GONE);
+                }
+            }
+        }
+
+        public class ScaleAnimToShow extends ScaleAnimation {
+
+            private View mView;
+
+            private LinearLayout.LayoutParams mLayoutParams;
+
+            private int mMarginBottomFromY, mMarginBottomToY;
+
+            private boolean mVanishAfter = false;
+
+            public ScaleAnimToShow(float toX, float fromX, float toY, float fromY, int duration, View view, boolean vanishAfter) {
+                super(fromX, toX, fromY, toY);
+                openLayout = view;
+                setDuration(duration);
+                mView = view;
+                mVanishAfter = vanishAfter;
+                mLayoutParams = (LinearLayout.LayoutParams) view.getLayoutParams();
+                mView.setVisibility(View.VISIBLE);
+                int height = mView.getHeight();
+                //mMarginBottomFromY = (int) (height * fromY) + mLayoutParams.bottomMargin + height;
+                //mMarginBottomToY = (int) (0 - ((height * toY) + mLayoutParams.bottomMargin)) + height;
+
+                mMarginBottomFromY = 0;
+                mMarginBottomToY = height;
+
+                Log.v("CZ", ".................height..." + height + " , mMarginBottomFromY...." + mMarginBottomFromY + " , mMarginBottomToY.." + mMarginBottomToY);
+            }
+
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                super.applyTransformation(interpolatedTime, t);
+                if (interpolatedTime < 1.0f) {
+                    int newMarginBottom = (int) ((mMarginBottomToY - mMarginBottomFromY) * interpolatedTime) - mMarginBottomToY;
+                    mLayoutParams.setMargins(mLayoutParams.leftMargin, mLayoutParams.topMargin, mLayoutParams.rightMargin, newMarginBottom);
+                    mView.getParent().requestLayout();
+                    //Log.v("CZ","newMarginBottom..." + newMarginBottom + " , mLayoutParams.topMargin..." + mLayoutParams.topMargin);
+                }
+            }
+
         }
 
         // action liée à un clic sur la pioche donjon

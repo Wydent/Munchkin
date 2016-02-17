@@ -38,7 +38,6 @@ public class ThreadChat {
 			}
 
 			public void envoi_message(String message) {
-
 				for (ThreadChat tc : v.values()) {
 					PrintWriter writer = null;
 					try {
@@ -61,6 +60,67 @@ public class ThreadChat {
 						v.remove(deco);
 					}
 
+				}
+			}
+			
+			// envoi des informations des joueurs et de leurs cartes équipées
+			public void envoyerAccordeon() {
+				for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
+					Joueur key = e.getKey();
+					ThreadChat value = e.getValue();
+
+					ArrayList<String> attributsClasse = new ArrayList<String>();
+					for (int i = 0; i < key.getClasses().size(); i++) {
+
+						attributsClasse.add(key.getClasses().get(i).getNom());
+						attributsClasse.add(key.getClasses().get(i).getDescription());
+					}
+
+					ArrayList<String> attributsRace = new ArrayList<String>();
+					for (int i = 0; i < key.getRaces().size(); i++) {
+
+						attributsRace.add(key.getRaces().get(i).getNom());
+						attributsRace.add(key.getRaces().get(i).getDescription());
+					}
+
+					ArrayList<String> attributsEquipement = new ArrayList<String>();
+					for (int i = 0; i < key.getEquipements().size(); i++) {
+
+						attributsEquipement.add(key.getEquipements().get(i).getNom());
+						attributsEquipement.add(key.getEquipements().get(i).getDescription());
+						attributsEquipement.add(key.getEquipements().get(i).getPartie_corps());
+						if (key.getEquipements().get(i).isGros())
+							attributsEquipement.add("true");
+						else
+							attributsEquipement.add("false");
+					}
+
+					ArrayList<String> attributsMalediction = new ArrayList<String>();
+					for (int i = 0; i < key.getMaledictions().size(); i++) {
+
+						attributsMalediction.add(key.getMaledictions().get(i).getNom());
+						attributsMalediction.add(key.getMaledictions().get(i).getDescription());
+					}
+					
+					String chaineAEnvoyer = "afficherAccordeon-" + key.getNom() + "-" + key.getSexe() + "-" + key.getNiveau() + "-"
+							+ key.getAttaque();
+					
+					if(attributsClasse.size() != 0) {
+						chaineAEnvoyer += "-"+key.getClasses().size()+"classe[" + attributsClasse.get(0) + "-" + attributsClasse.get(1) + "]";
+					}
+					if(attributsRace.size() != 0) {
+						chaineAEnvoyer += "-"+key.getRaces().size()+"race[" + attributsRace.get(0) + "-" + attributsRace.get(1) + "]";
+					}
+					if(attributsEquipement.size() != 0) {
+						chaineAEnvoyer += "-"+key.getEquipements().size()+"equipement[" + attributsEquipement.get(0) + "-" + attributsEquipement.get(1) + "-" + attributsEquipement.get(2) + "-" + attributsEquipement.get(3) + "]";
+					}
+					if(attributsMalediction.size() != 0) {
+						chaineAEnvoyer += "-"+key.getMaledictions().size()+"malediction[" + attributsMalediction.get(0) + "-" + attributsMalediction.get(1) + "]";
+					}
+
+					envoi_message(chaineAEnvoyer);
+					
+					System.out.println("chaine envoyee : "+chaineAEnvoyer);
 				}
 			}
 
@@ -89,6 +149,24 @@ public class ThreadChat {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 				String line = "";
 				int i = 0;
+				
+				envoyerAccordeon();
+				
+				// on attend que le client ait bien pris en compte tout l'accordéon
+				synchronized(this) {
+					try {
+						wait(5000);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				
+				// ordre d'animation de l'accordéon
+				envoi_message("animationAccordeon");
+				
+				// ordre d'affichage du nom du joueur
+				envoi_message("afficherNomJoueur-" + joueur.getNom());
 
 				try {
 					while ((line = reader.readLine()) != null) {
@@ -117,10 +195,9 @@ public class ThreadChat {
 							}
 
 						}
-
-						// a supprimer plus tard
-						envoi_message("afficherNomJoueur-" + joueur.getNom());
 					}
+					
+					
 					System.out.println("étiquette : " + etiquette);
 
 				} catch (IOException e) {

@@ -19,10 +19,19 @@ public class Joueur {
     	setNom(nom);
         setNiveau(1);
         setAttaque(1);
-        setClasses(new ArrayList<Classe>());
-        races=new ArrayList<Carte>();
-        races.add(new Carte("Humain","Humain",null,null,null));
-        setEquipements(new ArrayList<Equipement>());
+        
+        ArrayList<Classe> arrayListTest = new ArrayList<Classe>();
+        arrayListTest.add(new Classe("Prêtre", "description du prêtre bla bla bla", "momentTest", null, "classe", null));
+        setClasses(arrayListTest);
+        
+        ArrayList<Carte> arrayListTest2 = new ArrayList<Carte>();
+        arrayListTest2.add(new Carte("Humain","Humain",null,null,null));
+        setRaces(arrayListTest2);
+        
+        ArrayList<Equipement> arrayListTest3 = new ArrayList<Equipement>();
+        arrayListTest3.add(new Equipement("Epee de Dieu", "Description de epee la la la", "momentTest", null, "equipement", "tete", true, null));
+        setEquipements(arrayListTest3);
+        
         setMaledictions(new ArrayList<Malediction>());
         setMain(new ArrayList<Carte>());
         setSexe(0);

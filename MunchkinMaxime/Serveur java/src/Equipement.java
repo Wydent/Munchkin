@@ -18,6 +18,13 @@ public class Equipement extends Carte {
     boolean gros;
     ArrayList<String> contraintes;
 
+    public String getPartie_corps() {
+    	return partie_corps;
+    }
+    
+    public void setPartie_corps(String pc) {
+    	partie_corps = pc;
+    }
 
     public boolean isGros() {
         return gros;

@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
-public class PageGaucheFragment extends Fragment implements OnClickListener {
+public class PageGaucheFragment extends Fragment {
 
     public View.OnLongClickListener longClickListner;
     LinearLayout panel1, panel2, panel3, panel4, panel5;
@@ -29,7 +29,9 @@ public class PageGaucheFragment extends Fragment implements OnClickListener {
 
         View v = inflater.inflate(R.layout.page_gauche_layout, container, false);
 
-        panel1 = (LinearLayout) v.findViewById(R.id.panel1);
+        System.out.println("this : "+this);
+
+        /*panel1 = (LinearLayout) v.findViewById(R.id.panel1);
         panel2 = (LinearLayout) v.findViewById(R.id.panel2);
         panel3 = (LinearLayout) v.findViewById(R.id.panel3);
         panel4 = (LinearLayout) v.findViewById(R.id.panel4);
@@ -51,12 +53,12 @@ public class PageGaucheFragment extends Fragment implements OnClickListener {
         text2.setOnClickListener(this);
         text3.setOnClickListener(this);
         text4.setOnClickListener(this);
-        text5.setOnClickListener(this);
+        text5.setOnClickListener(this);*/
 
         return v;
     }
 
-    public void onClick(View v) {
+    /*public void onClick(View v) {
         hideOthers(v);
     }
 
@@ -195,5 +197,5 @@ public class PageGaucheFragment extends Fragment implements OnClickListener {
             }
         }
 
-    }
+    }*/
 }
