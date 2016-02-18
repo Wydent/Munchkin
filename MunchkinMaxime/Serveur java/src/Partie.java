@@ -165,6 +165,42 @@ public class Partie {
 		}
 		return b;
 	}
+	public void TrierPaquetDonjonEtTresor() {
+    	Integer nombreAleatoire;
+    	ArrayList<Integer> NombreUtilises = new ArrayList<Integer>();
+    	
+    	ArrayList<Carte> paquet_donjons_tmp= new ArrayList<Carte>();
+    	ArrayList<Carte> paquet_tresors_tmp= new ArrayList<Carte>();
+    	
+    	
+    	for (int i = 0 ; i < paquet_donjons.size(); i++ ){    		
+    		nombreAleatoire= (int)(Math.random() * (paquet_donjons.size() + 1));
+    		while (NombreUtilises.contains(nombreAleatoire)){
+    			nombreAleatoire= (int)(Math.random() * (paquet_donjons.size() + 1));
+    		}
+    		paquet_donjons_tmp.add(paquet_donjons.get(nombreAleatoire));
+    	}
+    	paquet_donjons=paquet_donjons_tmp;
+    	
+    	NombreUtilises.clear();
+    	
+    	for (int i = 0 ; i < paquet_tresors.size(); i++ ){    		
+    		nombreAleatoire= (int)(Math.random() * (paquet_tresors.size() + 1));
+    		while (NombreUtilises.contains(nombreAleatoire)){
+    			nombreAleatoire= (int)(Math.random() * (paquet_tresors.size() + 1));
+    		}
+    		paquet_tresors_tmp.add(paquet_tresors.get(nombreAleatoire));
+    	}
+    	paquet_tresors=paquet_tresors_tmp;
+    }
+    
+    public void distribuerMains(){
+    	for(Joueur j:joueurs){
+			piocher(2,"tresor",j);
+			piocher(2,"donjon",j);
+		}
+    }
+	
 
 	public static void main(String[] args) {
 		new Partie();
