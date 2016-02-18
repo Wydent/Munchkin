@@ -1,0 +1,12 @@
+tresor;carte;laver la voiture du mj;+1 gain de niveau;tour;modifierNiveau.1:int.null:Joueur;
+tresor;equipement;brosse de toilette dorée;+3 d'attaque;tour;modifierAttaque.3:int.null:Joueur;une main;false; ;
+tresor;carte;+5 d'attaque pour le joueur;combat;modifierAttaque.5:int.null:Joueur;
+tresor;carte:erreur de calcul;+1 gain de niveau;modifierNiveau.1:int.null:Joueur;
+tresor;carte:hé un niveau;+1 gain de niveau;modifierNiveau.1:int.null:Joueur;
+tresor;equipement;épée en bois;+1 d'attaque;tour;modifierAttaque.3:int.null:Joueur;une main;false; ;
+donjon;malediction;courir derrière un canard;tous;perdez 2 niveaux;modifierNiveau.-2:int.null:Joueur; ;0;
+donjon;monstre;le balai de Potter;special;il vous tape au derrière jusqu'a la mort; ;2; ;1;1;
+donjon;malediction;fracture du doigt de pied;tous;perdez 1 niveaux;modifierNiveau.-2:int.null:Joueur; ;0;
+donjon;monstre;justin bibière;special;il vous pète les tymphans; ;6; ;1;3;
+donjon;monstre;mégaphone hurleur;special;il vous pète les tymphans; ;6; ;1;3;
+donjon;monstre;chuchmur sauvage;special;il vous pète les tymphans; ;6; ;1;3;
