@@ -93,6 +93,9 @@ public class FragmentsMainActivity extends FragmentActivity {
         // Affectation de l'adapter au ViewPager
         pager.setAdapter(this.mPagerAdapter);
 
+        // pour garder les fragments en vie
+        pager.setOffscreenPageLimit(3);
+
         // page par défaut
         pager.setCurrentItem(2);
 
