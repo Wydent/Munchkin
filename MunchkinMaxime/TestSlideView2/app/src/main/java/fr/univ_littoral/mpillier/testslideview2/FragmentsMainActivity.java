@@ -17,6 +17,7 @@ import java.util.Vector;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -26,15 +27,21 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.Transformation;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -148,10 +155,16 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                     }
 
-                    if(line.contains("animationAccordeon")) {
+                    if (line.contains("animationAccordeon")) {
 
                         System.out.println("ca passe animation accordeon");
                         animerAccordeon(nbPanels);
+
+                    }
+
+                    if (line.contains("afficherDansLeChat")) {
+
+                        afficherDansLeChat(line);
 
                     }
 
@@ -166,7 +179,7 @@ public class FragmentsMainActivity extends FragmentActivity {
 
         public void afficherAccordeon(final String line) {
 
-            nbPanels ++;
+            nbPanels++;
 
             System.out.println("ca passe");
 
@@ -184,18 +197,18 @@ public class FragmentsMainActivity extends FragmentActivity {
             int attaqueJoueur = Integer.parseInt(line.split("-")[4]);
 
             final int nombreClasses = Integer.parseInt(line.split("-")[5].substring(0, line.split("-")[5].indexOf("classe[")));
-            System.out.println("nombreClasses : "+nombreClasses);
+            System.out.println("nombreClasses : " + nombreClasses);
 
             int nombreRaces = Integer.parseInt(line.split("]-")[1].substring(0, line.split("]-")[1].indexOf("race[")));
-            System.out.println("nombreRaces : "+nombreRaces);
+            System.out.println("nombreRaces : " + nombreRaces);
 
             int nombreEquipements = Integer.parseInt(line.split("]-")[2].substring(0, line.split("]-")[2].indexOf("equipement[")));
-            System.out.println("nombreEquipements : "+nombreEquipements);
+            System.out.println("nombreEquipements : " + nombreEquipements);
 
             int nombreMaledictions;
-            if(line.contains("malediction")) {
+            if (line.contains("malediction")) {
                 nombreMaledictions = Integer.parseInt(line.split("]-")[3].substring(0, line.split("]-")[3].indexOf("malediction[")));
-                System.out.println("nombreMaledictions : "+nombreMaledictions);
+                System.out.println("nombreMaledictions : " + nombreMaledictions);
             }
 
             String[] attributsClasse = line.substring(line.indexOf("classe[") + 7, line.indexOf("]")).split("-");
@@ -274,12 +287,12 @@ public class FragmentsMainActivity extends FragmentActivity {
                                   layoutInterne.addView(layoutMultiImages);
                                   System.out.println("layout multi-images fait");
 
-                                  for(int i = 0; i < nombreClasses; i ++) {
+                                  for (int i = 0; i < nombreClasses; i++) {
 
                                       final ImageView imageClasse = new ImageView(getApplicationContext());
-                                      imageJoueur.setId(new Integer(3)+i);
+                                      imageJoueur.setId(new Integer(3) + i);
                                       lp = new LinearLayout.LayoutParams(widthImage, heightImage);
-                                      lp.setMargins(padding, padding, padding ,padding);
+                                      lp.setMargins(padding, padding, padding, padding);
                                       imageClasse.setLayoutParams(lp);
                                       imageClasse.setScaleType(ImageView.ScaleType.CENTER_CROP);
                                       imageClasse.setImageResource(getResources().getIdentifier(nomClasse, "drawable", getPackageName()));
@@ -295,15 +308,15 @@ public class FragmentsMainActivity extends FragmentActivity {
 
         public void animerAccordeon(final int nbPanels) {
 
-            for(int i = 1; i <= nbPanels; i ++){
+            for (int i = 1; i <= nbPanels; i++) {
 
                 System.out.println("easy");
-                int id = getApplicationContext().getResources().getIdentifier(""+i, "id", getApplicationContext().getPackageName());
+                int id = getApplicationContext().getResources().getIdentifier("" + i, "id", getApplicationContext().getPackageName());
                 System.out.println("id : " + id);
 
                 TextView textView = (TextView) findViewById(id);
 
-                System.out.println("textview id : "+textView.getId());
+                System.out.println("textview id : " + textView.getId());
 
                 textView.setOnClickListener(new View.OnClickListener() {
 
@@ -324,9 +337,9 @@ public class FragmentsMainActivity extends FragmentActivity {
 
             if (openLayout == null) return;
 
-            for(int i = 0; i < nbPanels; i++) {
+            for (int i = 0; i < nbPanels; i++) {
 
-                int idPanel = getApplicationContext().getResources().getIdentifier(""+10+i, "id", getApplicationContext().getPackageName());
+                int idPanel = getApplicationContext().getResources().getIdentifier("" + 10 + i, "id", getApplicationContext().getPackageName());
                 LinearLayout panel = (LinearLayout) findViewById(idPanel);
 
                 if (openLayout == panel)
@@ -340,10 +353,10 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                 System.out.println("easy 2 ");
 
-                for(int i = 1; i <= nbPanels; i++) {
+                for (int i = 1; i <= nbPanels; i++) {
 
-                    int idPanel = getApplicationContext().getResources().getIdentifier(""+10+i, "id", getApplicationContext().getPackageName());
-                    int idTextView = getApplicationContext().getResources().getIdentifier(""+i, "id", getApplicationContext().getPackageName());
+                    int idPanel = getApplicationContext().getResources().getIdentifier("" + 10 + i, "id", getApplicationContext().getPackageName());
+                    int idTextView = getApplicationContext().getResources().getIdentifier("" + i, "id", getApplicationContext().getPackageName());
                     LinearLayout panel = (LinearLayout) findViewById(idPanel);
 
                     if (layoutView.getId() == idTextView) {
@@ -434,6 +447,44 @@ public class FragmentsMainActivity extends FragmentActivity {
                 }
             }
 
+        }
+
+        public void afficherDansLeChat(final String line) {
+
+            final String messageAAfficher = line.substring(19);
+
+            final String debutMessage = messageAAfficher.substring(0, messageAAfficher.indexOf(": "));
+            final SpannableString spanString1 = new SpannableString(debutMessage);
+            spanString1.setSpan(new StyleSpan(Typeface.BOLD), 0, spanString1.length(), 0);
+            spanString1.setSpan(new ForegroundColorSpan(Color.BLACK), 0, spanString1.length(), 0);
+
+            final String finMessage = messageAAfficher.substring(messageAAfficher.indexOf(": "));
+            final SpannableString spanString2 = new SpannableString(finMessage);
+            spanString2.setSpan(new ForegroundColorSpan(Color.DKGRAY), 0, spanString2.length(), 0);
+
+            final LinearLayout chatView = (LinearLayout) findViewById(R.id.chatView);
+            final EditText chatText = (EditText) findViewById(R.id.chatText);
+            final ScrollView scrollViewChat = (ScrollView) findViewById(R.id.scrollViewChat);
+
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    final TextView tvChat = new TextView(getApplicationContext());
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    lp.setMargins(10, 10, 10, 10);
+                    tvChat.setLayoutParams(lp);
+                    tvChat.append(spanString1);
+                    tvChat.append(spanString2);
+                    chatView.addView(tvChat);
+                    // effacement du texte
+                    chatText.setText("");
+                    // on met le scroolview toujours en bas
+                    scrollViewChat.fullScroll(View.FOCUS_DOWN);
+
+                }
+            });
         }
 
         // action liée à un clic sur la pioche donjon
@@ -543,5 +594,28 @@ public class FragmentsMainActivity extends FragmentActivity {
             e.printStackTrace();
         }
 
+    }
+
+    public void envoyerMessageChat(View v) {
+
+        EditText ed = (EditText) findViewById(R.id.chatText);
+
+        if (ed.getText() != null) {
+
+            String texte = ed.getText().toString();
+
+            try {
+                PrintWriter out = new PrintWriter(new BufferedWriter(
+                        new OutputStreamWriter(socket.getOutputStream())),
+                        true);
+                out.println("clicBoutonChat" + texte);
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

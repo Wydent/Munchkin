@@ -61,10 +61,6 @@ public class Carte {
     public void setEffects(ArrayList<Method> effects) {
         this.effects = effects;
     }
-    
-    public void ajouterEffect(Method effect) {
-        effects.add(effect);
-    }
 
     public String getType() {
         return type;
@@ -84,7 +80,7 @@ public class Carte {
 		return 0;
 	}
 
-	public Method getIncident_facheux() {
+	public Effet getIncident_facheux() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -171,6 +171,14 @@ public class ThreadChat {
 				try {
 					while ((line = reader.readLine()) != null) {
 						System.out.println("Client dit : " + line);
+						
+						if(line.contains("clicBoutonChat")) {
+							
+							envoi_message("afficherDansLeChat-"+joueur.getNom()+" dit : "+line.substring(14));
+							
+							System.out.println("chaine chat : "+"afficherDansLeChat-"+joueur.getNom()+" dit : "+line.substring(14));
+							
+						}
 
 						// gestion clic sur pioche donjon
 						if (line.equals("clicPiocheDonjon")) {
