@@ -1,9 +1,11 @@
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -17,7 +19,7 @@ import java.util.Map;
 public class Partie {
 	ArrayList<Joueur> joueurs;
 	static ArrayList<Carte> paquet_donjons;
-	static ArrayList<Carte> paquet_tresors;
+	 static ArrayList<Carte> paquet_tresors;
 	ArrayList<Carte> defausse_donjons;
 	ArrayList<Carte> defausse_tresors;
 	int tourjoueur;
@@ -32,12 +34,12 @@ public class Partie {
 	public HashMap<Joueur, ThreadChat> chat = new HashMap<Joueur, ThreadChat>();
 
 	public Partie() {
-
-		// test d'ajout de cartes a supprimer plus tard
-		paquet_donjons = new ArrayList<Carte>();
-		paquet_donjons.add(new Carte("carte_test1", "descriptionTest", "momentTest", null, "monstre"));
-		paquet_donjons.add(new Carte("carte_test2", "descriptionTest2", "momentTest2", null, "monstre"));
-		paquet_donjons.add(new Carte("carte_test3", "descriptionTest3", "momentTest3", null, "monstre"));
+		
+		init_cartes("cartes.txt",this);
+		/*System.out.println("taille paquet donjon " + paquet_donjons.size());
+		System.out.println("Carte : "+ paquet_donjons.get(0).getNom());*/
+		TrierPaquetDonjonEtTresor();
+		//System.out.println("Carte : "+ paquet_donjons.get(0).getNom());
 
 		try {
 			String etiquette = new String("");
@@ -173,23 +175,29 @@ public class Partie {
     	ArrayList<Carte> paquet_tresors_tmp= new ArrayList<Carte>();
     	
     	
-    	for (int i = 0 ; i < paquet_donjons.size(); i++ ){    		
-    		nombreAleatoire= (int)(Math.random() * (paquet_donjons.size() + 1));
+    	for (int i = 0 ; i < paquet_donjons.size(); i++ ){    	
+    		
+    		nombreAleatoire= (int)(Math.random() * (paquet_donjons.size()));
+    		
     		while (NombreUtilises.contains(nombreAleatoire)){
-    			nombreAleatoire= (int)(Math.random() * (paquet_donjons.size() + 1));
+    			nombreAleatoire= (int)(Math.random() * (paquet_donjons.size()));
     		}
+    		
     		paquet_donjons_tmp.add(paquet_donjons.get(nombreAleatoire));
+    		NombreUtilises.add(nombreAleatoire);
+    	
     	}
     	paquet_donjons=paquet_donjons_tmp;
     	
     	NombreUtilises.clear();
     	
     	for (int i = 0 ; i < paquet_tresors.size(); i++ ){    		
-    		nombreAleatoire= (int)(Math.random() * (paquet_tresors.size() + 1));
+    		nombreAleatoire= (int)(Math.random() * (paquet_tresors.size()));
     		while (NombreUtilises.contains(nombreAleatoire)){
-    			nombreAleatoire= (int)(Math.random() * (paquet_tresors.size() + 1));
+    			nombreAleatoire= (int)(Math.random() * (paquet_tresors.size()));
     		}
     		paquet_tresors_tmp.add(paquet_tresors.get(nombreAleatoire));
+    		NombreUtilises.add(nombreAleatoire);
     	}
     	paquet_tresors=paquet_tresors_tmp;
     }
@@ -200,7 +208,76 @@ public class Partie {
 			piocher(2,"donjon",j);
 		}
     }
-	
+    public void init_cartes(String path,Partie p){
+		String[] chaine;
+		
+		ArrayList<Carte> tresors=new ArrayList<Carte>();
+		ArrayList<Carte> donjons=new ArrayList<Carte>();
+		try{
+			InputStream ips=new FileInputStream(path); 
+			InputStreamReader ipsr=new InputStreamReader(ips);
+			BufferedReader br=new BufferedReader(ipsr);
+			String ligne;
+			while ((ligne=br.readLine())!=null){
+				chaine=ligne.split(";");
+				/*for(int i=0;i<chaine.length;i++){
+					System.out.println(i +" : "+chaine[i]);
+				}*/
+				Carte c = null ;
+				if(chaine[1].equals("carte")){
+					
+					c=new Carte(chaine[2],chaine[3],chaine[4],null,chaine[0]);
+					
+				}
+				else if(chaine[1].equals("monstre")){
+					
+					c=new Monstre(chaine[2],chaine[3],chaine[4],null,chaine[0],Integer.parseInt(chaine[8]),Integer.parseInt(chaine[9]),null,Integer.parseInt(chaine[6]));
+				}
+				else if(chaine[1].equals("equipement")){
+					
+					c=new Equipement(chaine[2],chaine[3],chaine[4],null,chaine[0],chaine[6],Boolean.getBoolean(chaine[7]),null);
+				}
+				else if(chaine[1].equals("malediction")){
+					
+					c=new Malediction(chaine[2],chaine[3],chaine[4],null,chaine[0],null,Integer.parseInt(chaine[7]));
+				}
+				else if(chaine[1].equals("race")){
+					
+				}
+				else if(chaine[1].equals("classe")){
+					
+				}
+				/*if(chaine[5].contains(".")){
+				String effet[]=chaine[5].split(".");
+				Class[] classes=new Class[effet.length];
+				for(int i=0;i<effet.length;i++){
+					classes[i]=Class.forName(effet[i].split(":")[2]);
+				}
+				Method m =Effet.class.getDeclaredMethod(effet[0],classes);
+				Object[] parametres=new Object[effet.length];
+				for(int i=0;i<effet.length;i++){
+					//parametres[i]=int.class.newInstance()
+				}
+				}*/
+				if(c.getType().equals("donjon")){
+					donjons.add(c);
+				}
+				else if(c.getType().equals("tresor")){
+					tresors.add(c);
+				}
+			}
+				p.setPaquet_donjons(donjons);
+				p.setPaquet_tresors(tresors);
+				
+			
+			br.close();
+		}		
+		catch (Exception e){
+			System.out.println(e.toString());
+		}
+		
+		
+	}
 
 	public static void main(String[] args) {
 		new Partie();
