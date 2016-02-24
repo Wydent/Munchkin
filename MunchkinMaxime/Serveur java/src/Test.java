@@ -20,8 +20,9 @@ public class Test {
 	Joueur j2 = new Joueur("pipi");
 	System.out.println("Test avant effet : "+j1.getNiveau());
 	Class[] testt=new Class[2];
-	testt[0]=int.class;
+	testt[0]=Integer.class;
 	testt[1]=Joueur.class;
+	System.out.println(testt[1].toString());
 	Method m =Effet.class.getDeclaredMethod("modifierNiveau",testt);
 	System.out.println(m.toString());
 	HashMap<Integer,Object[]> jojo=new HashMap<Integer,Object[]>();
@@ -47,9 +48,20 @@ public class Test {
 	}
 	
 	System.out.println("Test après effet : "+j1.getNiveau());*/
-	String jojo = "Joueur";
+	String jojo = "java.lang.Integer";
 	try {
-		System.out.println(Class.forName(jojo).toString());
+	Integer go;
+	try {
+		System.out.println( Class.forName(jojo).getConstructors()[0].newInstance(2));
+		
+	} catch (IllegalArgumentException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (InvocationTargetException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+
 	} catch (ClassNotFoundException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();

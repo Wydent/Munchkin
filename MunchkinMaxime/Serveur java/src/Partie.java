@@ -36,10 +36,22 @@ public class Partie {
 	public Partie() {
 		
 		init_cartes("cartes.txt",this);
-		/*System.out.println("taille paquet donjon " + paquet_donjons.size());
-		System.out.println("Carte : "+ paquet_donjons.get(0).getNom());*/
+		System.out.println("taille paquet donjon " + paquet_donjons.size());
+		Joueur jojo=new Joueur("jojo");
+		paquet_tresors.get(0).changerJoueurcible(jojo);
+		try {
+			System.out.println("Niveau avant :"+ jojo.getNiveau());
+			paquet_tresors.get(0).joueur_effets();
+			System.out.println("Niveau après :"+ jojo.getNiveau());
+		} catch (InstantiationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		System.out.println("paquet tresors " + paquet_tresors.get(0).nom);
 		TrierPaquetDonjonEtTresor();
-		//System.out.println("Carte : "+ paquet_donjons.get(0).getNom());
 
 		try {
 			String etiquette = new String("");
@@ -220,9 +232,9 @@ public class Partie {
 			String ligne;
 			while ((ligne=br.readLine())!=null){
 				chaine=ligne.split(";");
-				/*for(int i=0;i<chaine.length;i++){
+				for(int i=0;i<chaine.length;i++){
 					System.out.println(i +" : "+chaine[i]);
-				}*/
+				}
 				Carte c = null ;
 				if(chaine[1].equals("carte")){
 					
@@ -247,18 +259,27 @@ public class Partie {
 				else if(chaine[1].equals("classe")){
 					
 				}
-				/*if(chaine[5].contains(".")){
-				String effet[]=chaine[5].split(".");
-				Class[] classes=new Class[effet.length];
-				for(int i=0;i<effet.length;i++){
-					classes[i]=Class.forName(effet[i].split(":")[2]);
+				if(chaine[5].contains("/")){
+				String effet[]=chaine[5].split("/");
+				System.out.println("------------------------------------------------");
+				Class[] classes=new Class[effet.length-1];
+				for(int i=1;i<effet.length;i++){
+					classes[i-1]=Class.forName(effet[i].split(":")[1]);
 				}
 				Method m =Effet.class.getDeclaredMethod(effet[0],classes);
-				Object[] parametres=new Object[effet.length];
-				for(int i=0;i<effet.length;i++){
-					//parametres[i]=int.class.newInstance()
+				c.ajouterEffect(m);
+				Object[] parametres=new Object[effet.length-1];
+				for(int i=1;i<effet.length;i++){
+					System.out.println(classes[i-1].getConstructors()[0].toString());
+					if(classes[i-1].equals(Joueur.class)){
+						parametres[i-1]=classes[i-1].getConstructors()[0].newInstance("pardéfaut");	
+					}
+					else{
+						parametres[i-1]=classes[i-1].getConstructors()[0].newInstance(Integer.parseInt(effet[i].split(":")[0]));
+					}
 				}
-				}*/
+				c.ajouterParametre_effect(parametres);
+				}
 				if(c.getType().equals("donjon")){
 					donjons.add(c);
 				}

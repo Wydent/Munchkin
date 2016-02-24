@@ -21,8 +21,9 @@ public class Carte {
         this.nom = nom;
         this.description = description;
         this.moment = moment;
-        this.effects = effects;
+        this.effects =new ArrayList<Method>();
         this.type = type;
+        parametres_effets=new HashMap<Integer,Object[]>();
     }
 
     public int getId() {
@@ -114,6 +115,15 @@ public class Carte {
 		Object[] parametres=getParametres_effets(numero_methode);
 		parametres[numero_parametre]=objet;
 		setParametres_effets(numero_methode, parametres);
+	}
+	
+	public void changerJoueurcible(Joueur j){
+		if(effects.size()>0){
+			for(int i=0;i<effects.size();i++){
+				changerParametre(i,1,j);	
+			}
+		}
+		
 	}
 	
 	public void joueur_effets() throws InstantiationException, IllegalAccessException{
