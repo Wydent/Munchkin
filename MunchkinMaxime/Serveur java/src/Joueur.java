@@ -14,8 +14,9 @@ public class Joueur {
     private ArrayList<Malediction> maledictions;
     private ArrayList<Carte> main;
     private int sexe;
+    private int deguerpir;
 
-    public Joueur(String nom){
+	public Joueur(String nom){
     	setNom(nom);
         setNiveau(1);
         setAttaque(1);
@@ -37,6 +38,14 @@ public class Joueur {
         setSexe(0);
 
     }
+	
+	public int getDeguerpir() {
+		return deguerpir;
+	}
+
+	public void setDeguerpir(int deguerpir) {
+		this.deguerpir = deguerpir;
+	}
     
     public int getAttaque() {
     	return attaque;

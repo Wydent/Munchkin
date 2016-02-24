@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Vector;
 
 public class ThreadChat {
@@ -370,9 +371,10 @@ public class ThreadChat {
 
 							ArrayList<Carte> list = Partie.piocher(1, "donjon", joueur);
 							String nomCarte = list.get(0).getNom();
-							String typeCarte = list.get(0).getType();
+							String typeCarte = list.get(0).getClass().toString();
+							System.out.println("typeCarte : "+typeCarte);
 
-							if (typeCarte == "monstre") {
+							if (typeCarte.equals("class Monstre")) {
 
 								Monstre m = new Monstre(list.get(0).getNom(), list.get(0).getDescription(),
 										list.get(0).getMoment(), list.get(0).getEffects(), list.get(0).getType(),
@@ -386,7 +388,31 @@ public class ThreadChat {
 										+ "-" + joueur.getAttaque() + "-" + nomCarte + "-" + typeCarte + "-"
 										+ levelMonstre + "-" + attaqueMonstre);
 							}
-
+						}
+						
+						// gestion clic sur bouton fuir
+						if(line.equals("clicBoutonFuir")) {
+							
+							Random rand = new Random();
+					        int randomNum = rand.nextInt((6 - 1) + 1) + 1;
+					        
+					        // cas fuite réussie
+					        if(randomNum + joueur.getDeguerpir() > 4) {
+					        	
+					        	System.out.println("fuite réussie");
+					        	
+					        	envoi_message("fuiteReussie-"+randomNum);
+					        	
+					        } else {
+					        	
+					        	// incindent fâcheux
+					        	
+					        	System.out.println("fuite échouée");
+					        	
+					        	envoi_message("fuiteEchouee-"+randomNum);
+					        	
+					        }
+							
 						}
 					}
 

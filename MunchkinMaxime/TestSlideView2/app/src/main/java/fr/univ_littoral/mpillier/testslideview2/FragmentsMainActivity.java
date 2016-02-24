@@ -12,6 +12,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Vector;
 
 import android.app.Activity;
@@ -38,6 +39,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.Transformation;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -176,6 +178,18 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                     }
 
+                    if (line.contains("fuiteReussie")) {
+
+                        fuir(line);
+
+                    }
+
+                    if (line.contains("fuiteEchouee")) {
+
+                        fuir(line);
+
+                    }
+
                 }
 
             } catch (UnknownHostException e1) {
@@ -185,11 +199,66 @@ public class FragmentsMainActivity extends FragmentActivity {
             }
         }
 
+        public void fuir(final String line) {
+
+            final Button fuirBouton = (Button) findViewById(R.id.boutonFuir);
+
+            final int nb = Integer.parseInt(line.split("-")[1]);
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    fuirBouton.setClickable(false);
+                    fuirBouton.setText(String.valueOf(nb));
+                }
+            });
+
+            synchronized (this) {
+                try {
+                    wait(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            PageMilieuFragment f = new PageMilieuFragment();
+
+            // passage de paramètres au fragmentCombat
+            Bundle args = new Bundle();
+            args.putString("nomJoueur", nomJoueur);
+            f.setArguments(args);
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, f);
+            transaction.commit();
+
+            final TextView infoBulle = (TextView) findViewById(R.id.infoBulle);
+
+            if(nb > 4) {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        infoBulle.setText("Fuite réussie !");
+                    }
+                });
+
+            } else {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        infoBulle.setText("Fuite échouée !");
+                    }
+                });
+
+            }
+
+        }
+
         public void afficherAccordeon(final String line) {
 
             nbPanels++;
-
-            System.out.println("ca passe");
 
             // variables servant la conversion px -> dp
             final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
@@ -205,18 +274,14 @@ public class FragmentsMainActivity extends FragmentActivity {
             int attaqueJoueur = Integer.parseInt(line.split("-")[4]);
 
             final int nombreClasses = Integer.parseInt(line.split("-")[5].substring(0, line.split("-")[5].indexOf("classe[")));
-            System.out.println("nombreClasses : " + nombreClasses);
 
             int nombreRaces = Integer.parseInt(line.split("]-")[1].substring(0, line.split("]-")[1].indexOf("race[")));
-            System.out.println("nombreRaces : " + nombreRaces);
 
             int nombreEquipements = Integer.parseInt(line.split("]-")[2].substring(0, line.split("]-")[2].indexOf("equipement[")));
-            System.out.println("nombreEquipements : " + nombreEquipements);
 
             int nombreMaledictions;
             if (line.contains("malediction")) {
                 nombreMaledictions = Integer.parseInt(line.split("]-")[3].substring(0, line.split("]-")[3].indexOf("malediction[")));
-                System.out.println("nombreMaledictions : " + nombreMaledictions);
             }
 
             final String[] attributsClasse = line.substring(line.indexOf("classe[") + 7, line.indexOf("]")).split("-");
@@ -268,7 +333,6 @@ public class FragmentsMainActivity extends FragmentActivity {
                                   layoutInterne.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                                   // id important
                                   layoutInterne.setId(100 + nbPanels);
-                                  System.out.println("id : " + layoutInterne.getId());
                                   layoutInterne.setOrientation(LinearLayout.VERTICAL);
                                   layoutInterne.setVisibility(View.GONE);
                                   layoutTest.addView(layoutInterne);
@@ -318,8 +382,6 @@ public class FragmentsMainActivity extends FragmentActivity {
 
             nbPanels++;
 
-            System.out.println("ca passe envoyerMain");
-
             // variables servant la conversion px -> dp
             final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
             final int padding = (int) (10 * scale + 0.5f);
@@ -338,7 +400,6 @@ public class FragmentsMainActivity extends FragmentActivity {
             if (line.contains("classe")) {
                 nombreClasses = Integer.parseInt(line.split("-")[5].substring(0, line.split("-")[5].indexOf("classe[")));
                 attributsClasse = line.substring(line.indexOf("classe[") + 7, line.indexOf("]")).split("-");
-                System.out.println("nombreClasses : " + nombreClasses);
             }
 
             int nombreRaces;
@@ -346,7 +407,6 @@ public class FragmentsMainActivity extends FragmentActivity {
             if (line.contains("race")) {
                 nombreRaces = Integer.parseInt(line.split("]-")[1].substring(0, line.split("]-")[1].indexOf("race[")));
                 attributsRace = line.substring(line.indexOf("race[") + 5, line.indexOf("]", line.indexOf("race[") + 5)).split("-");
-                System.out.println("nombreRaces : " + nombreRaces);
             }
 
             int nombreEquipements;
@@ -354,7 +414,6 @@ public class FragmentsMainActivity extends FragmentActivity {
             if (line.contains("equipement")) {
                 nombreEquipements = Integer.parseInt(line.split("]-")[2].substring(0, line.split("]-")[2].indexOf("equipement[")));
                 attributsEquipement = line.substring(line.indexOf("equipement[") + 11, line.indexOf("]", line.indexOf("equipement[") + 11)).split("-");
-                System.out.println("nombreEquipements : " + nombreEquipements);
             }
 
             int nombreMaledictions;
@@ -362,7 +421,6 @@ public class FragmentsMainActivity extends FragmentActivity {
             if (line.contains("malediction")) {
                 nombreMaledictions = Integer.parseInt(line.split("]-")[3].substring(0, line.split("]-")[3].indexOf("malediction[")));
                 attributsMalediction = line.substring(line.indexOf("malediction[") + 12, line.indexOf("]", line.indexOf("malediction[") + 12)).split("-");
-                System.out.println("nombreMaledictions : " + nombreMaledictions);
             }
 
             int nombreMonstres;
@@ -370,7 +428,6 @@ public class FragmentsMainActivity extends FragmentActivity {
             if (line.contains("monstre")) {
                 nombreMonstres = Integer.parseInt(line.split("]-")[4].substring(0, line.split("]-")[4].indexOf("monstre[")));
                 attributsMonstres = line.substring(line.indexOf("monstre[") + 8, line.indexOf("]", line.indexOf("monstre[") + 8)).split("-");
-                System.out.println("nombreMonstres : " + nombreMonstres);
             }
 
             int nombreBonus;
@@ -378,7 +435,6 @@ public class FragmentsMainActivity extends FragmentActivity {
             if (line.contains("bonus")) {
                 nombreBonus = Integer.parseInt(line.split("]-")[5].substring(0, line.split("]-")[5].indexOf("bonus[")));
                 attributsBonus = line.substring(line.indexOf("bonus[") + 7, line.indexOf("]", line.indexOf("bonus[") + 7)).split("-");
-                System.out.println("nombreBonus : " + nombreBonus);
             }
 
             // affichage de la main du joueur
@@ -417,20 +473,15 @@ public class FragmentsMainActivity extends FragmentActivity {
 
             for (int i = 1; i <= nbPanels; i++) {
 
-                System.out.println("easy");
                 int id = getApplicationContext().getResources().getIdentifier("" + i, "id", getApplicationContext().getPackageName());
-                System.out.println("id : " + id);
 
                 TextView textView = (TextView) findViewById(id);
-
-                System.out.println("textview id : " + textView.getId());
 
                 textView.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
 
-                        System.out.println("clic !");
                         hideOthers(v, nbPanels);
                     }
                 });
@@ -439,8 +490,6 @@ public class FragmentsMainActivity extends FragmentActivity {
         }
 
         private void hideThemAll() {
-
-            System.out.println("easy 3");
 
             if (openLayout == null) return;
 
@@ -457,8 +506,6 @@ public class FragmentsMainActivity extends FragmentActivity {
         private void hideOthers(View layoutView, int nbPanels) {
             {
                 int v;
-
-                System.out.println("easy 2 ");
 
                 for (int i = 1; i <= nbPanels; i++) {
 
@@ -610,7 +657,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                     afficherCartePiochee(nomImage);
                     afficherInfosCartePiochee(nomJoueur, nomImage);
 
-                    if (typeCarte.equals("monstre")) {
+                    if (typeCarte.equals("class Monstre")) {
 
                         final String levelMonstre = line.split("-")[6];
                         final String ataqueMonstre = line.split("-")[7];
@@ -625,6 +672,9 @@ public class FragmentsMainActivity extends FragmentActivity {
 
         // affichage des infos dans l'infobulle
         public void afficherInfosCartePiochee(String nomJoueur, String nomImage) {
+
+            System.out.println("nomJoueur : "+nomJoueur);
+            System.out.println("nomImage : "+nomImage);
 
             tvInfoBulle = (TextView) findViewById(R.id.infoBulle);
             // on rend visible l'infobulle
@@ -701,6 +751,22 @@ public class FragmentsMainActivity extends FragmentActivity {
             e.printStackTrace();
         }
 
+    }
+
+    public void clicBoutonFuir(View v) {
+
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream())),
+                    true);
+            out.println("clicBoutonFuir");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void envoyerMessageChat(View v) {

@@ -124,7 +124,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fuir"
-                android:layout_toRightOf="@id/boutonCombattre"/>
+                android:layout_toRightOf="@id/boutonCombattre"
+                android:onClick="clicBoutonFuir"/>
 
             <Button
                 android:id="@+id/boutonAide"
