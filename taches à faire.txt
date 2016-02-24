@@ -1,0 +1,17 @@
+-création de la partie ?(comment héberger, qui héberge , le lancement de la partie)
+-ordres du serveur : 
+-pioche donjon_1er
+-pioche_trésor
+_pioche_donjon_2eme
+-combattre
+-fuir
+-demander aide(joueur) : aide accepté,aide refusée
+-afficher_main
+-jouer_carte
+_changement_detour
+_détecter_fin_de_partie
+
+-graphisme des cartes
+-gérer les actions de classes
+
+-gérer la vente(ajouter prix et clause)
