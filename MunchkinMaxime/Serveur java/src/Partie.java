@@ -23,6 +23,7 @@ public class Partie {
 	ArrayList<Carte> defausse_donjons;
 	ArrayList<Carte> defausse_tresors;
 	int tourjoueur;
+	String EtatPartie;
 	ArrayList<Participation> liste_participants;
 
 	static final int PORT = 6666;
@@ -58,7 +59,7 @@ public class Partie {
 			ServerSocket serverSocket = new ServerSocket(PORT);
 			System.out.println("Serveur prêt ");
 			int i = 1;
-			while (chat.size() < 1) {
+			while (chat.size() < 2) {
 				System.out.println("Serveur en Attente");
 				Socket socket = serverSocket.accept();
 				System.out.println(new Date() + " Client connecté");
@@ -66,10 +67,13 @@ public class Partie {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 				etiquette = reader.readLine();
 				System.out.println(etiquette);
-
-				chat.put(new Joueur(etiquette), new ThreadChat(i, socket, this, etiquette));
-
-				i++;
+				if (!chat.containsKey(etiquette)){
+					System.out.println(etiquette);
+					Joueur j= new Joueur(etiquette);
+					chat.put(new Joueur(etiquette),new ThreadChat(i,socket,this,etiquette));	
+					joueurs.add(j);
+					i++;
+				}	
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -170,14 +174,14 @@ public class Partie {
 		return list;
 	}
 
-	public boolean findepartie() {
-		boolean b = false;
+	public int findepartie() {
+	    	int numeroJoueurGagnant=-1;
 		for (int i = 0; i < joueurs.size(); i++) {
 			if (joueurs.get(i).getNiveau() >= 10) {
-				b = true;
+				numeroJoueurGagnant=i;
 			}
 		}
-		return b;
+		return numeroJoueurGagnant;
 	}
 	public void TrierPaquetDonjonEtTresor() {
     	Integer nombreAleatoire;
@@ -293,12 +297,56 @@ public class Partie {
 			
 			br.close();
 		}		
+	
 		catch (Exception e){
 			System.out.println(e.toString());
 		}
 		
 		
 	}
+    
+    
+    /*public void JouerCarte(Joueur j, Carte c, Joueur cible){
+    	if (j.getMain().contains(c)){
+    		if ((c.getMoment()=="Tout") || (EtatPartie==c.getMoment())) {
+    			if (c instanceof Monstre) {
+    				
+    			}
+    			else if (c instanceof Equipement) {
+    				Equipement equ=(Equipement)c;
+    				j.getEquipements().add(equ);
+    			}
+    			else if (c instanceof Malediction) {
+    				Malediction mal=(Malediction)c;
+    				mal.setCible(cible);
+    				mal.setTempsRestant(mal.getTempsInitial());
+    				cible.getMaledictions().add(mal);
+    			}
+    			else if (c instanceof Classe) {
+    				Classe cla=(Classe)c;
+    				int nb_classes_possibles=1;
+    				/*if (j.EstSuperMunchKin()){ //<-- jojo tu peux rajouter l'attribut superMunchKin au joueur?
+    					nb_classes_possibles=2;
+    				}
+    				
+    				if (j.getClasses().size()<nb_classes_possibles){
+    					j.getClasses().add(cla);
+    				}
+    			} 
+    			else if (c instanceof Race) {
+    				
+    			}
+    			
+    		}
+    		
+    	}
+    	else //Envoi d'un message d'erreur comme quoi la carte n'est pas dans sa main.
+    	{
+    		chat.get(j.getNom());
+    	}
+    	
+    	
+    }*/
 
 	public static void main(String[] args) {
 		new Partie();

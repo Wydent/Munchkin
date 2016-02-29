@@ -7,12 +7,15 @@ import java.util.ArrayList;
  */
 public class Malediction extends Carte {
     Joueur cible;
-    int temps;
+    int tempsInitial;
+    int tempsRestant;
 
-    public Malediction(String nom, String description, String moment, ArrayList<Method> effects, String type, Joueur cible, int temps) {
+    public Malediction(String nom, String description, String moment, ArrayList<Method> effects,
+    		String type, Joueur cible, int tempsInitial) {
         super(nom, description, moment, effects, type);
         this.cible = cible;
-        this.temps = temps;
+        this.tempsInitial = tempsInitial;
+        this.tempsInitial=this.tempsRestant;
     }
 
     public Joueur getCible() {
@@ -23,11 +26,20 @@ public class Malediction extends Carte {
         this.cible = cible;
     }
 
-    public int getTemps() {
-        return temps;
+    public int getTempsInitial() {
+        return tempsInitial;
     }
 
-    public void setTemps(int temps) {
-        this.temps = temps;
+    public void setTempsInitial(int tempsInitial) {
+        this.tempsInitial = tempsInitial;
+    }
+    
+    public int getTempsRestant() {
+        return tempsRestant;
+    }
+
+    public void setTempsRestant(int tempsRestant) {
+        this.tempsRestant = tempsRestant;
     }
 }
+
