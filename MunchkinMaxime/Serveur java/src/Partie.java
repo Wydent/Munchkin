@@ -23,6 +23,7 @@ public class Partie {
 	ArrayList<Carte> defausse_donjons;
 	ArrayList<Carte> defausse_tresors;
 	int tourjoueur;
+	Monstre monstre_a_combattre;
 	String EtatPartie;
 	ArrayList<Participation> liste_participants;
 
@@ -304,6 +305,34 @@ public class Partie {
 		
 		
 	}
+    
+    public void Combattre (){
+    	int totalAttaque;
+    	totalAttaque=joueurs.get(tourjoueur).getAttaque();
+    	
+    	for(Participation p:liste_participants){
+    			totalAttaque=totalAttaque+ p.getJoueur_allie().getAttaque();
+    		}
+    		
+    	if (monstre_a_combattre.getAttaque()>=totalAttaque) {
+    		joueurs.get(tourjoueur).setNiveau(joueurs.get(tourjoueur).getNiveau()-1);
+    		//Appliquer l'effet facheux jojo? 
+    	}
+    	else{ //Victoire des joueurs , répartition des récompenses.
+    		int total_niveaux_attribues=0;
+    		int total_tresors_attribues=0;
+    		
+    		for(Participation p:liste_participants){
+    			total_niveaux_attribues+=p.getRecompense_niveau_donne();
+    			total_tresors_attribues+=p.getRecompense_tresor_donne();
+    			piocher(p.getRecompense_tresor_donne(), "tresor", p.getJoueur_allie());
+    			p.getJoueur_allie().setNiveau(p.getJoueur_allie().getNiveau()+p.getRecompense_niveau_donne());
+    		}
+    		//Attribution des niveaux et des tresors au joueur qui joue en ce moment: c'est le reste.
+    		joueurs.get(tourjoueur).setNiveau(monstre_a_combattre.getRecompense_niveau()-total_niveaux_attribues);
+    		piocher(monstre_a_combattre.getRecompense_niveau()-total_tresors_attribues, "tresor",joueurs.get(tourjoueur));
+    	}
+    }
     
     
     /*public void JouerCarte(Joueur j, Carte c, Joueur cible){
