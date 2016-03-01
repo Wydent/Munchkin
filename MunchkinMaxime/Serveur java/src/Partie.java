@@ -19,7 +19,7 @@ import java.util.Map;
 public class Partie {
 	ArrayList<Joueur> joueurs;
 	static ArrayList<Carte> paquet_donjons;
-	 static ArrayList<Carte> paquet_tresors;
+	static ArrayList<Carte> paquet_tresors;
 	ArrayList<Carte> defausse_donjons;
 	ArrayList<Carte> defausse_tresors;
 	int tourjoueur;
@@ -36,22 +36,16 @@ public class Partie {
 	public HashMap<Joueur, ThreadChat> chat = new HashMap<Joueur, ThreadChat>();
 
 	public Partie() {
-		
+
 		init_cartes("cartes.txt",this);
 		System.out.println("taille paquet donjon " + paquet_donjons.size());
 		Joueur jojo=new Joueur("jojo");
 		paquet_tresors.get(0).changerJoueurcible(jojo);
-		try {
+	
 			System.out.println("Niveau avant :"+ jojo.getNiveau());
 			paquet_tresors.get(0).joueur_effets();
 			System.out.println("Niveau après :"+ jojo.getNiveau());
-		} catch (InstantiationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		
 		System.out.println("paquet tresors " + paquet_tresors.get(0).nom);
 		TrierPaquetDonjonEtTresor();
 
@@ -94,7 +88,7 @@ public class Partie {
 
 	}
 
-	
+
 
 	public ArrayList<Joueur> getJoueurs() {
 		return joueurs;
@@ -176,7 +170,7 @@ public class Partie {
 	}
 
 	public int findepartie() {
-	    	int numeroJoueurGagnant=-1;
+		int numeroJoueurGagnant=-1;
 		for (int i = 0; i < joueurs.size(); i++) {
 			if (joueurs.get(i).getNiveau() >= 10) {
 				numeroJoueurGagnant=i;
@@ -185,49 +179,49 @@ public class Partie {
 		return numeroJoueurGagnant;
 	}
 	public void TrierPaquetDonjonEtTresor() {
-    	Integer nombreAleatoire;
-    	ArrayList<Integer> NombreUtilises = new ArrayList<Integer>();
-    	
-    	ArrayList<Carte> paquet_donjons_tmp= new ArrayList<Carte>();
-    	ArrayList<Carte> paquet_tresors_tmp= new ArrayList<Carte>();
-    	
-    	
-    	for (int i = 0 ; i < paquet_donjons.size(); i++ ){    	
-    		
-    		nombreAleatoire= (int)(Math.random() * (paquet_donjons.size()));
-    		
-    		while (NombreUtilises.contains(nombreAleatoire)){
-    			nombreAleatoire= (int)(Math.random() * (paquet_donjons.size()));
-    		}
-    		
-    		paquet_donjons_tmp.add(paquet_donjons.get(nombreAleatoire));
-    		NombreUtilises.add(nombreAleatoire);
-    	
-    	}
-    	paquet_donjons=paquet_donjons_tmp;
-    	
-    	NombreUtilises.clear();
-    	
-    	for (int i = 0 ; i < paquet_tresors.size(); i++ ){    		
-    		nombreAleatoire= (int)(Math.random() * (paquet_tresors.size()));
-    		while (NombreUtilises.contains(nombreAleatoire)){
-    			nombreAleatoire= (int)(Math.random() * (paquet_tresors.size()));
-    		}
-    		paquet_tresors_tmp.add(paquet_tresors.get(nombreAleatoire));
-    		NombreUtilises.add(nombreAleatoire);
-    	}
-    	paquet_tresors=paquet_tresors_tmp;
-    }
-    
-    public void distribuerMains(){
-    	for(Joueur j:joueurs){
+		Integer nombreAleatoire;
+		ArrayList<Integer> NombreUtilises = new ArrayList<Integer>();
+
+		ArrayList<Carte> paquet_donjons_tmp= new ArrayList<Carte>();
+		ArrayList<Carte> paquet_tresors_tmp= new ArrayList<Carte>();
+
+
+		for (int i = 0 ; i < paquet_donjons.size(); i++ ){    	
+
+			nombreAleatoire= (int)(Math.random() * (paquet_donjons.size()));
+
+			while (NombreUtilises.contains(nombreAleatoire)){
+				nombreAleatoire= (int)(Math.random() * (paquet_donjons.size()));
+			}
+
+			paquet_donjons_tmp.add(paquet_donjons.get(nombreAleatoire));
+			NombreUtilises.add(nombreAleatoire);
+
+		}
+		paquet_donjons=paquet_donjons_tmp;
+
+		NombreUtilises.clear();
+
+		for (int i = 0 ; i < paquet_tresors.size(); i++ ){    		
+			nombreAleatoire= (int)(Math.random() * (paquet_tresors.size()));
+			while (NombreUtilises.contains(nombreAleatoire)){
+				nombreAleatoire= (int)(Math.random() * (paquet_tresors.size()));
+			}
+			paquet_tresors_tmp.add(paquet_tresors.get(nombreAleatoire));
+			NombreUtilises.add(nombreAleatoire);
+		}
+		paquet_tresors=paquet_tresors_tmp;
+	}
+
+	public void distribuerMains(){
+		for(Joueur j:joueurs){
 			piocher(2,"tresor",j);
 			piocher(2,"donjon",j);
 		}
-    }
-    public void init_cartes(String path,Partie p){
+	}
+	public void init_cartes(String path,Partie p){
 		String[] chaine;
-		
+
 		ArrayList<Carte> tresors=new ArrayList<Carte>();
 		ArrayList<Carte> donjons=new ArrayList<Carte>();
 		try{
@@ -242,48 +236,48 @@ public class Partie {
 				}
 				Carte c = null ;
 				if(chaine[1].equals("carte")){
-					
+
 					c=new Carte(chaine[2],chaine[3],chaine[4],null,chaine[0]);
-					
+
 				}
 				else if(chaine[1].equals("monstre")){
-					
+
 					c=new Monstre(chaine[2],chaine[3],chaine[4],null,chaine[0],Integer.parseInt(chaine[8]),Integer.parseInt(chaine[9]),null,Integer.parseInt(chaine[6]));
 				}
 				else if(chaine[1].equals("equipement")){
-					
+
 					c=new Equipement(chaine[2],chaine[3],chaine[4],null,chaine[0],chaine[6],Boolean.getBoolean(chaine[7]),null);
 				}
 				else if(chaine[1].equals("malediction")){
-					
+
 					c=new Malediction(chaine[2],chaine[3],chaine[4],null,chaine[0],null,Integer.parseInt(chaine[7]));
 				}
 				else if(chaine[1].equals("race")){
-					
+
 				}
 				else if(chaine[1].equals("classe")){
-					
+
 				}
 				if(chaine[5].contains("/")){
-				String effet[]=chaine[5].split("/");
-				System.out.println("------------------------------------------------");
-				Class[] classes=new Class[effet.length-1];
-				for(int i=1;i<effet.length;i++){
-					classes[i-1]=Class.forName(effet[i].split(":")[1]);
-				}
-				Method m =Effet.class.getDeclaredMethod(effet[0],classes);
-				c.ajouterEffect(m);
-				Object[] parametres=new Object[effet.length-1];
-				for(int i=1;i<effet.length;i++){
-					System.out.println(classes[i-1].getConstructors()[0].toString());
-					if(classes[i-1].equals(Joueur.class)){
-						parametres[i-1]=classes[i-1].getConstructors()[0].newInstance("pardéfaut");	
+					String effet[]=chaine[5].split("/");
+					System.out.println("------------------------------------------------");
+					Class[] classes=new Class[effet.length-1];
+					for(int i=1;i<effet.length;i++){
+						classes[i-1]=Class.forName(effet[i].split(":")[1]);
 					}
-					else{
-						parametres[i-1]=classes[i-1].getConstructors()[0].newInstance(Integer.parseInt(effet[i].split(":")[0]));
+					Method m =Effet.class.getDeclaredMethod(effet[0],classes);
+					c.ajouterEffect(m);
+					Object[] parametres=new Object[effet.length-1];
+					for(int i=1;i<effet.length;i++){
+						System.out.println(classes[i-1].getConstructors()[0].toString());
+						if(classes[i-1].equals(Joueur.class)){
+							parametres[i-1]=classes[i-1].getConstructors()[0].newInstance("pardéfaut");	
+						}
+						else{
+							parametres[i-1]=classes[i-1].getConstructors()[0].newInstance(Integer.parseInt(effet[i].split(":")[0]));
+						}
 					}
-				}
-				c.ajouterParametre_effect(parametres);
+					c.ajouterParametre_effect(parametres);
 				}
 				if(c.getType().equals("donjon")){
 					donjons.add(c);
@@ -292,91 +286,173 @@ public class Partie {
 					tresors.add(c);
 				}
 			}
-				p.setPaquet_donjons(donjons);
-				p.setPaquet_tresors(tresors);
-				
-			
+			p.setPaquet_donjons(donjons);
+			p.setPaquet_tresors(tresors);
+
+
 			br.close();
 		}		
-	
+
 		catch (Exception e){
 			System.out.println(e.toString());
 		}
-		
-		
-	}
-    
-    public void Combattre (){
-    	int totalAttaque;
-    	totalAttaque=joueurs.get(tourjoueur).getAttaque();
-    	
-    	for(Participation p:liste_participants){
-    			totalAttaque=totalAttaque+ p.getJoueur_allie().getAttaque();
-    		}
-    		
-    	if (monstre_a_combattre.getAttaque()>=totalAttaque) {
-    		joueurs.get(tourjoueur).setNiveau(joueurs.get(tourjoueur).getNiveau()-1);
-    		//Appliquer l'effet facheux jojo? 
-    	}
-    	else{ //Victoire des joueurs , répartition des récompenses.
-    		int total_niveaux_attribues=0;
-    		int total_tresors_attribues=0;
-    		
-    		for(Participation p:liste_participants){
-    			total_niveaux_attribues+=p.getRecompense_niveau_donne();
-    			total_tresors_attribues+=p.getRecompense_tresor_donne();
-    			piocher(p.getRecompense_tresor_donne(), "tresor", p.getJoueur_allie());
-    			p.getJoueur_allie().setNiveau(p.getJoueur_allie().getNiveau()+p.getRecompense_niveau_donne());
-    		}
-    		//Attribution des niveaux et des tresors au joueur qui joue en ce moment: c'est le reste.
-    		joueurs.get(tourjoueur).setNiveau(monstre_a_combattre.getRecompense_niveau()-total_niveaux_attribues);
-    		piocher(monstre_a_combattre.getRecompense_niveau()-total_tresors_attribues, "tresor",joueurs.get(tourjoueur));
-    	}
-    }
-    
-    
-    /*public void JouerCarte(Joueur j, Carte c, Joueur cible){
-    	if (j.getMain().contains(c)){
-    		if ((c.getMoment()=="Tout") || (EtatPartie==c.getMoment())) {
-    			if (c instanceof Monstre) {
-    				
-    			}
-    			else if (c instanceof Equipement) {
-    				Equipement equ=(Equipement)c;
-    				j.getEquipements().add(equ);
-    			}
-    			else if (c instanceof Malediction) {
-    				Malediction mal=(Malediction)c;
-    				mal.setCible(cible);
-    				mal.setTempsRestant(mal.getTempsInitial());
-    				cible.getMaledictions().add(mal);
-    			}
-    			else if (c instanceof Classe) {
-    				Classe cla=(Classe)c;
-    				int nb_classes_possibles=1;
-    				/*if (j.EstSuperMunchKin()){ //<-- jojo tu peux rajouter l'attribut superMunchKin au joueur?
-    					nb_classes_possibles=2;
-    				}
-    				
-    				if (j.getClasses().size()<nb_classes_possibles){
-    					j.getClasses().add(cla);
-    				}
-    			} 
-    			else if (c instanceof Race) {
-    				
-    			}
-    			
-    		}
-    		
-    	}
-    	else //Envoi d'un message d'erreur comme quoi la carte n'est pas dans sa main.
-    	{
-    		chat.get(j.getNom());
-    	}
-    	
-    	
-    }*/
 
+
+	}
+
+	public void attribuer_recompense(ArrayList<Participation> participants){
+		int total_niveaux_attribues=0;
+		int total_tresors_attribues=0;
+
+		for(Participation p:participants){
+			total_niveaux_attribues+=p.getRecompense_niveau_donne();
+			total_tresors_attribues+=p.getRecompense_tresor_donne();
+			piocher(p.getRecompense_tresor_donne(), "tresor", p.getJoueur_allie());
+			p.getJoueur_allie().setNiveau(p.getJoueur_allie().getNiveau()+p.getRecompense_niveau_donne());
+		}
+		//Attribution des niveaux et des tresors au joueur qui joue en ce moment: c'est le reste.
+		joueurs.get(tourjoueur).setNiveau(monstre_a_combattre.getRecompense_niveau()-total_niveaux_attribues);
+		piocher(monstre_a_combattre.getRecompense_niveau()-total_tresors_attribues, "tresor",joueurs.get(tourjoueur));
+	}
+
+	public void Combattre (){
+		int totalAttaque;
+		totalAttaque=joueurs.get(tourjoueur).getAttaque();
+
+		for(Participation p:liste_participants){
+			totalAttaque=totalAttaque+ p.getJoueur_allie().getAttaque();
+		}
+
+		if (monstre_a_combattre.getAttaque()>totalAttaque) {
+
+			//Appliquer l'effet facheux jojo? 
+		}
+		else if(monstre_a_combattre.getAttaque()==totalAttaque){
+			boolean guerrier=false;
+			int i=0;
+			for(int j=0;j<joueurs.get(tourjoueur).getClasses().size();j++){
+				if(joueurs.get(tourjoueur).getClasses().get(j).getNom().equals("guerrier")){
+					guerrier=true;
+				}
+			}
+			while((i<liste_participants.size())&&(guerrier==false)){
+				Joueur joueur=liste_participants.get(i).getJoueur_allie();
+				for(int j=0;j<joueur.getClasses().size();j++){
+					if(joueur.getClasses().get(j).getNom().equals("guerrier")){
+						guerrier=true;
+					}
+				}
+				i++;
+			}
+			if(guerrier==false){
+				//Appliquer l'effet facheux jojo? 
+			}
+			else{
+				attribuer_recompense(liste_participants);
+			}
+		}
+		else{ //Victoire des joueurs , répartition des récompenses.
+			attribuer_recompense(liste_participants);
+		}
+	}
+
+	public void changertour(){
+		if(tourjoueur==joueurs.size()-1){
+			setTourjoueur(0);
+		}
+		else{
+			setTourjoueur(getTourjoueur()+1);
+		}
+	}
+
+
+	public void JouerCarte(Joueur j, Carte c, Object cible){
+		if (j.getMain().contains(c)){
+			if(joueurs.get(tourjoueur).getNom().equals(j.getNom())){
+				if ((c.getMoment()=="tout") || (EtatPartie==c.getMoment())) {
+					if (c instanceof Monstre) {
+					monstre_a_combattre=(Monstre)c;
+					j.removeCarteMain(c);
+					//pop interface de combatS
+					}
+					else if (c instanceof Equipement) {
+						Equipement equ=(Equipement)c;
+						boolean nain=false;
+						for(int i=0;i<j.getClasses().size();i++){
+							if(j.getRaces().get(i).getNom().equals("nain")){
+								nain=true;
+							}
+						}
+						//check contraintes
+						boolean compatible=true;
+						int arme=0;
+						int i=0;
+						while((i<j.getEquipements().size())&&(compatible==true)){
+							Equipement equipement=j.getEquipements().get(i);
+							if((equipement.gros==true)&&(equ.gros==true)&&(nain==false)){
+								compatible=false;
+							}
+							if(equipement.getPartie_corps().contains("arme")){
+								arme=arme+Integer.parseInt(equipement.getPartie_corps().substring(3,4));
+							}
+							if((!equ.getPartie_corps().contains("arme"))&&(equ.getPartie_corps().equals(equipement.getPartie_corps()))){
+								if(equ!=null){
+									compatible=false;
+								}
+							}
+							if((equ.getPartie_corps().contains("arme"))&&(arme>=2)){
+								compatible=false;
+							}
+							
+						}
+						if(compatible==true){
+							equ.changerJoueurcible(j);
+							equ.joueur_effets();
+							j.getEquipements().add(equ);
+							j.removeCarteMain(equ);
+						}else{
+							//erreur
+						}	
+					}
+					else if (c instanceof Malediction) {
+						Malediction mal=(Malediction)c;
+						mal.setCible((Joueur)cible);
+						mal.setTempsRestant(mal.getTempsInitial());
+						((Joueur) cible).getMaledictions().add(mal);
+					}
+					else if (c instanceof Classe) {
+						Classe cla=(Classe)c;
+						int nb_classes_possibles=1;
+						if (j.isEstSuperMunckhin()){ //<-- jojo tu peux rajouter l'attribut superMunchKin au joueur?
+							nb_classes_possibles=2;
+						}
+
+						if (j.getClasses().size()<nb_classes_possibles){
+							j.getClasses().add(cla);
+						}
+					} 
+					else if (c instanceof Race) {
+
+					}
+
+				}else{
+					System.out.println("erreur");
+				}
+
+			}
+			else //pas le tour du joueur
+			{
+				if ((c.getMoment()=="tout") || ((EtatPartie==c.getMoment())&&(!c.getMoment().equals("tour"))&&(!c.getMoment().equals("pasdemonstre")))) {
+					
+				}else{
+					System.out.println("erreur");
+				}
+			}
+		}
+
+	}
+
+	
 	public static void main(String[] args) {
 		new Partie();
 	}

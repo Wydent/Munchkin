@@ -1,9 +1,0 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle" >
-
-    // couleur de fond
-    <solid android:color="#ffffff" />
-
-    // couleur du tour
-    <stroke android:width="1dip" android:color="#4fa5d5"/>
-
-</shape>

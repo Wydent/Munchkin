@@ -126,8 +126,17 @@ public class Carte {
 		
 	}
 	
-	public void joueur_effets() throws InstantiationException, IllegalAccessException{
-		Object t = Effet.class.newInstance();
+	public void joueur_effets(){
+		Object t = null;
+		try {
+			t = Effet.class.newInstance();
+		} catch (InstantiationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		for(int i=0;i<getEffects().size();i++){
 			try {
 				getEffects().get(i).invoke(t,parametres_effets.get(i));

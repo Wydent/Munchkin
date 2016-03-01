@@ -15,6 +15,36 @@ public class Joueur {
     private ArrayList<Carte> main;
     private int sexe;
     private int deguerpir;
+    private boolean EstSuperMunckhin;
+    private boolean EstSangMelee;
+
+	/**
+	 * @return the estSuperMunckhin
+	 */
+	public boolean isEstSuperMunckhin() {
+		return EstSuperMunckhin;
+	}
+
+	/**
+	 * @param estSuperMunckhin the estSuperMunckhin to set
+	 */
+	public void setEstSuperMunckhin(boolean estSuperMunckhin) {
+		EstSuperMunckhin = estSuperMunckhin;
+	}
+
+	/**
+	 * @return the estSangMelee
+	 */
+	public boolean isEstSangMelee() {
+		return EstSangMelee;
+	}
+
+	/**
+	 * @param estSangMelee the estSangMelee to set
+	 */
+	public void setEstSangMelee(boolean estSangMelee) {
+		EstSangMelee = estSangMelee;
+	}
 
 	public Joueur(String nom){
     	setNom(nom);
@@ -22,7 +52,6 @@ public class Joueur {
         setAttaque(1);
         
         ArrayList<Classe> arrayListTest = new ArrayList<Classe>();
-        arrayListTest.add(new Classe("Prêtre", "description du prêtre bla bla bla", "momentTest", null, "classe", null));
         setClasses(arrayListTest);
         
         ArrayList<Carte> arrayListTest2 = new ArrayList<Carte>();
@@ -30,13 +59,14 @@ public class Joueur {
         setRaces(arrayListTest2);
         
         ArrayList<Equipement> arrayListTest3 = new ArrayList<Equipement>();
-        arrayListTest3.add(new Equipement("Epee de Dieu", "Description de epee la la la", "momentTest", null, "equipement", "tete", true, null));
         setEquipements(arrayListTest3);
         
         setMaledictions(new ArrayList<Malediction>());
         setMain(new ArrayList<Carte>());
         setSexe(0);
-
+        setDeguerpir(0);
+        setEstSangMelee(false);
+        setEstSuperMunckhin(false);
     }
 	
 	public int getDeguerpir() {
