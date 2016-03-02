@@ -17,7 +17,6 @@ import java.util.Map;
  * Created by jojo on 02/02/2016.
  */
 public class Partie {
-	ArrayList<Joueur> joueurs;
 	static ArrayList<Carte> paquet_donjons;
 	static ArrayList<Carte> paquet_tresors;
 	ArrayList<Carte> defausse_donjons;
@@ -66,7 +65,6 @@ public class Partie {
 					System.out.println(etiquette);
 					Joueur j= new Joueur(etiquette);
 					chat.put(new Joueur(etiquette),new ThreadChat(i,socket,this,etiquette));	
-					joueurs.add(j);
 					i++;
 				}	
 			}
@@ -75,10 +73,9 @@ public class Partie {
 		}
 	}
 
-	public Partie(ArrayList<Joueur> joueurs, ArrayList<Carte> paquet_donjons, ArrayList<Carte> paquet_tresors,
+	public Partie(ArrayList<Carte> paquet_donjons, ArrayList<Carte> paquet_tresors,
 			ArrayList<Carte> defausse_donjons, ArrayList<Carte> defausse_tresors, int tourjoueur,
 			ArrayList<Participation> liste_participants) {
-		this.joueurs = joueurs;
 		this.paquet_donjons = paquet_donjons;
 		this.paquet_tresors = paquet_tresors;
 		this.defausse_donjons = defausse_donjons;
@@ -90,13 +87,6 @@ public class Partie {
 
 
 
-	public ArrayList<Joueur> getJoueurs() {
-		return joueurs;
-	}
-
-	public void setJoueurs(ArrayList<Joueur> joueurs) {
-		this.joueurs = joueurs;
-	}
 
 	public ArrayList<Carte> getPaquet_donjons() {
 		return paquet_donjons;
@@ -168,11 +158,16 @@ public class Partie {
 
 		return list;
 	}
+	public ArrayList<Joueur> getJoueurs(){
+		ArrayList<Joueur> joueurs=new ArrayList<Joueur>();
+		joueurs.addAll(chat.keySet());
+		return joueurs;
+	}
 
 	public int findepartie() {
 		int numeroJoueurGagnant=-1;
-		for (int i = 0; i < joueurs.size(); i++) {
-			if (joueurs.get(i).getNiveau() >= 10) {
+		for (int i = 0; i < chat.size(); i++) {
+			if (getJoueurs().get(i).getNiveau() >= 10) {
 				numeroJoueurGagnant=i;
 			}
 		}
@@ -214,7 +209,7 @@ public class Partie {
 	}
 
 	public void distribuerMains(){
-		for(Joueur j:joueurs){
+		for(Joueur j:getJoueurs()){
 			piocher(2,"tresor",j);
 			piocher(2,"donjon",j);
 		}
@@ -311,13 +306,13 @@ public class Partie {
 			p.getJoueur_allie().setNiveau(p.getJoueur_allie().getNiveau()+p.getRecompense_niveau_donne());
 		}
 		//Attribution des niveaux et des tresors au joueur qui joue en ce moment: c'est le reste.
-		joueurs.get(tourjoueur).setNiveau(monstre_a_combattre.getRecompense_niveau()-total_niveaux_attribues);
-		piocher(monstre_a_combattre.getRecompense_niveau()-total_tresors_attribues, "tresor",joueurs.get(tourjoueur));
+		getJoueurs().get(tourjoueur).setNiveau(monstre_a_combattre.getRecompense_niveau()-total_niveaux_attribues);
+		piocher(monstre_a_combattre.getRecompense_niveau()-total_tresors_attribues, "tresor",getJoueurs().get(tourjoueur));
 	}
 
 	public void Combattre (){
 		int totalAttaque;
-		totalAttaque=joueurs.get(tourjoueur).getAttaque();
+		totalAttaque=getJoueurs().get(tourjoueur).getAttaque();
 
 		for(Participation p:liste_participants){
 			totalAttaque=totalAttaque+ p.getJoueur_allie().getAttaque();
@@ -330,8 +325,8 @@ public class Partie {
 		else if(monstre_a_combattre.getAttaque()==totalAttaque){
 			boolean guerrier=false;
 			int i=0;
-			for(int j=0;j<joueurs.get(tourjoueur).getClasses().size();j++){
-				if(joueurs.get(tourjoueur).getClasses().get(j).getNom().equals("guerrier")){
+			for(int j=0;j<getJoueurs().get(tourjoueur).getClasses().size();j++){
+				if(getJoueurs().get(tourjoueur).getClasses().get(j).getNom().equals("guerrier")){
 					guerrier=true;
 				}
 			}
@@ -357,7 +352,7 @@ public class Partie {
 	}
 
 	public void changertour(){
-		if(tourjoueur==joueurs.size()-1){
+		if(tourjoueur==chat.size()-1){
 			setTourjoueur(0);
 		}
 		else{
@@ -368,7 +363,7 @@ public class Partie {
 
 	public void JouerCarte(Joueur j, Carte c, Object cible){
 		if (j.getMain().contains(c)){
-			if(joueurs.get(tourjoueur).getNom().equals(j.getNom())){
+			if(getJoueurs().get(tourjoueur).getNom().equals(j.getNom())){
 				if ((c.getMoment()=="tout") || (EtatPartie==c.getMoment())) {
 					if (c instanceof Monstre) {
 					monstre_a_combattre=(Monstre)c;
