@@ -34,7 +34,6 @@
 
         <TextView
             android:id="@+id/infoBulleMonstre"
-            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/infobulle"
@@ -42,7 +41,8 @@
             android:padding="10dp"
             android:text="Maxime a joué la carte Môman !"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:visibility="invisible" />
 
     </LinearLayout>
 
@@ -80,10 +80,10 @@
 
             <TextView
                 android:id="@+id/classeJoueur"
-                android:layout_marginLeft="20dp"
-                android:layout_toRightOf="@id/raceJoueur"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@id/raceJoueur"
                 android:text="Classe : "
                 android:textColor="@android:color/holo_blue_dark" />
 
@@ -98,7 +98,6 @@
 
         <TextView
             android:id="@+id/infoBulleJoueur"
-            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/infobulle"
@@ -106,7 +105,8 @@
             android:padding="10dp"
             android:text="Kévin demande de l'aide..."
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:visibility="invisible" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -117,24 +117,30 @@
                 android:id="@+id/boutonCombattre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Combattre"/>
+                android:text="Combattre" />
 
             <Button
                 android:id="@+id/boutonFuir"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fuir"
                 android:layout_toRightOf="@id/boutonCombattre"
-                android:onClick="clicBoutonFuir"/>
+                android:onClick="clicBoutonFuir"
+                android:text="Fuir" />
 
             <Button
                 android:id="@+id/boutonAide"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Aide"
-                android:layout_toRightOf="@id/boutonFuir"/>
+                android:layout_toRightOf="@id/boutonFuir"
+                android:text="Aide" />
 
         </RelativeLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="finDeTour"
+            android:text="Fin de tour" />
 
     </LinearLayout>
 

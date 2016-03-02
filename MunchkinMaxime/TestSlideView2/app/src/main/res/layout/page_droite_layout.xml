@@ -21,28 +21,32 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/holo_orange_light"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            android:minHeight="120dp"/>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/layoutMaledictionBonus"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/holo_green_light"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            android:minHeight="120dp"/>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/layoutEquipement"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/holo_purple"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            android:minHeight="120dp"/>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/layoutRaceClasse"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/background_dark"
-            android:orientation="horizontal" />
+            android:orientation="horizontal"
+            android:minHeight="120dp"/>
 
     </LinearLayout>
 

@@ -77,6 +77,10 @@ public class FragmentsMainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.view_pager);
 
+        // définition du nom du joueur
+        Intent intent = getIntent();
+        nomJoueur = intent.getStringExtra("PSEUDO");
+
         // Création de la liste de Fragments que fera défiler le PagerAdapter
         fragments = new Vector();
 
@@ -131,7 +135,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                 PrintWriter out = new PrintWriter(new BufferedWriter(
                         new OutputStreamWriter(socket.getOutputStream())),
                         true);
-                out.println("clientTest");
+                out.println(nomJoueur.toString());
 
                 // mise sur écoute du client
                 stream = socket.getInputStream();
@@ -148,7 +152,7 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                     }
 
-                    if (line.contains("afficherNomJoueur")) {
+                    if (line.contains("auTourDe")) {
 
                         afficherNomJoueur(line);
 
@@ -275,19 +279,27 @@ public class FragmentsMainActivity extends FragmentActivity {
 
             final int nombreClasses = Integer.parseInt(line.split("-")[5].substring(0, line.split("-")[5].indexOf("classe[")));
 
-            int nombreRaces = Integer.parseInt(line.split("]-")[1].substring(0, line.split("]-")[1].indexOf("race[")));
+            final int nombreRaces = Integer.parseInt(line.split("]-")[1].substring(0, line.split("]-")[1].indexOf("race[")));
 
-            int nombreEquipements = Integer.parseInt(line.split("]-")[2].substring(0, line.split("]-")[2].indexOf("equipement[")));
+            final int nombreEquipements = Integer.parseInt(line.split("]-")[2].substring(0, line.split("]-")[2].indexOf("equipement[")));
 
-            int nombreMaledictions;
-            if (line.contains("malediction")) {
-                nombreMaledictions = Integer.parseInt(line.split("]-")[3].substring(0, line.split("]-")[3].indexOf("malediction[")));
-            }
+            final int nombreMaledictions = Integer.parseInt(line.split("]-")[3].substring(0, line.split("]-")[3].indexOf("malediction[")));
 
-            final String[] attributsClasse = line.substring(line.indexOf("classe[") + 7, line.indexOf("]")).split("-");
-            String[] attributsRace = line.substring(line.indexOf("race[") + 5, line.indexOf("]", line.indexOf("race[") + 5)).split("-");
-            String[] attributsEquipement = line.substring(line.indexOf("equipement[") + 11, line.indexOf("]", line.indexOf("equipement[") + 11)).split("-");
-            String[] attributsMalediction = line.substring(line.indexOf("malediction[") + 12, line.indexOf("]", line.indexOf("malediction[") + 12)).split("-");
+            String[] attributsClasse = null;
+            String[] attributsRace = null;
+            String[] attributsEquipement = null;
+            String[] attributsMalediction = null;
+
+            if(nombreClasses != 0)
+                attributsClasse = line.substring(line.indexOf("classe[") + 7, line.indexOf("]")).split("-");
+
+            attributsRace = line.substring(line.indexOf("race[") + 5, line.indexOf("]", line.indexOf("race[") + 5)).split("-");
+
+            if(nombreEquipements != 0)
+                attributsEquipement = line.substring(line.indexOf("equipement[") + 11, line.indexOf("]", line.indexOf("equipement[") + 11)).split("-");
+
+            if(nombreMaledictions != 0)
+                attributsMalediction = line.substring(line.indexOf("malediction[") + 12, line.indexOf("]", line.indexOf("malediction[") + 12)).split("-");
 
             // ne pas supprimer
             /*String nomRace = attributsRace[0];
@@ -302,6 +314,10 @@ public class FragmentsMainActivity extends FragmentActivity {
             String descriptionMalediction = attributsClasse[1];*/
 
             // implémentation de l'accordéon
+            final String[] finalAttributsClasse = attributsClasse;
+            final String[] finalAttributsRace = attributsRace;
+            final String[] finalAttributsEquipement = attributsEquipement;
+            final String[] finalAttributsMalediction = attributsMalediction;
             runOnUiThread(new Runnable() {
                               @Override
                               public void run() {
@@ -346,6 +362,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                   imageJoueur.setImageResource(R.drawable.image_test);
                                   layoutInterne.addView(imageJoueur);
 
+                                  /* races et classes */
                                   final TextView tvTitreRaceClasse = new TextView(getApplicationContext());
                                   lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                                   lp.setMargins(padding, padding, padding, padding);
@@ -357,12 +374,14 @@ public class FragmentsMainActivity extends FragmentActivity {
                                   final LinearLayout layoutMultiImages = new LinearLayout(getApplicationContext());
                                   layoutMultiImages.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                                   layoutMultiImages.setOrientation(LinearLayout.HORIZONTAL);
+                                  layoutMultiImages.setMinimumHeight(heightImage);
+                                  layoutMultiImages.setBackgroundColor(Color.parseColor("red"));
                                   layoutInterne.addView(layoutMultiImages);
 
-                                  for (int i = 0; i < nombreClasses; i = i + 2) {
+                                  for (int i = 0; i < nombreClasses*2; i = i + 2) {
 
-                                      String nomClasse = attributsClasse[i];
-                                      String descriptionClasse = attributsClasse[i + 1];
+                                      String nomClasse = finalAttributsClasse[i];
+                                      String descriptionClasse = finalAttributsClasse[i + 1];
 
                                       final ImageView imageClasse = new ImageView(getApplicationContext());
                                       lp = new LinearLayout.LayoutParams(widthImage, heightImage);
@@ -373,14 +392,91 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       layoutMultiImages.addView(imageClasse);
 
                                   }
+
+                                  for (int i = 0; i < nombreRaces*2; i = i + 2) {
+
+                                      String nomRace = finalAttributsRace[i];
+                                      String descriptionRace = finalAttributsRace[i + 1];
+
+                                      final ImageView imageRace= new ImageView(getApplicationContext());
+                                      lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      lp.setMargins(padding, padding, padding, padding);
+                                      imageRace.setLayoutParams(lp);
+                                      imageRace.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                      imageRace.setImageResource(getResources().getIdentifier(nomRace, "drawable", getPackageName()));
+                                      layoutMultiImages.addView(imageRace);
+
+                                  }
+
+                                  /* equipements */
+                                  final TextView tvTitreEquipement = new TextView(getApplicationContext());
+                                  lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                  lp.setMargins(padding, padding, padding, padding);
+                                  tvTitreEquipement.setLayoutParams(lp);
+                                  tvTitreEquipement.setText("Equipements : ");
+                                  tvTitreEquipement.setTextColor(Color.parseColor("black"));
+                                  layoutInterne.addView(tvTitreEquipement);
+
+                                  final LinearLayout layoutMultiImages2 = new LinearLayout(getApplicationContext());
+                                  layoutMultiImages2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                                  layoutMultiImages2.setOrientation(LinearLayout.HORIZONTAL);
+                                  layoutMultiImages2.setMinimumHeight(heightImage);
+                                  layoutMultiImages2.setBackgroundColor(Color.parseColor("purple"));
+                                  layoutInterne.addView(layoutMultiImages2);
+
+                                  for (int i = 0; i < nombreEquipements*4; i = i + 4) {
+
+                                      String nomEquipement = finalAttributsEquipement[i];
+                                      String descriptionEquipement = finalAttributsEquipement[i + 1];
+                                      String partieCorps = finalAttributsEquipement[i + 2];
+                                      String isGros = finalAttributsEquipement[i + 3];
+
+                                      final ImageView imageEquipement = new ImageView(getApplicationContext());
+                                      lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      lp.setMargins(padding, padding, padding, padding);
+                                      imageEquipement.setLayoutParams(lp);
+                                      imageEquipement.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                      imageEquipement.setImageResource(getResources().getIdentifier(nomEquipement, "drawable", getPackageName()));
+                                      layoutMultiImages.addView(imageEquipement);
+
+                                  }
+
+                                  /* malédictions et bonus */
+                                  final TextView tvTitreMaledictionBonus = new TextView(getApplicationContext());
+                                  lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                                  lp.setMargins(padding, padding, padding, padding);
+                                  tvTitreMaledictionBonus.setLayoutParams(lp);
+                                  tvTitreMaledictionBonus.setText("Malédictions et bonus : ");
+                                  tvTitreMaledictionBonus.setTextColor(Color.parseColor("black"));
+                                  layoutInterne.addView(tvTitreMaledictionBonus);
+
+                                  final LinearLayout layoutMultiImages3 = new LinearLayout(getApplicationContext());
+                                  layoutMultiImages3.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                                  layoutMultiImages3.setOrientation(LinearLayout.HORIZONTAL);
+                                  layoutMultiImages3.setMinimumHeight(heightImage);
+                                  layoutMultiImages3.setBackgroundColor(Color.parseColor("green"));
+                                  layoutInterne.addView(layoutMultiImages3);
+
+                                  for (int i = 0; i < nombreMaledictions*2; i = i + 2) {
+
+                                      String nom = finalAttributsMalediction[i];
+                                      String description = finalAttributsMalediction[i + 1];
+
+                                      final ImageView image = new ImageView(getApplicationContext());
+                                      lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      lp.setMargins(padding, padding, padding, padding);
+                                      image.setLayoutParams(lp);
+                                      image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                      image.setImageResource(getResources().getIdentifier(nom, "drawable", getPackageName()));
+                                      layoutMultiImages.addView(image);
+
+                                  }
                               }
                           }
             );
         }
 
         public void afficherMain(final String line) {
-
-            nbPanels++;
 
             // variables servant la conversion px -> dp
             final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
@@ -395,59 +491,66 @@ public class FragmentsMainActivity extends FragmentActivity {
             int niveauJoueur = Integer.parseInt(line.split("-")[3]);
             int attaqueJoueur = Integer.parseInt(line.split("-")[4]);
 
-            int nombreClasses = 0;
+            int nombreClasses = Integer.parseInt(line.split("-")[5].substring(0, line.split("-")[5].indexOf("classe[")));
             String[] attributsClasse = null;
-            if (line.contains("classe")) {
-                nombreClasses = Integer.parseInt(line.split("-")[5].substring(0, line.split("-")[5].indexOf("classe[")));
+            if (nombreClasses != 0) {
                 attributsClasse = line.substring(line.indexOf("classe[") + 7, line.indexOf("]")).split("-");
             }
 
-            int nombreRaces;
-            String[] attributsRace;
-            if (line.contains("race")) {
-                nombreRaces = Integer.parseInt(line.split("]-")[1].substring(0, line.split("]-")[1].indexOf("race[")));
+            int nombreRaces = Integer.parseInt(line.split("]-")[1].substring(0, line.split("]-")[1].indexOf("race[")));
+            String[] attributsRace = new String[0];
+            if (nombreRaces != 0) {
                 attributsRace = line.substring(line.indexOf("race[") + 5, line.indexOf("]", line.indexOf("race[") + 5)).split("-");
             }
 
-            int nombreEquipements;
-            String[] attributsEquipement;
-            if (line.contains("equipement")) {
-                nombreEquipements = Integer.parseInt(line.split("]-")[2].substring(0, line.split("]-")[2].indexOf("equipement[")));
+            int nombreEquipements = Integer.parseInt(line.split("]-")[2].substring(0, line.split("]-")[2].indexOf("equipement[")));
+            String[] attributsEquipement = new String[0];
+            if (nombreEquipements != 0) {
                 attributsEquipement = line.substring(line.indexOf("equipement[") + 11, line.indexOf("]", line.indexOf("equipement[") + 11)).split("-");
             }
 
-            int nombreMaledictions;
-            String[] attributsMalediction;
-            if (line.contains("malediction")) {
-                nombreMaledictions = Integer.parseInt(line.split("]-")[3].substring(0, line.split("]-")[3].indexOf("malediction[")));
+            int nombreMaledictions = Integer.parseInt(line.split("]-")[3].substring(0, line.split("]-")[3].indexOf("malediction[")));
+            String[] attributsMalediction = new String[0];
+            if (nombreMaledictions != 0) {
                 attributsMalediction = line.substring(line.indexOf("malediction[") + 12, line.indexOf("]", line.indexOf("malediction[") + 12)).split("-");
             }
 
-            int nombreMonstres;
-            String[] attributsMonstres;
-            if (line.contains("monstre")) {
-                nombreMonstres = Integer.parseInt(line.split("]-")[4].substring(0, line.split("]-")[4].indexOf("monstre[")));
+            int nombreMonstres = Integer.parseInt(line.split("]-")[4].substring(0, line.split("]-")[4].indexOf("monstre[")));
+            String[] attributsMonstres = new String[0];
+            if (nombreMonstres != 0) {
                 attributsMonstres = line.substring(line.indexOf("monstre[") + 8, line.indexOf("]", line.indexOf("monstre[") + 8)).split("-");
             }
 
-            int nombreBonus;
-            String[] attributsBonus;
-            if (line.contains("bonus")) {
-                nombreBonus = Integer.parseInt(line.split("]-")[5].substring(0, line.split("]-")[5].indexOf("bonus[")));
-                attributsBonus = line.substring(line.indexOf("bonus[") + 7, line.indexOf("]", line.indexOf("bonus[") + 7)).split("-");
+            int nombreBonus = Integer.parseInt(line.split("]-")[5].substring(0, line.split("]-")[5].indexOf("bonus[")));
+            String[] attributsBonus = new String[0];
+            if (nombreBonus != 0) {
+                attributsBonus = line.substring(line.indexOf("bonus[") + 6, line.indexOf("]", line.indexOf("bonus[") + 6)).split("-");
             }
 
             // affichage de la main du joueur
             final int finalNombreClasses = nombreClasses;
+            final int finalNombreRaces = nombreRaces;
             final String[] finalAttributsClasse = attributsClasse;
+            final String[] finalAttributsRace = attributsRace;
+            final String[] finalAttributsEquipement = attributsEquipement;
+            final int finalNombreMonstres = nombreMonstres;
+            final String[] finalAttributsMonstres = attributsMonstres;
+            final String[] finalAttributsMalediction = attributsMalediction;
+            final int finalNombreMaledictions = nombreMaledictions;
+            final int finalNombreBonus = nombreBonus;
+            final String[] finalAttributsBonus = attributsBonus;
+            final int finalNombreEquipements = nombreEquipements;
             runOnUiThread(new Runnable() {
                               @Override
                               public void run() {
 
                                   LinearLayout raceClasseLayout = (LinearLayout) findViewById(R.id.layoutRaceClasse);
+                                  LinearLayout equipementLayout = (LinearLayout) findViewById(R.id.layoutEquipement);
+                                  LinearLayout bonusMaledictionLayout = (LinearLayout) findViewById(R.id.layoutMaledictionBonus);
+                                  LinearLayout monstreLayout = (LinearLayout) findViewById(R.id.layoutMonstre);
 
                                   // affichage des races et classes en main
-                                  for (int i = 0; i < finalNombreClasses; i = i + 2) {
+                                  for (int i = 0; i < finalNombreClasses * 2; i = i + 2) {
 
                                       String nomClasse = finalAttributsClasse[i];
                                       String descriptionClasse = finalAttributsClasse[i + 1];
@@ -457,11 +560,100 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       lp.setMargins(padding, padding, padding, padding);
                                       imageClasse.setLayoutParams(lp);
                                       imageClasse.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                      imageClasse.setImageResource(getResources().getIdentifier(nomClasse, "drawable", getPackageName()));
+                                      //imageClasse.setImageResource(getResources().getIdentifier(nomClasse, "drawable", getPackageName()));
+                                      imageClasse.setImageResource(R.drawable.image_test);
                                       raceClasseLayout.addView(imageClasse);
 
                                   }
 
+                                  for (int i = 0; i < finalNombreRaces * 2; i = i + 2) {
+
+                                      String nomRace = finalAttributsRace[i];
+                                      String descriptionRace = finalAttributsRace[i + 1];
+
+                                      final ImageView imageRace = new ImageView(getApplicationContext());
+                                      LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      lp.setMargins(padding, padding, padding, padding);
+                                      imageRace.setLayoutParams(lp);
+                                      imageRace.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                      //imageRace.setImageResource(getResources().getIdentifier(nomRace, "drawable", getPackageName()));
+                                      imageRace.setImageResource(R.drawable.image_test);
+                                      raceClasseLayout.addView(imageRace);
+
+                                  }
+
+                                  // affichage des équipements en main
+                                  for (int i = 0; i < finalNombreEquipements * 4; i = i + 4) {
+
+                                      String nomEquipement = finalAttributsEquipement[i];
+                                      String descriptionEquipement = finalAttributsEquipement[i + 1];
+                                      String partieCorps = finalAttributsEquipement[i + 2];
+                                      String isGros = finalAttributsEquipement[i + 3];
+
+                                      final ImageView imageEquipement = new ImageView(getApplicationContext());
+                                      LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      lp.setMargins(padding, padding, padding, padding);
+                                      imageEquipement.setLayoutParams(lp);
+                                      imageEquipement.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                      //imageEquipement.setImageResource(getResources().getIdentifier(nomEquipement, "drawable", getPackageName()));
+                                      imageEquipement.setImageResource(R.drawable.image_test);
+                                      equipementLayout.addView(imageEquipement);
+
+                                  }
+
+                                  // affichage des monstres en main
+                                  for (int i = 0; i < finalNombreMonstres * 5; i = i + 5) {
+
+                                      String nomMonstre = finalAttributsMonstres[i];
+                                      String descriptionMonstre = finalAttributsMonstres[i + 1];
+                                      String niveauMonstre = finalAttributsMonstres[i + 2];
+                                      String recompenseNiveaux = finalAttributsMonstres[i + 3];
+                                      String recompenseTresors = finalAttributsMonstres[i + 4];
+
+                                      final ImageView imageMonstre = new ImageView(getApplicationContext());
+                                      LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      lp.setMargins(padding, padding, padding, padding);
+                                      imageMonstre.setLayoutParams(lp);
+                                      imageMonstre.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                      //imageMonstre.setImageResource(getResources().getIdentifier(nomMonstre, "drawable", getPackageName()));
+                                      imageMonstre.setImageResource(R.drawable.image_test);
+                                      monstreLayout.addView(imageMonstre);
+
+                                  }
+
+                                  // affichage des bonus en main
+                                  for (int i = 0; i < finalNombreBonus * 2; i = i + 2) {
+
+                                      String nomBonus = finalAttributsBonus[i];
+                                      String descriptionBonus = finalAttributsBonus[i + 1];
+
+                                      final ImageView imageBonus = new ImageView(getApplicationContext());
+                                      LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      lp.setMargins(padding, padding, padding, padding);
+                                      imageBonus.setLayoutParams(lp);
+                                      imageBonus.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                      //imageBonus.setImageResource(getResources().getIdentifier(nomBonus, "drawable", getPackageName()));
+                                      imageBonus.setImageResource(R.drawable.image_test);
+                                      bonusMaledictionLayout.addView(imageBonus);
+
+                                  }
+
+                                  // affichage des malédictions en main
+                                  for (int i = 0; i < finalNombreMaledictions * 2; i = i + 2) {
+
+                                      String nomBonus = finalAttributsMalediction[i];
+                                      String descriptionBonus = finalAttributsMalediction[i + 1];
+
+                                      final ImageView imageMalediction = new ImageView(getApplicationContext());
+                                      LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      lp.setMargins(padding, padding, padding, padding);
+                                      imageMalediction.setLayoutParams(lp);
+                                      imageMalediction.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                                      //imageMalediction.setImageResource(getResources().getIdentifier(nomBonus, "drawable", getPackageName()));
+                                      imageMalediction.setImageResource(R.drawable.image_test);
+                                      bonusMaledictionLayout.addView(imageMalediction);
+
+                                  }
                               }
                           }
             );
@@ -662,7 +854,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                         final String levelMonstre = line.split("-")[6];
                         final String ataqueMonstre = line.split("-")[7];
 
-                        combattre(nomJoueur, levelJoueur, attaqueJoueur, nomImage, levelMonstre, ataqueMonstre);
+                        combattre(line, nomJoueur, levelJoueur, attaqueJoueur, nomImage, levelMonstre, ataqueMonstre);
                     }
 
                 }
@@ -712,7 +904,9 @@ public class FragmentsMainActivity extends FragmentActivity {
             });
         }
 
-        public void combattre(String nomJoueur, String levelJoueur, String attaqueJoueur, String nomMonstre, String levelMonstre, String attaqueMonstre) {
+        public void combattre(String line, String nomJoueur, String levelJoueur, String attaqueJoueur, String nomMonstre, String levelMonstre, String attaqueMonstre) {
+
+            String joueurActuel = line.split("-")[1];
 
             PageMilieuCombatFragment f = new PageMilieuCombatFragment();
 
@@ -724,6 +918,17 @@ public class FragmentsMainActivity extends FragmentActivity {
             args.putString("nomMonstre", nomMonstre);
             args.putString("levelMonstre", levelMonstre);
             args.putString("attaqueMonstre", attaqueMonstre);
+            // si c'est à nous de jouer
+            if(joueurActuel.equals(nomJoueur)) {
+
+                args.putBoolean("isTonTour", true);
+
+            } else {
+
+                args.putBoolean("isTonTour", false);
+
+            }
+
             f.setArguments(args);
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -735,6 +940,16 @@ public class FragmentsMainActivity extends FragmentActivity {
     /******************************************
      * FIN THREAD
      **************************************/
+
+    public void finDeTour(View v) {
+
+        PageMilieuFragment f = new PageMilieuFragment();
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, f);
+        transaction.commit();
+
+    }
 
     public void test(View v) {
 

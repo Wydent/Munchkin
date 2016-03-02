@@ -69,45 +69,46 @@ public class ThreadChat {
 
 				ArrayList<Carte> main = joueur.getMain();
 
+				System.out.println("main du joueur : " + joueur.getMain().toString());
+
 				ArrayList<Carte> bonus = new ArrayList<Carte>();
 				ArrayList<Carte> maledictions = new ArrayList<Carte>();
 				ArrayList<Carte> monstres = new ArrayList<Carte>();
 				ArrayList<Carte> races = new ArrayList<Carte>();
 				ArrayList<Carte> classes = new ArrayList<Carte>();
-				ArrayList<Equipement> equipements = new ArrayList<Equipement>();
+				ArrayList<Carte> equipements = new ArrayList<Carte>();
 
 				// tri des cartes dans la main du joueur
 				for (int i = 0; i < joueur.getMain().size(); i++) {
 
 					System.out.println("test type de carte : " + joueur.getMain().get(i).getClass().toString());
-					if (joueur.getMain().get(i).getClass().toString().equals("Carte")) {
+					if (joueur.getMain().get(i).getClass().toString().equals("class Carte")) {
 						bonus.add(joueur.getMain().get(i));
 					}
 
-					if (joueur.getMain().get(i).getClass().toString().equals("Malediction")) {
+					if (joueur.getMain().get(i).getClass().toString().equals("class Malediction")) {
 						maledictions.add(joueur.getMain().get(i));
 					}
 
-					if (joueur.getMain().get(i).getClass().toString().equals("Monstre")) {
+					if (joueur.getMain().get(i).getClass().toString().equals("class Monstre")) {
 						monstres.add(joueur.getMain().get(i));
 					}
 
-					if (joueur.getMain().get(i).getClass().toString().equals("Race")) {
+					if (joueur.getMain().get(i).getClass().toString().equals("class Race")) {
 						races.add(joueur.getMain().get(i));
 					}
 
-					if (joueur.getMain().get(i).getClass().toString().equals("Classe")) {
+					if (joueur.getMain().get(i).getClass().toString().equals("class Classe")) {
 						classes.add(joueur.getMain().get(i));
 					}
 
-					if (joueur.getMain().get(i).getClass().toString().equals("Equipement")) {
-						Equipement e = (Equipement) joueur.getMain().get(i);
-						equipements.add(e);
+					if (joueur.getMain().get(i).getClass().toString().equals("class Equipement")) {
+						equipements.add(joueur.getMain().get(i));
 					}
 
 				}
 
-				ArrayList<String> attributsClasse = new ArrayList<String>();
+				/*ArrayList<String> attributsClasse = new ArrayList<String>();
 				for (int i = 0; i < classes.size(); i++) {
 
 					attributsClasse.add(classes.get(i).getNom());
@@ -138,53 +139,58 @@ public class ThreadChat {
 
 					attributsMalediction.add(maledictions.get(i).getNom());
 					attributsMalediction.add(maledictions.get(i).getDescription());
-				}
+				}*/
 
 				String chaineAEnvoyer = "afficherMain-" + joueur.getNom() + "-" + joueur.getSexe() + "-"
 						+ joueur.getNiveau() + "-" + joueur.getAttaque();
 
+				chaineAEnvoyer += "-" + classes.size() + "classe[";
 				if (classes.size() != 0) {
-					chaineAEnvoyer += "-" + classes.size() + "classe[";
 					for (int i = 0; i < classes.size(); i++) {
 						chaineAEnvoyer += classes.get(i).getNom() + "-" + classes.get(i).getDescription();
 						if (i != (classes.size() - 1)) {
 							chaineAEnvoyer += "-";
 						}
 					}
-					chaineAEnvoyer += "]";
 				}
+				chaineAEnvoyer += "]";
+
+				chaineAEnvoyer += "-" + races.size() + "race[";
 				if (races.size() != 0) {
-					chaineAEnvoyer += "-" + races.size() + "race[";
 					for (int i = 0; i < races.size(); i++) {
 						chaineAEnvoyer += races.get(i).getNom() + "-" + races.get(i).getDescription();
 						if (i != (races.size() - 1)) {
 							chaineAEnvoyer += "-";
 						}
 					}
-					chaineAEnvoyer += "]";
 				}
+				chaineAEnvoyer += "]";
+
+				chaineAEnvoyer += "-" + equipements.size() + "equipement[";
 				if (equipements.size() != 0) {
-					chaineAEnvoyer += "-" + equipements.size() + "equipement[";
-					for (int i = 0; i < races.size(); i++) {
-						chaineAEnvoyer += equipements.get(i).getNom() + "-" + equipements.get(i).getDescription();
+					for (int i = 0; i < equipements.size(); i++) {
+						chaineAEnvoyer += equipements.get(i).getNom() + "-" + equipements.get(i).getDescription() + "-"
+								+ equipements.get(i).getPartie_corps() + "-" + equipements.get(i).isGros();
 						if (i != (equipements.size() - 1)) {
 							chaineAEnvoyer += "-";
 						}
 					}
-					chaineAEnvoyer += "]";
 				}
+				chaineAEnvoyer += "]";
+
+				chaineAEnvoyer += "-" + maledictions.size() + "malediction[";
 				if (maledictions.size() != 0) {
-					chaineAEnvoyer += "-" + maledictions.size() + "malediction[";
 					for (int i = 0; i < maledictions.size(); i++) {
 						chaineAEnvoyer += maledictions.get(i).getNom() + "-" + maledictions.get(i).getDescription();
 						if (i != (maledictions.size() - 1)) {
 							chaineAEnvoyer += "-";
 						}
 					}
-					chaineAEnvoyer += "]";
 				}
+				chaineAEnvoyer += "]";
+
+				chaineAEnvoyer += "-" + monstres.size() + "monstre[";
 				if (monstres.size() != 0) {
-					chaineAEnvoyer += "-" + monstres.size() + "monstre[";
 					for (int i = 0; i < monstres.size(); i++) {
 						chaineAEnvoyer += monstres.get(i).getNom() + "-" + monstres.get(i).getDescription() + "-"
 								+ monstres.get(i).getNiveau() + "-" + monstres.get(i).getRecompense_niveau() + "-"
@@ -193,18 +199,19 @@ public class ThreadChat {
 							chaineAEnvoyer += "-";
 						}
 					}
-					chaineAEnvoyer += "]";
 				}
+				chaineAEnvoyer += "]";
+
+				chaineAEnvoyer += "-" + bonus.size() + "bonus[";
 				if (bonus.size() != 0) {
-					chaineAEnvoyer += "-" + bonus.size() + "bonus[";
 					for (int i = 0; i < bonus.size(); i++) {
 						chaineAEnvoyer += bonus.get(i).getNom() + "-" + bonus.get(i).getDescription();
 						if (i != (bonus.size() - 1)) {
 							chaineAEnvoyer += "-";
 						}
 					}
-					chaineAEnvoyer += "]";
 				}
+				chaineAEnvoyer += "]";
 
 				envoi_message(chaineAEnvoyer);
 
@@ -252,8 +259,8 @@ public class ThreadChat {
 					String chaineAEnvoyer = "afficherAccordeon-" + key.getNom() + "-" + key.getSexe() + "-"
 							+ key.getNiveau() + "-" + key.getAttaque();
 
+					chaineAEnvoyer += "-" + key.getClasses().size() + "classe[";
 					if (attributsClasse.size() != 0) {
-						chaineAEnvoyer += "-" + key.getClasses().size() + "classe[";
 						int i = 0;
 						while (i != attributsClasse.size()) {
 							chaineAEnvoyer += attributsClasse.get(i) + "-" + attributsClasse.get(i + 1);
@@ -262,10 +269,11 @@ public class ThreadChat {
 								chaineAEnvoyer += "-";
 							}
 						}
-						chaineAEnvoyer += "]";
 					}
+					chaineAEnvoyer += "]";
+
+					chaineAEnvoyer += "-" + key.getRaces().size() + "race[";
 					if (attributsRace.size() != 0) {
-						chaineAEnvoyer += "-" + key.getRaces().size() + "race[";
 						int i = 0;
 						while (i != attributsRace.size()) {
 							chaineAEnvoyer += attributsRace.get(i) + "-" + attributsRace.get(i + 1);
@@ -274,10 +282,11 @@ public class ThreadChat {
 								chaineAEnvoyer += "-";
 							}
 						}
-						chaineAEnvoyer += "]";
 					}
+					chaineAEnvoyer += "]";
+
+					chaineAEnvoyer += "-" + key.getEquipements().size() + "equipement[";
 					if (attributsEquipement.size() != 0) {
-						chaineAEnvoyer += "-" + key.getEquipements().size() + "equipement[";
 						int i = 0;
 						while (i != attributsEquipement.size()) {
 							chaineAEnvoyer += attributsEquipement.get(i) + "-" + attributsEquipement.get(i + 1) + "-"
@@ -287,10 +296,11 @@ public class ThreadChat {
 								chaineAEnvoyer += "-";
 							}
 						}
-						chaineAEnvoyer += "]";
 					}
+					chaineAEnvoyer += "]";
+
+					chaineAEnvoyer += "-" + key.getMaledictions().size() + "malediction[";
 					if (attributsMalediction.size() != 0) {
-						chaineAEnvoyer += "-" + key.getMaledictions().size() + "malediction[";
 						int i = 0;
 						while (i != attributsMalediction.size()) {
 							chaineAEnvoyer += attributsMalediction.get(i) + "-" + attributsMalediction.get(i + 1);
@@ -299,8 +309,8 @@ public class ThreadChat {
 								chaineAEnvoyer += "-";
 							}
 						}
-						chaineAEnvoyer += "]";
 					}
+					chaineAEnvoyer += "]";
 
 					envoi_message(chaineAEnvoyer);
 
@@ -348,9 +358,11 @@ public class ThreadChat {
 				// ordre d'animation de l'accordéon
 				envoi_message("animationAccordeon");
 
-				// ordre d'affichage du nom du joueur
-				envoi_message("afficherNomJoueur-" + joueur.getNom());
-				
+				// définition du tour du joueur pour le premier qui se connecte
+				if (v.size() == 1) {
+					envoi_message("auTourDe-" + joueur.getNom());
+				}
+
 				envoyerMain();
 
 				try {
@@ -372,7 +384,7 @@ public class ThreadChat {
 							ArrayList<Carte> list = Partie.piocher(1, "donjon", joueur);
 							String nomCarte = list.get(0).getNom();
 							String typeCarte = list.get(0).getClass().toString();
-							System.out.println("typeCarte : "+typeCarte);
+							System.out.println("typeCarte : " + typeCarte);
 
 							if (typeCarte.equals("class Monstre")) {
 
@@ -389,30 +401,30 @@ public class ThreadChat {
 										+ levelMonstre + "-" + attaqueMonstre);
 							}
 						}
-						
+
 						// gestion clic sur bouton fuir
-						if(line.equals("clicBoutonFuir")) {
-							
+						if (line.equals("clicBoutonFuir")) {
+
 							Random rand = new Random();
-					        int randomNum = rand.nextInt((6 - 1) + 1) + 1;
-					        
-					        // cas fuite réussie
-					        if(randomNum + joueur.getDeguerpir() > 4) {
-					        	
-					        	System.out.println("fuite réussie");
-					        	
-					        	envoi_message("fuiteReussie-"+randomNum);
-					        	
-					        } else {
-					        	
-					        	// incindent fâcheux
-					        	
-					        	System.out.println("fuite échouée");
-					        	
-					        	envoi_message("fuiteEchouee-"+randomNum);
-					        	
-					        }
-							
+							int randomNum = rand.nextInt((6 - 1) + 1) + 1;
+
+							// cas fuite réussie
+							if (randomNum + joueur.getDeguerpir() > 4) {
+
+								System.out.println("fuite réussie");
+
+								envoi_message("fuiteReussie-" + randomNum);
+
+							} else {
+
+								// incindent fâcheux
+
+								System.out.println("fuite échouée");
+
+								envoi_message("fuiteEchouee-" + randomNum);
+
+							}
+
 						}
 					}
 
