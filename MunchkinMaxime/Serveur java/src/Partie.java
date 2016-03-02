@@ -40,14 +40,14 @@ public class Partie {
 		System.out.println("taille paquet donjon " + paquet_donjons.size());
 		Joueur jojo=new Joueur("jojo");
 		paquet_tresors.get(0).changerJoueurcible(jojo);
-	
-			System.out.println("Niveau avant :"+ jojo.getNiveau());
-			paquet_tresors.get(0).joueur_effets();
-			System.out.println("Niveau après :"+ jojo.getNiveau());
-		
-		System.out.println("paquet tresors " + paquet_tresors.get(0).nom);
-		TrierPaquetDonjonEtTresor();
 
+		System.out.println("Niveau avant :"+ jojo.getNiveau());
+		paquet_tresors.get(0).joueur_effets();
+		System.out.println("Niveau après :"+ jojo.getNiveau());
+
+		
+		TrierPaquetDonjonEtTresor();
+		System.out.println("paquet tresors " + paquet_tresors.get(2).nom);
 		try {
 			String etiquette = new String("");
 			ServerSocket serverSocket = new ServerSocket(PORT);
@@ -364,15 +364,17 @@ public class Partie {
 	public void JouerCarte(Joueur j, Carte c, Object cible){
 		if (j.getMain().contains(c)){
 			if(getJoueurs().get(tourjoueur).getNom().equals(j.getNom())){
-				if ((c.getMoment()=="tout") || (EtatPartie==c.getMoment())) {
+				if ((c.getMoment().equals("tout")) || (EtatPartie.equals(c.getMoment()))) {
 					if (c instanceof Monstre) {
-					monstre_a_combattre=(Monstre)c;
-					j.removeCarteMain(c);
-					//pop interface de combatS
+						monstre_a_combattre=(Monstre)c;
+						j.removeCarteMain(c);
+						//pop interface de combatS
 					}
 					else if (c instanceof Equipement) {
 						Equipement equ=(Equipement)c;
 						boolean nain=false;
+						ArrayList<Equipement> armes= new ArrayList<Equipement>();
+						ArrayList<Equipement> suppression= new ArrayList<Equipement>();
 						for(int i=0;i<j.getClasses().size();i++){
 							if(j.getRaces().get(i).getNom().equals("nain")){
 								nain=true;
@@ -389,18 +391,34 @@ public class Partie {
 							}
 							if(equipement.getPartie_corps().contains("arme")){
 								arme=arme+Integer.parseInt(equipement.getPartie_corps().substring(3,4));
+								armes.add(equipement);
+								
 							}
 							if((!equ.getPartie_corps().contains("arme"))&&(equ.getPartie_corps().equals(equipement.getPartie_corps()))){
 								if(equ!=null){
-									compatible=false;
+									suppression.add(equipement);
 								}
 							}
-							if((equ.getPartie_corps().contains("arme"))&&(arme>=2)){
-								compatible=false;
+							if((equ.getPartie_corps().contains("arme"))&&(arme<=2)){
+								if(equ.getPartie_corps().equals("arme1")){
+									if(arme==2){
+										suppression.add((Equipement)cible);
+									}
+								}
+								else if(equ.getPartie_corps().equals("arme2")){
+									if(arme==1){
+										suppression.add((Equipement)cible);
+									}
+									else if(arme==2){
+										suppression.addAll(armes);
+									}
+									
+								}
 							}
-							
+
 						}
 						if(compatible==true){
+							j.getEquipements().removeAll(suppression);
 							equ.changerJoueurcible(j);
 							equ.joueur_effets();
 							j.getEquipements().add(equ);
@@ -411,44 +429,143 @@ public class Partie {
 					}
 					else if (c instanceof Malediction) {
 						Malediction mal=(Malediction)c;
-						mal.setCible((Joueur)cible);
+						if(EtatPartie.equals("debuttour")){
+							mal.setCible(j);
+						}
+						else{
+							mal.setCible((Joueur)cible);
+
+						}
+						mal.changerJoueurcible(mal.getCible());
+						mal.joueur_effets();
 						mal.setTempsRestant(mal.getTempsInitial());
-						((Joueur) cible).getMaledictions().add(mal);
+						mal.getCible().getMaledictions().add(mal);
+
 					}
 					else if (c instanceof Classe) {
 						Classe cla=(Classe)c;
-						int nb_classes_possibles=1;
-						if (j.isEstSuperMunckhin()){ //<-- jojo tu peux rajouter l'attribut superMunchKin au joueur?
-							nb_classes_possibles=2;
-						}
+						int nb_classes=j.getClasses().size();
+						if (nb_classes==0){
+							j.getClasses().add(cla);
 
-						if (j.getClasses().size()<nb_classes_possibles){
+						}
+						else if(nb_classes==1){
+							if(j.isEstSuperMunckhin()){
+								j.getClasses().add(cla);
+
+							}
+							else{
+								String type =j.getClasses().get(0).getType();
+								if(type.equals("donjon")){
+									getDefausse_donjons().add(j.getClasses().get(0));
+								}
+								else{
+									getDefausse_tresors().add(j.getClasses().get(0));	
+								}
+								j.getClasses().remove(0);
+								j.getClasses().add(cla);
+							}
+						}
+						else{
+							Classe classe_remplace=(Classe)cible;
+							String type =classe_remplace.getType();
+							if(type.equals("donjon")){
+								getDefausse_donjons().add(j.getClasses().get(j.getClasses().indexOf(classe_remplace)));
+							}
+							else{
+								getDefausse_tresors().add(j.getClasses().get(j.getClasses().indexOf(classe_remplace)));	
+							}
+							j.getClasses().remove(j.getClasses().indexOf(classe_remplace));
 							j.getClasses().add(cla);
 						}
-					} 
-					else if (c instanceof Race) {
+						j.removeCarteMain(cla);
 
 					}
+					else if (c instanceof Race) {
+						Race cla=(Race)c;
+						int nb_races=j.getRaces().size();
+						if (nb_races==0){
+							j.getRaces().add(cla);
 
-				}else{
-					System.out.println("erreur");
+						}
+						else if(nb_races==1){
+							if(j.isEstSangMelee()){
+								j.getRaces().add(cla);
+
+							}
+							else{
+								String type =j.getRaces().get(0).getType();
+								if(type.equals("donjon")){
+									getDefausse_donjons().add(j.getRaces().get(0));
+								}
+								else{
+									getDefausse_tresors().add(j.getRaces().get(0));	
+								}
+								j.getRaces().remove(0);
+								j.getRaces().add(cla);
+							}
+						}
+						else{
+							Race race_remplace=(Race)cible;
+							String type =race_remplace.getType();
+							if(type.equals("donjon")){
+								getDefausse_donjons().add(j.getRaces().get(j.getRaces().indexOf(race_remplace)));
+							}
+							else{
+								getDefausse_tresors().add(j.getRaces().get(j.getRaces().indexOf(race_remplace)));	
+							}
+							j.getRaces().remove(j.getRaces().indexOf(race_remplace));
+							j.getRaces().add(cla);
+						}	
+						j.removeCarteMain(cla);
+					}
+					else{
+						if(cible instanceof Monstre){
+							/*
+							 c.changerMonstreCible((Monstre)cible);
+							 c.joueur_effets();
+							 */
+						}
+						else{
+							c.changerJoueurcible((Joueur)cible);
+							c.joueur_effets();
+						}
+					}
+
 				}
-
-			}
-			else //pas le tour du joueur
-			{
-				if ((c.getMoment()=="tout") || ((EtatPartie==c.getMoment())&&(!c.getMoment().equals("tour"))&&(!c.getMoment().equals("pasdemonstre")))) {
-					
-				}else{
-					System.out.println("erreur");
+				else //pas le tour du joueur
+				{
+					if ((c.getMoment().equals("tout")) || ((EtatPartie.equals(c.getMoment()))&&(!c.getMoment().equals("tour"))&&(!c.getMoment().equals("pasdemonstre")))) {
+						if (c instanceof Malediction) {
+							Malediction mal=(Malediction)c;
+							mal.setCible((Joueur)cible);
+							mal.changerJoueurcible(mal.getCible());
+							mal.joueur_effets();
+							mal.setTempsRestant(mal.getTempsInitial());
+							mal.getCible().getMaledictions().add(mal);
+						}
+						else if((c instanceof Carte)){
+							if(cible instanceof Monstre){
+								/*
+								 c.changerMonstreCible((Monstre)cible);
+								 c.joueur_effets();
+								 */
+							}
+							else{
+								c.changerJoueurcible((Joueur)cible);
+								c.joueur_effets();
+							}
+						}
+					}else{
+						System.out.println("erreur");
+					}
 				}
 			}
 		}
+		}
 
-	}
 
-	
-	public static void main(String[] args) {
-		new Partie();
+		public static void main(String[] args) {
+			new Partie();
+		}
 	}
-}
