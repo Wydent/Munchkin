@@ -388,7 +388,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       lp.setMargins(padding, padding, padding, padding);
                                       imageClasse.setLayoutParams(lp);
                                       imageClasse.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                      imageClasse.setImageResource(getResources().getIdentifier(nomClasse, "drawable", getPackageName()));
+                                      imageClasse.setImageResource(getResources().getIdentifier(new String(nomClasse).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       layoutMultiImages.addView(imageClasse);
 
                                   }
@@ -403,7 +403,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       lp.setMargins(padding, padding, padding, padding);
                                       imageRace.setLayoutParams(lp);
                                       imageRace.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                      imageRace.setImageResource(getResources().getIdentifier(nomRace, "drawable", getPackageName()));
+                                      imageRace.setImageResource(getResources().getIdentifier(new String(nomRace).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       layoutMultiImages.addView(imageRace);
 
                                   }
@@ -436,7 +436,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       lp.setMargins(padding, padding, padding, padding);
                                       imageEquipement.setLayoutParams(lp);
                                       imageEquipement.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                      imageEquipement.setImageResource(getResources().getIdentifier(nomEquipement, "drawable", getPackageName()));
+                                      imageEquipement.setImageResource(getResources().getIdentifier(new String(nomEquipement).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       layoutMultiImages.addView(imageEquipement);
 
                                   }
@@ -467,7 +467,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       lp.setMargins(padding, padding, padding, padding);
                                       image.setLayoutParams(lp);
                                       image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                      image.setImageResource(getResources().getIdentifier(nom, "drawable", getPackageName()));
+                                      image.setImageResource(getResources().getIdentifier(new String(nom).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       layoutMultiImages.addView(image);
 
                                   }
@@ -560,8 +560,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       lp.setMargins(padding, padding, padding, padding);
                                       imageClasse.setLayoutParams(lp);
                                       imageClasse.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                      //imageClasse.setImageResource(getResources().getIdentifier(nomClasse, "drawable", getPackageName()));
-                                      imageClasse.setImageResource(R.drawable.image_test);
+                                      imageClasse.setImageResource(getResources().getIdentifier(new String(nomClasse).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       raceClasseLayout.addView(imageClasse);
 
                                   }
@@ -576,8 +575,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       lp.setMargins(padding, padding, padding, padding);
                                       imageRace.setLayoutParams(lp);
                                       imageRace.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                      //imageRace.setImageResource(getResources().getIdentifier(nomRace, "drawable", getPackageName()));
-                                      imageRace.setImageResource(R.drawable.image_test);
+                                      imageRace.setImageResource(getResources().getIdentifier(new String(nomRace).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       raceClasseLayout.addView(imageRace);
 
                                   }
@@ -595,8 +593,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       lp.setMargins(padding, padding, padding, padding);
                                       imageEquipement.setLayoutParams(lp);
                                       imageEquipement.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                      //imageEquipement.setImageResource(getResources().getIdentifier(nomEquipement, "drawable", getPackageName()));
-                                      imageEquipement.setImageResource(R.drawable.image_test);
+                                      imageEquipement.setImageResource(getResources().getIdentifier(new String(nomEquipement).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       imageEquipement.setOnClickListener(new View.OnClickListener() {
                                           @Override
                                           public void onClick(View v) {
@@ -623,8 +620,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       lp.setMargins(padding, padding, padding, padding);
                                       imageMonstre.setLayoutParams(lp);
                                       imageMonstre.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                      //imageMonstre.setImageResource(getResources().getIdentifier(nomMonstre, "drawable", getPackageName()));
-                                      imageMonstre.setImageResource(R.drawable.image_test);
+                                      imageMonstre.setImageResource(getResources().getIdentifier(new String(nomMonstre).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       monstreLayout.addView(imageMonstre);
 
                                   }
@@ -640,8 +636,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       lp.setMargins(padding, padding, padding, padding);
                                       imageBonus.setLayoutParams(lp);
                                       imageBonus.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                      //imageBonus.setImageResource(getResources().getIdentifier(nomBonus, "drawable", getPackageName()));
-                                      imageBonus.setImageResource(R.drawable.image_test);
+                                      imageBonus.setImageResource(getResources().getIdentifier(new String(nomBonus).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       bonusMaledictionLayout.addView(imageBonus);
 
                                   }
@@ -657,8 +652,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       lp.setMargins(padding, padding, padding, padding);
                                       imageMalediction.setLayoutParams(lp);
                                       imageMalediction.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                      //imageMalediction.setImageResource(getResources().getIdentifier(nomBonus, "drawable", getPackageName()));
-                                      imageMalediction.setImageResource(R.drawable.image_test);
+                                      imageMalediction.setImageResource(getResources().getIdentifier(new String(nomBonus).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       bonusMaledictionLayout.addView(imageMalediction);
 
                                   }
