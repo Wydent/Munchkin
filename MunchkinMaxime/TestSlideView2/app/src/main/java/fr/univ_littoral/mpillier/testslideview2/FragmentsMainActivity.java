@@ -585,7 +585,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                   // affichage des équipements en main
                                   for (int i = 0; i < finalNombreEquipements * 4; i = i + 4) {
 
-                                      String nomEquipement = finalAttributsEquipement[i];
+                                      final String nomEquipement = finalAttributsEquipement[i];
                                       String descriptionEquipement = finalAttributsEquipement[i + 1];
                                       String partieCorps = finalAttributsEquipement[i + 2];
                                       String isGros = finalAttributsEquipement[i + 3];
@@ -597,6 +597,14 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       imageEquipement.setScaleType(ImageView.ScaleType.CENTER_CROP);
                                       //imageEquipement.setImageResource(getResources().getIdentifier(nomEquipement, "drawable", getPackageName()));
                                       imageEquipement.setImageResource(R.drawable.image_test);
+                                      imageEquipement.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+
+                                              clicCarteMain(nomEquipement);
+
+                                          }
+                                      });
                                       equipementLayout.addView(imageEquipement);
 
                                   }
@@ -958,6 +966,23 @@ public class FragmentsMainActivity extends FragmentActivity {
                     new OutputStreamWriter(socket.getOutputStream())),
                     true);
             out.println("clicPiocheDonjon");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void clicCarteMain(String nomEquipement) {
+
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream())),
+                    true);
+            out.println("clicCarteMain-"+nomEquipement);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {

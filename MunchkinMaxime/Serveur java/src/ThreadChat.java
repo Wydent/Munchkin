@@ -426,6 +426,29 @@ public class ThreadChat {
 							}
 
 						}
+						
+						if(line.contains("clicCarteMain")) {
+							
+							String nomCarte = line.split("-")[1];
+							Carte c = null;
+							
+							// récupération de la carte
+							for(int j = 0; j < joueur.getMain().size(); j ++) {
+								
+								if(joueur.getMain().get(j).getNom().equals(nomCarte)) {
+									
+									System.out.println("nom de la carte jouée : "+nomCarte);
+									c = joueur.getMain().get(j);
+									
+								}
+								
+							}
+							
+							System.out.println("att avant : "+joueur.getAttaque());
+							serveur.JouerCarte(joueur, c, joueur);
+							System.out.println("att apres : "+joueur.getAttaque());
+							
+						}
 					}
 
 					System.out.println("étiquette : " + etiquette);
