@@ -108,39 +108,6 @@ public class ThreadChat {
 
 				}
 
-				/*ArrayList<String> attributsClasse = new ArrayList<String>();
-				for (int i = 0; i < classes.size(); i++) {
-
-					attributsClasse.add(classes.get(i).getNom());
-					attributsClasse.add(classes.get(i).getDescription());
-				}
-
-				ArrayList<String> attributsRace = new ArrayList<String>();
-				for (int i = 0; i < races.size(); i++) {
-
-					attributsRace.add(races.get(i).getNom());
-					attributsRace.add(races.get(i).getDescription());
-				}
-
-				ArrayList<String> attributsEquipement = new ArrayList<String>();
-				for (int i = 0; i < equipements.size(); i++) {
-
-					attributsEquipement.add(equipements.get(i).getNom());
-					attributsEquipement.add(equipements.get(i).getDescription());
-					attributsEquipement.add(equipements.get(i).getPartie_corps());
-					if (equipements.get(i).isGros())
-						attributsEquipement.add("true");
-					else
-						attributsEquipement.add("false");
-				}
-
-				ArrayList<String> attributsMalediction = new ArrayList<String>();
-				for (int i = 0; i < maledictions.size(); i++) {
-
-					attributsMalediction.add(maledictions.get(i).getNom());
-					attributsMalediction.add(maledictions.get(i).getDescription());
-				}*/
-
 				String chaineAEnvoyer = "afficherMain-" + joueur.getNom() + "-" + joueur.getSexe() + "-"
 						+ joueur.getNiveau() + "-" + joueur.getAttaque();
 
@@ -219,7 +186,7 @@ public class ThreadChat {
 			}
 
 			// envoi des informations des joueurs et de leurs cartes équipées
-			public void envoyerAccordeon() {
+			public void envoyerAccordeon(String prefixe) {
 				for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
 					Joueur key = e.getKey();
 
@@ -256,7 +223,7 @@ public class ThreadChat {
 						attributsMalediction.add(key.getMaledictions().get(i).getDescription());
 					}
 
-					String chaineAEnvoyer = "afficherAccordeon-" + key.getNom() + "-" + key.getSexe() + "-"
+					String chaineAEnvoyer = prefixe + "Accordeon-" + key.getNom() + "-" + key.getSexe() + "-"
 							+ key.getNiveau() + "-" + key.getAttaque();
 
 					chaineAEnvoyer += "-" + key.getClasses().size() + "classe[";
@@ -342,7 +309,7 @@ public class ThreadChat {
 				String line = "";
 				int i = 0;
 
-				envoyerAccordeon();
+				envoyerAccordeon("init");
 
 				// on attend que le client ait bien pris en compte tout
 				// l'accordéon
@@ -444,10 +411,10 @@ public class ThreadChat {
 								
 							}
 							
-							System.out.println("att avant : "+joueur.getAttaque());
 							serveur.JouerCarte(joueur, c, joueur);
-							System.out.println("att apres : "+joueur.getAttaque());
 							
+							envoyerMain();
+							envoyerAccordeon("afficher");
 						}
 					}
 
