@@ -223,7 +223,7 @@ public class ThreadChat {
 						attributsMalediction.add(key.getMaledictions().get(i).getDescription());
 					}
 
-					String chaineAEnvoyer = prefixe + "Accordeon-" + key.getNom() + "-" + key.getSexe() + "-"
+					String chaineAEnvoyer = prefixe + "Accordeon" + e.getValue().getId() + "-" + key.getNom() + "-" + key.getSexe() + "-"
 							+ key.getNiveau() + "-" + key.getAttaque();
 
 					chaineAEnvoyer += "-" + key.getClasses().size() + "classe[";
@@ -308,8 +308,14 @@ public class ThreadChat {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 				String line = "";
 				int i = 0;
+				
+				envoi_message("idJoueur-"+id);
+				
+				System.out.println("id envoyé : "+id);
 
 				envoyerAccordeon("init");
+				
+				envoi_message("nombreJoueurs-"+v.size());
 
 				// on attend que le client ait bien pris en compte tout
 				// l'accordéon

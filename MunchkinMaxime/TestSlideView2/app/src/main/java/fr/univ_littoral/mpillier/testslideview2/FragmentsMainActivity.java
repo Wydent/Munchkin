@@ -52,6 +52,8 @@ public class FragmentsMainActivity extends FragmentActivity {
     TextView tvNomJoueur;
     TextView tvNomJoueurCombat = null;
     String nomJoueur = null;
+    int idJoueur = 0;
+    int nombreJoueurs = 0;
 
     Handler handlerTest;
 
@@ -62,7 +64,6 @@ public class FragmentsMainActivity extends FragmentActivity {
     LinearLayout panel1, panel2, panel3, panel4, panel5, panel6;
     TextView text1, text2, text3, text4, text5;
     View openLayout;
-    int nbPanels = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,19 +153,27 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                     if (line.contains("initAccordeon")) {
 
-                        initAccordeon(line);
+                        int idj = Integer.parseInt(line.substring(line.indexOf("Accordeon") + 9, line.indexOf("-")));
+
+                        System.out.println("idj : "+idj);
+
+                        initAccordeon(line, idj);
 
                     }
 
                     if (line.contains("afficherAccordeon")) {
 
-                        afficherAccordeon(line);
+                        int idj = Integer.parseInt(line.substring(line.indexOf("Accordeon") + 9, line.indexOf("-")));
+
+                        System.out.println("idj : "+idj);
+
+                        afficherAccordeon(line, idj);
 
                     }
 
                     if (line.contains("animationAccordeon")) {
 
-                        animerAccordeon(nbPanels);
+                        animerAccordeon(nombreJoueurs);
 
                     }
 
@@ -189,6 +198,18 @@ public class FragmentsMainActivity extends FragmentActivity {
                     if (line.contains("fuiteEchouee")) {
 
                         fuir(line);
+
+                    }
+
+                    if(line.contains("nombreJoueurs")) {
+
+                        nombreJoueurs = Integer.parseInt(line.split("-")[1]);
+
+                    }
+
+                    if (line.contains("idJoueur")) {
+
+                        idJoueur = Integer.parseInt(line.split("-")[1]);
 
                     }
 
@@ -258,9 +279,7 @@ public class FragmentsMainActivity extends FragmentActivity {
 
         }
 
-        public void initAccordeon(final String line) {
-
-            nbPanels++;
+        public void initAccordeon(final String line, final int idj) {
 
             // variables servant la conversion px -> dp
             final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
@@ -284,53 +303,33 @@ public class FragmentsMainActivity extends FragmentActivity {
                     layoutAccordeon.addView(layoutTest);
 
                     // onglet
-                    final TextView tvTest = new TextView(getApplicationContext());
+                    final TextView tvJoueur = new TextView(getApplicationContext());
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, height);
-                    tvTest.setLayoutParams(lp);
-                    tvTest.setPadding(padding, padding, padding, padding);
-                    tvTest.setBackgroundColor(Color.parseColor("black"));
-                    tvTest.setTextColor(Color.parseColor("white"));
-                    tvTest.setText(nomJoueur);
+                    tvJoueur.setLayoutParams(lp);
+                    tvJoueur.setPadding(padding, padding, padding, padding);
+                    tvJoueur.setBackgroundColor(Color.parseColor("black"));
+                    tvJoueur.setTextColor(Color.parseColor("white"));
+                    tvJoueur.setText(idj+nomJoueur);
                     // id important
-                    tvTest.setId(nbPanels);
-                    tvTest.setVisibility(View.VISIBLE);
-                    layoutTest.addView(tvTest);
+                    tvJoueur.setId(idj);
+                    tvJoueur.setVisibility(View.VISIBLE);
+                    layoutTest.addView(tvJoueur);
 
                     // panel
                     final LinearLayout layoutInterne = new LinearLayout(getApplicationContext());
                     layoutInterne.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                     // id important
-                    layoutInterne.setId(100 + nbPanels);
+                    layoutInterne.setId(100 + idj);
                     layoutInterne.setOrientation(LinearLayout.VERTICAL);
                     layoutInterne.setVisibility(View.GONE);
                     layoutTest.addView(layoutInterne);
 
-                    afficherAccordeon(line);
+                    afficherAccordeon(line, idj);
                 }
             });
         }
 
-        public void afficherAccordeon(final String line) {
-
-            int idPanel = 1;
-            boolean trouve = false;
-
-            // on récupère l'id du panel du joueur concerné
-            while(!trouve) {
-
-                int id = getResources().getIdentifier(idPanel+ "", "id", getPackageName());
-                final TextView tv = (TextView) findViewById(id);
-
-                System.out.println("id : "+idPanel);
-
-                if(tv.getText().equals(nomJoueur)) {
-
-                    trouve = true;
-                } else {
-
-                    idPanel ++;
-                }
-            }
+        public void afficherAccordeon(final String line, final int idj) {
 
             // variables servant la conversion px -> dp
             final float scale = getApplicationContext().getResources().getDisplayMetrics().density;
@@ -374,12 +373,11 @@ public class FragmentsMainActivity extends FragmentActivity {
             final String[] finalAttributsRace = attributsRace;
             final String[] finalAttributsEquipement = attributsEquipement;
             final String[] finalAttributsMalediction = attributsMalediction;
-            final int finalIdPanel = idPanel;
             runOnUiThread(new Runnable() {
                               @Override
                               public void run() {
 
-                                  int id = getResources().getIdentifier(100 + finalIdPanel + "", "id", getPackageName());
+                                  int id = getResources().getIdentifier(100 + idj + "", "id", getPackageName());
                                   final LinearLayout layoutInterne = (LinearLayout) findViewById(id);
 
                                   // on réinitialise l'affichage
@@ -716,6 +714,8 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                 int id = getApplicationContext().getResources().getIdentifier("" + i, "id", getApplicationContext().getPackageName());
 
+                System.out.println("id : "+id);
+
                 TextView textView = (TextView) findViewById(id);
 
                 textView.setOnClickListener(new View.OnClickListener() {
@@ -734,7 +734,7 @@ public class FragmentsMainActivity extends FragmentActivity {
 
             if (openLayout == null) return;
 
-            for (int i = 0; i < nbPanels; i++) {
+            for (int i = 0; i < nombreJoueurs; i++) {
 
                 int idPanel = getApplicationContext().getResources().getIdentifier("" + 10 + i, "id", getApplicationContext().getPackageName());
                 LinearLayout panel = (LinearLayout) findViewById(idPanel);
