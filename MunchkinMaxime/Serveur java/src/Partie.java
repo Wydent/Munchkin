@@ -361,13 +361,16 @@ public class Partie {
 	}
 
 
-	public void JouerCarte(Joueur j, Carte c, Object cible){
+	public String JouerCarte(Joueur j, Carte c, Object cible){
+		String erreur="";
+		String action="";
 		if (j.getMain().contains(c)){
 			if(getJoueurs().get(tourjoueur).getNom().equals(j.getNom())){
 				if ((c.getMoment().equals("tout")) || (EtatPartie.equals(c.getMoment()))) {
 					if (c instanceof Monstre) {
 						monstre_a_combattre=(Monstre)c;
 						j.removeCarteMain(c);
+						action="";
 						//pop interface de combatS
 					}
 					else if (c instanceof Equipement) {
@@ -423,8 +426,9 @@ public class Partie {
 							equ.joueur_effets();
 							j.getEquipements().add(equ);
 							j.removeCarteMain(equ);
-						}else{
-							//erreur
+						}
+						else{
+							erreur="Impossible d'équiper!Vous avez déja un équipement gros et vous n'êtes pas un nain!";
 						}	
 					}
 					else if (c instanceof Malediction) {
@@ -558,10 +562,12 @@ public class Partie {
 						}
 					}else{
 						System.out.println("erreur");
+						erreur="Impossible de jouer cette carte à ce moment de la partie";
 					}
 				}
 			}
 		}
+		return erreur+";"+action;
 		}
 
 

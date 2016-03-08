@@ -52,6 +52,18 @@ public class ThreadChat {
 					writer.flush();
 				}
 			}
+			
+			public void envoi_message_seulement_au_socket_courant(String message) {
+				PrintWriter writer = null;
+				try {
+					writer = new PrintWriter(soc.getOutputStream());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				writer.print(message + "\n");
+				writer.flush();
+			}
 
 			public void test_mes_special(String line) {
 				if (line.contains("déconnecté")) {
@@ -137,7 +149,7 @@ public class ThreadChat {
 				if (equipements.size() != 0) {
 					for (int i = 0; i < equipements.size(); i++) {
 						chaineAEnvoyer += equipements.get(i).getNom() + "-" + equipements.get(i).getDescription() + "-"
-								+ equipements.get(i).getPartie_corps() + "-" + equipements.get(i).isGros();
+								+ ((Equipement)equipements.get(i)).getPartie_corps() + "-" + ((Equipement)equipements.get(i)).isGros();
 						if (i != (equipements.size() - 1)) {
 							chaineAEnvoyer += "-";
 						}
@@ -417,10 +429,24 @@ public class ThreadChat {
 								
 							}
 							
-							serveur.JouerCarte(joueur, c, joueur);
+							String retour=serveur.JouerCarte(joueur, c, joueur);
+							String[] t = retour.split(";");
+							String erreur=t[0];
+							String action=t[1];
+							if (erreur.equals("")){
+								if (!action.equals("")){
+									envoi_message("LancerInterfaceCombat");
+								}
+								
+								envoyerMain();
+								envoyerAccordeon("afficher");
+							}
+							else{
+								envoi_message("ErreurJouerCarte-"+erreur);
+							}
+										
 							
-							envoyerMain();
-							envoyerAccordeon("afficher");
+							
 						}
 					}
 
