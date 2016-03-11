@@ -49,6 +49,10 @@ public class Carte {
     public void setDescription(String description) {
         this.description = description;
     }
+    
+    public int getTempsInitial() {
+        return 0;
+    }
 
     public String getMoment() {
         return moment;
@@ -76,6 +80,14 @@ public class Carte {
 
     public void setType(String type) {
         this.type = type;
+    }
+    
+    public String getPartie_corps() {
+    	return null;
+    }
+    
+    public boolean isGros() {
+    	return false;
     }
 
 	public int getRecompense_tresors() {

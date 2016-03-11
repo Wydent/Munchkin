@@ -10,7 +10,10 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import android.content.Intent;
@@ -27,11 +30,16 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.Transformation;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -64,6 +72,10 @@ public class FragmentsMainActivity extends FragmentActivity {
     LinearLayout panel1, panel2, panel3, panel4, panel5, panel6;
     TextView text1, text2, text3, text4, text5;
     View openLayout;
+
+    private Menu menuContextuel = null;
+    private Map<Integer, String> listItems = new HashMap<Integer, String>();
+    private String selectionCarte = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +113,32 @@ public class FragmentsMainActivity extends FragmentActivity {
         ivPioche = (ImageView) findViewById(R.id.imagePioche);
 
         new Thread(new ClientThread(this)).start();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_carte_main, menu);
+
+        menuContextuel = menu;
+
+        // création du menu contextuel à partir de tous les items : id item + valeur item
+        for(Map.Entry<Integer, String> e : listItems.entrySet()) {
+
+            menuContextuel.add(0,e.getKey(),0,e.getValue());
+
+        }
+
+        System.out.println("Menu contextuel attribué.");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        clicCarteMainBonusMalediction(selectionCarte, item.toString());
+
+        return true;
     }
 
     /******************************************
@@ -155,7 +193,7 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                         int idj = Integer.parseInt(line.substring(line.indexOf("Accordeon") + 9, line.indexOf("-")));
 
-                        System.out.println("idj : "+idj);
+                        System.out.println("idj : " + idj);
 
                         initAccordeon(line, idj);
 
@@ -165,7 +203,7 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                         int idj = Integer.parseInt(line.substring(line.indexOf("Accordeon") + 9, line.indexOf("-")));
 
-                        System.out.println("idj : "+idj);
+                        System.out.println("idj : " + idj);
 
                         afficherAccordeon(line, idj);
 
@@ -201,7 +239,7 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                     }
 
-                    if(line.contains("nombreJoueurs")) {
+                    if (line.contains("nombreJoueurs")) {
 
                         nombreJoueurs = Integer.parseInt(line.split("-")[1]);
 
@@ -210,6 +248,39 @@ public class FragmentsMainActivity extends FragmentActivity {
                     if (line.contains("idJoueur")) {
 
                         idJoueur = Integer.parseInt(line.split("-")[1]);
+
+                    }
+
+                    if (line.contains("LancerInterfaceCombat")) {
+
+                        final String nomJoueur = line.split("-")[1];
+                        final String levelJoueur = line.split("-")[2];
+                        final String attaqueJoueur = line.split("-")[3];
+                        final String nomImage = line.split("-")[4];
+                        final String typeCarte = line.split("-")[5];
+                        final String levelMonstre = line.split("-")[6];
+                        final String ataqueMonstre = line.split("-")[7];
+
+                        combattre(line, nomJoueur, levelJoueur, attaqueJoueur, nomImage, levelMonstre, ataqueMonstre);
+
+                    }
+
+                    if (line.contains("cartePiochee")) {
+
+                        final String nomJoueur = line.split("-")[1];
+                        final String levelJoueur = line.split("-")[2];
+                        final String attaqueJoueur = line.split("-")[3];
+                        final String nomImage = line.split("-")[4];
+                        final String typeCarte = line.split("-")[5];
+
+                        afficherInfosCartePiochee(nomJoueur, nomImage);
+                        afficherCartePiochee(nomImage);
+
+                    }
+
+                    if(line.contains("actualiserMenu")) {
+
+                        actualiserMenu(line);
 
                     }
 
@@ -309,7 +380,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                     tvJoueur.setPadding(padding, padding, padding, padding);
                     tvJoueur.setBackgroundColor(Color.parseColor("black"));
                     tvJoueur.setTextColor(Color.parseColor("white"));
-                    tvJoueur.setText(idj+nomJoueur);
+                    tvJoueur.setText(idj + nomJoueur);
                     // id important
                     tvJoueur.setId(idj);
                     tvJoueur.setVisibility(View.VISIBLE);
@@ -643,7 +714,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                           @Override
                                           public void onClick(View v) {
 
-                                              clicCarteMain(nomEquipement);
+                                              clicCarteMainEquipement(nomEquipement);
 
                                           }
                                       });
@@ -673,7 +744,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                   // affichage des bonus en main
                                   for (int i = 0; i < finalNombreBonus * 2; i = i + 2) {
 
-                                      String nomBonus = finalAttributsBonus[i];
+                                      final String nomBonus = finalAttributsBonus[i];
                                       String descriptionBonus = finalAttributsBonus[i + 1];
 
                                       final ImageView imageBonus = new ImageView(getApplicationContext());
@@ -682,6 +753,17 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       imageBonus.setLayoutParams(lp);
                                       imageBonus.setScaleType(ImageView.ScaleType.CENTER_CROP);
                                       imageBonus.setImageResource(getResources().getIdentifier(new String(nomBonus).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
+                                      registerForContextMenu(imageBonus);
+                                      imageBonus.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+
+                                              selectionCarte = nomBonus;
+
+                                              v.showContextMenu();
+
+                                          }
+                                      });
                                       bonusMaledictionLayout.addView(imageBonus);
 
                                   }
@@ -689,7 +771,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                   // affichage des malédictions en main
                                   for (int i = 0; i < finalNombreMaledictions * 2; i = i + 2) {
 
-                                      String nomBonus = finalAttributsMalediction[i];
+                                      final String nomMalediction = finalAttributsMalediction[i];
                                       String descriptionBonus = finalAttributsMalediction[i + 1];
 
                                       final ImageView imageMalediction = new ImageView(getApplicationContext());
@@ -697,7 +779,18 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       lp.setMargins(padding, padding, padding, padding);
                                       imageMalediction.setLayoutParams(lp);
                                       imageMalediction.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                                      imageMalediction.setImageResource(getResources().getIdentifier(new String(nomBonus).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
+                                      imageMalediction.setImageResource(getResources().getIdentifier(new String(nomMalediction).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
+                                      registerForContextMenu(imageMalediction);
+                                      imageMalediction.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+
+                                              selectionCarte = nomMalediction;
+
+                                              v.showContextMenu();
+
+                                          }
+                                      });
                                       bonusMaledictionLayout.addView(imageMalediction);
 
                                   }
@@ -714,7 +807,7 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                 int id = getApplicationContext().getResources().getIdentifier("" + i, "id", getApplicationContext().getPackageName());
 
-                System.out.println("id : "+id);
+                System.out.println("id : " + id);
 
                 TextView textView = (TextView) findViewById(id);
 
@@ -912,22 +1005,33 @@ public class FragmentsMainActivity extends FragmentActivity {
         }
 
         // affichage des infos dans l'infobulle
-        public void afficherInfosCartePiochee(String nomJoueur, String nomImage) {
+        public void afficherInfosCartePiochee(final String nomJoueur, final String nomImage) {
 
             System.out.println("nomJoueur : " + nomJoueur);
             System.out.println("nomImage : " + nomImage);
 
-            tvInfoBulle = (TextView) findViewById(R.id.infoBulle);
-            // on rend visible l'infobulle
-            tvInfoBulle.setVisibility(View.VISIBLE);
-            tvInfoBulle.setText(nomJoueur + " a pioché la carte " + nomImage);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    tvInfoBulle = (TextView) findViewById(R.id.infoBulle);
+                    // on rend visible l'infobulle
+                    tvInfoBulle.setVisibility(View.VISIBLE);
+                    tvInfoBulle.setText(nomJoueur + " a pioché la carte " + nomImage);
+                }
+            });
         }
 
         // affichage de la carte piochée
-        public void afficherCartePiochee(String nomImage) {
 
-            ivPioche = (ImageView) findViewById(R.id.imagePioche);
-            ivPioche.setImageResource(getResources().getIdentifier(nomImage, "drawable", getPackageName()));
+        public void afficherCartePiochee(final String nomImage) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ivPioche = (ImageView) findViewById(R.id.imagePioche);
+                    ivPioche.setImageResource(getResources().getIdentifier(new String(nomImage).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
+                }
+            });
         }
 
         // actions liées au commencement du tour du joueur
@@ -992,11 +1096,18 @@ public class FragmentsMainActivity extends FragmentActivity {
 
     public void finDeTour(View v) {
 
-        PageMilieuFragment f = new PageMilieuFragment();
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, f);
-        transaction.commit();
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream())),
+                    true);
+            out.println("changementTour");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -1017,13 +1128,30 @@ public class FragmentsMainActivity extends FragmentActivity {
 
     }
 
-    public void clicCarteMain(String nomEquipement) {
+    public void clicCarteMainEquipement(String nomEquipement) {
 
         try {
             PrintWriter out = new PrintWriter(new BufferedWriter(
                     new OutputStreamWriter(socket.getOutputStream())),
                     true);
-            out.println("clicCarteMain-" + nomEquipement);
+            out.println("clicCarteMainEquipement-" + nomEquipement);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void clicCarteMainBonusMalediction(String nomBonusMalediction, String joueurCible) {
+
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream())),
+                    true);
+            out.println("clicCarteMainBonusMalediction-" + nomBonusMalediction);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -1048,6 +1176,21 @@ public class FragmentsMainActivity extends FragmentActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void actualiserMenu(final String line) {
+
+        String[] listeJoueurs = line.substring(line.indexOf("actualiserMenu-") + 15).split("-");
+
+        System.out.println("liste joueurs : "+listeJoueurs);
+
+        for(int i = 0; i < listeJoueurs.length; i++) {
+
+            int id = i;
+            listItems.put(id, listeJoueurs[i]);
+
+        }
+
     }
 
     public void envoyerMessageChat(View v) {

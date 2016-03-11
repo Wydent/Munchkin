@@ -52,7 +52,7 @@ public class ThreadChat {
 					writer.flush();
 				}
 			}
-			
+
 			public void envoi_message_seulement_au_socket_courant(String message) {
 				PrintWriter writer = null;
 				try {
@@ -149,7 +149,8 @@ public class ThreadChat {
 				if (equipements.size() != 0) {
 					for (int i = 0; i < equipements.size(); i++) {
 						chaineAEnvoyer += equipements.get(i).getNom() + "-" + equipements.get(i).getDescription() + "-"
-								+ ((Equipement)equipements.get(i)).getPartie_corps() + "-" + ((Equipement)equipements.get(i)).isGros();
+								+ ((Equipement) equipements.get(i)).getPartie_corps() + "-"
+								+ ((Equipement) equipements.get(i)).isGros();
 						if (i != (equipements.size() - 1)) {
 							chaineAEnvoyer += "-";
 						}
@@ -235,8 +236,8 @@ public class ThreadChat {
 						attributsMalediction.add(key.getMaledictions().get(i).getDescription());
 					}
 
-					String chaineAEnvoyer = prefixe + "Accordeon" + e.getValue().getId() + "-" + key.getNom() + "-" + key.getSexe() + "-"
-							+ key.getNiveau() + "-" + key.getAttaque();
+					String chaineAEnvoyer = prefixe + "Accordeon" + e.getValue().getId() + "-" + key.getNom() + "-"
+							+ key.getSexe() + "-" + key.getNiveau() + "-" + key.getAttaque();
 
 					chaineAEnvoyer += "-" + key.getClasses().size() + "classe[";
 					if (attributsClasse.size() != 0) {
@@ -320,14 +321,14 @@ public class ThreadChat {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 				String line = "";
 				int i = 0;
-				
-				envoi_message("idJoueur-"+id);
-				
-				System.out.println("id envoyé : "+id);
+
+				envoi_message("idJoueur-" + id);
+
+				System.out.println("id envoyé : " + id);
 
 				envoyerAccordeon("init");
-				
-				envoi_message("nombreJoueurs-"+v.size());
+
+				envoi_message("nombreJoueurs-" + v.size());
 
 				// on attend que le client ait bien pris en compte tout
 				// l'accordéon
@@ -350,6 +351,36 @@ public class ThreadChat {
 
 				envoyerMain();
 
+				// on attend que le client ait bien pris en compte toute la main
+				synchronized (this) {
+					try {
+						wait(3000);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+
+				/* envoi du menu contextuel contenant la liste des joueurs */
+				String s = "actualiserMenu-";
+				int temp = 0;
+
+				for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
+
+					temp++;
+
+					s += e.getKey().getNom();
+
+					if (temp != v.size()) {
+
+						s += "-";
+
+					}
+
+				}
+
+				envoi_message(s);
+
 				try {
 					while ((line = reader.readLine()) != null) {
 						System.out.println("Client dit : " + line);
@@ -366,17 +397,19 @@ public class ThreadChat {
 						// gestion clic sur pioche donjon
 						if (line.equals("clicPiocheDonjon")) {
 
-							ArrayList<Carte> list = Partie.piocher(1, "donjon", joueur);
-							String nomCarte = list.get(0).getNom();
-							String typeCarte = list.get(0).getClass().toString();
+							serveur.piocher(1, "donjon", joueur);
+							Carte carteTiree = joueur.getMain().get(joueur.getMain().size() - 1);
+							String nomCarte = carteTiree.getNom();
+							String typeCarte = carteTiree.getClass().toString();
 							System.out.println("typeCarte : " + typeCarte);
 
+							// pioche d'une carte Monstre
 							if (typeCarte.equals("class Monstre")) {
 
-								Monstre m = new Monstre(list.get(0).getNom(), list.get(0).getDescription(),
-										list.get(0).getMoment(), list.get(0).getEffects(), list.get(0).getType(),
-										list.get(0).getRecompense_tresors(), list.get(0).getRecompense_niveau(),
-										list.get(0).getIncident_facheux(), list.get(0).getNiveau());
+								Monstre m = new Monstre(carteTiree.getNom(), carteTiree.getDescription(),
+										carteTiree.getMoment(), carteTiree.getEffects(), carteTiree.getType(),
+										carteTiree.getRecompense_tresors(), carteTiree.getRecompense_niveau(),
+										carteTiree.getIncident_facheux(), carteTiree.getNiveau());
 
 								int levelMonstre = m.getNiveau();
 								int attaqueMonstre = m.getAttaque();
@@ -384,6 +417,29 @@ public class ThreadChat {
 								envoi_message("actionClicPiocheDonjon-" + joueur.getNom() + "-" + joueur.getNiveau()
 										+ "-" + joueur.getAttaque() + "-" + nomCarte + "-" + typeCarte + "-"
 										+ levelMonstre + "-" + attaqueMonstre);
+
+								// pioche d'une carte Malédiction
+							} else if (typeCarte.equals("class Malediction")) {
+
+								Malediction m = new Malediction(carteTiree.getNom(), carteTiree.getDescription(),
+										carteTiree.getMoment(), carteTiree.getEffects(), carteTiree.getType(), joueur,
+										carteTiree.getTempsInitial());
+
+								serveur.JouerCarte(joueur, m, joueur);
+
+								envoi_message("cartePiochee-" + joueur.getNom() + "-" + joueur.getNiveau() + "-"
+										+ joueur.getAttaque() + "-" + nomCarte + "-" + typeCarte);
+
+								envoyerAccordeon("afficher");
+
+								// pioche d'une autre carte
+							} else {
+
+								envoi_message("cartePiochee-" + joueur.getNom() + "-" + joueur.getNiveau() + "-"
+										+ joueur.getAttaque() + "-" + nomCarte + "-" + typeCarte);
+
+								envoyerMain();
+
 							}
 						}
 
@@ -411,41 +467,64 @@ public class ThreadChat {
 							}
 
 						}
-						
-						if(line.contains("clicCarteMain")) {
-							
+
+						if (line.contains("clicCarteMainEquipement")) {
+
 							String nomCarte = line.split("-")[1];
 							Carte c = null;
-							
+
 							// récupération de la carte
-							for(int j = 0; j < joueur.getMain().size(); j ++) {
-								
-								if(joueur.getMain().get(j).getNom().equals(nomCarte)) {
-									
-									System.out.println("nom de la carte jouée : "+nomCarte);
+							for (int j = 0; j < joueur.getMain().size(); j++) {
+
+								if (joueur.getMain().get(j).getNom().equals(nomCarte)) {
+
+									System.out.println("nom de la carte jouée : " + nomCarte);
 									c = joueur.getMain().get(j);
-									
+
 								}
-								
+
 							}
-							
-							String retour=serveur.JouerCarte(joueur, c, joueur);
+
+							String retour = serveur.JouerCarte(joueur, c, joueur);
 							String[] t = retour.split(";");
-							String erreur=t[0];
-							String action=t[1];
-							if (erreur.equals("")){
-								if (!action.equals("")){
-									envoi_message("LancerInterfaceCombat");
+							String erreur = t[0];
+							String action = t[1];
+							if (erreur.equals("")) {
+								if (!action.equals("")) {
+									envoi_message("LancerInterfaceCombat-" + joueur.getNom() + "-" + joueur.getNiveau()
+											+ "-" + joueur.getAttaque() + "-" + nomCarte + "-" + c.getType() + "-"
+											+ c.getNiveau() + "-" + c.getNiveau());
 								}
-								
+
 								envoyerMain();
 								envoyerAccordeon("afficher");
+							} else {
+								envoi_message("ErreurJouerCarte-" + erreur);
 							}
-							else{
-								envoi_message("ErreurJouerCarte-"+erreur);
+
+						}
+						
+						if (line.contains("clicCarteMainBonusMalediction")) {
+
+							String nomCarte = line.split("-")[1];
+							String joueurCible = line.split("-")[2];
+							Carte c = null;
+
+							// récupération de la carte
+							for (int j = 0; j < joueur.getMain().size(); j++) {
+
+								if (joueur.getMain().get(j).getNom().equals(nomCarte)) {
+
+									System.out.println("nom de la carte jouée : " + nomCarte);
+									c = joueur.getMain().get(j);
+
+								}
+
 							}
-										
-							
+
+							serveur.JouerCarte(joueur, c, joueurCible);
+							envoyerMain();
+							envoyerAccordeon("afficher");
 							
 						}
 					}
