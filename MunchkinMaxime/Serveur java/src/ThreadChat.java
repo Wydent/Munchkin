@@ -507,22 +507,37 @@ public class ThreadChat {
 						if (line.contains("clicCarteMainBonusMalediction")) {
 
 							String nomCarte = line.split("-")[1];
-							String joueurCible = line.split("-")[2];
+							String nomJoueurCible = line.split("-")[2];
 							Carte c = null;
+							Joueur j = null;
+							
+							System.out.println("joueur cible : "+nomJoueurCible);
 
 							// récupération de la carte
-							for (int j = 0; j < joueur.getMain().size(); j++) {
+							for (int k = 0; k < joueur.getMain().size(); k++) {
 
-								if (joueur.getMain().get(j).getNom().equals(nomCarte)) {
+								if (joueur.getMain().get(k).getNom().equals(nomCarte)) {
 
 									System.out.println("nom de la carte jouée : " + nomCarte);
-									c = joueur.getMain().get(j);
+									c = joueur.getMain().get(k);
+
+								}
+
+							}
+							
+							// récupération du joueur
+							for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
+
+								if (e.getKey().getNom().equals(nomJoueurCible)) {
+
+									System.out.println("nom du joueur cible : " + e.getKey().getNom());
+									j = e.getKey();
 
 								}
 
 							}
 
-							serveur.JouerCarte(joueur, c, joueurCible);
+							serveur.JouerCarte(joueur, c, j);
 							envoyerMain();
 							envoyerAccordeon("afficher");
 							
