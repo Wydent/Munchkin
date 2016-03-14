@@ -9,7 +9,7 @@ public class Joueur {
     private int niveau;
     private int attaque;
     private ArrayList<Classe> classes;
-    private ArrayList<Carte> races;
+    private ArrayList<Race> races;
     private ArrayList<Equipement> equipements;
     private ArrayList<Malediction> maledictions;
     private ArrayList<Carte> main;
@@ -17,6 +17,21 @@ public class Joueur {
     private int deguerpir;
     private boolean EstSuperMunckhin;
     private boolean EstSangMelee;
+    private boolean MonstrePremierePioche;
+
+	/**
+	 * @return the monstrePremierePioche
+	 */
+	public boolean isMonstrePremierePioche() {
+		return MonstrePremierePioche;
+	}
+
+	/**
+	 * @param monstrePremierePioche the monstrePremierePioche to set
+	 */
+	public void setMonstrePremierePioche(boolean monstrePremierePioche) {
+		MonstrePremierePioche = monstrePremierePioche;
+	}
 
 	/**
 	 * @return the estSuperMunckhin
@@ -54,8 +69,8 @@ public class Joueur {
         ArrayList<Classe> arrayListTest = new ArrayList<Classe>();
         setClasses(arrayListTest);
         
-        ArrayList<Carte> arrayListTest2 = new ArrayList<Carte>();
-        arrayListTest2.add(new Carte("Humain","Humain",null,null,null));
+        ArrayList<Race> arrayListTest2 = new ArrayList<Race>();
+        arrayListTest2.add(new Race("Humain","Humain",null,null,null));
         setRaces(arrayListTest2);
         
         ArrayList<Equipement> arrayListTest3 = new ArrayList<Equipement>();
@@ -67,6 +82,7 @@ public class Joueur {
         setDeguerpir(0);
         setEstSangMelee(false);
         setEstSuperMunckhin(false);
+        setMonstrePremierePioche(false);
     }
 	
 	public int getDeguerpir() {
@@ -109,11 +125,11 @@ public class Joueur {
         this.classes = classes;
     }
 
-    public ArrayList<Carte> getRaces() {
+    public ArrayList<Race> getRaces() {
         return races;
     }
 
-    public void setRaces(ArrayList<Carte> races) {
+    public void setRaces(ArrayList<Race> races) {
         this.races = races;
     }
 

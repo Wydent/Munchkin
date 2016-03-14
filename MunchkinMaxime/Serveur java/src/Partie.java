@@ -35,7 +35,8 @@ public class Partie {
 	public HashMap<Joueur, ThreadChat> chat = new HashMap<Joueur, ThreadChat>();
 
 	public Partie() {
-
+		EtatPartie=new String("pioche1");
+		tourjoueur=0;
 		init_cartes("cartes.txt",this);
 		TrierPaquetDonjonEtTresor();
 		System.out.println("paquet tresors " + paquet_tresors.get(2).nom);
@@ -133,40 +134,43 @@ public class Partie {
 
 	public String piocher(int nombrecarte, String paquet, Joueur j) {
 		String retour="";
-		ArrayList<Carte> list = new ArrayList<Carte>();
 		if (paquet.equals("tresor")) {
-		for (int i = 0; i < nombrecarte; i++) {
-			j.addCarteMain(paquet_tresors.get(0));
-			list.add(paquet_tresors.get(0));
-			paquet_tresors.remove(0);
+			for (int i = 0; i < nombrecarte; i++) {
+				j.addCarteMain(paquet_tresors.get(0));
+				paquet_tresors.remove(0);
 			} 
 		}
 		else if (paquet.equals("donjon")) {
 			Carte c=paquet_donjons.get(0);
-				if(EtatPartie.equals("pioche1")){
-					if(c instanceof Malediction){
-						((Malediction) c).setCible(j);
-						JouerCarte(j, c, j);
+			if(EtatPartie.equals("pioche1")){
+				if(c instanceof Malediction){
+					((Malediction) c).setCible(j);
+					JouerCarte(j, c, j);
+				}
+				else if(c instanceof Monstre){
+					monstre_a_combattre=new Monstre(c.getNom(), c.getDescription(), c.getMoment(), c.getEffects(), c.getType(), c.getRecompense_tresors(), c.getRecompense_niveau(), c.getIncident_facheux(), c.getNiveau());
+					for (int i=0;i<c.getEffects().size();i++){
+						monstre_a_combattre.setParametres_effets(i,c.getParametres_effets(i));
 					}
-					else if(c instanceof Monstre){
-						retour="AYYYYYYAAAAAAAAAAAAAAAA CCCCCCCCCOOOOOOOOOMMMMMMMMMMBBBBBBBAAAAAAAATTTTTTT";
-					}
-					else{
-						j.addCarteMain(paquet_donjons.get(0));
-						list.add(paquet_donjons.get(0));
-						paquet_donjons.remove(0);
-					}
-					
+					retour="LancerInterfaceCombat-" + j.getNom() + "-" + j.getNiveau()
+							+ "-" + j.getAttaque() + "-" + c.getNom() + "-" + c.getType() + "-"
+							+ c.getNiveau() + "-" + c.getNiveau();
+					j.setMonstrePremierePioche(true);
 				}
 				else{
 					j.addCarteMain(paquet_donjons.get(0));
-					list.add(paquet_donjons.get(0));
-					paquet_donjons.remove(0);
+					
 				}
-				
+
 			}
-		return retour;
+			else{
+				j.addCarteMain(paquet_donjons.get(0));
+			}
+			changerMoment();
+			paquet_donjons.remove(0);
 		}
+		return retour;
+	}
 	public ArrayList<Joueur> getJoueurs(){
 		ArrayList<Joueur> joueurs=new ArrayList<Joueur>();
 		joueurs.addAll(chat.keySet());
@@ -268,9 +272,9 @@ public class Partie {
 							parametres[i-1]=classes[i-1].getConstructors()[0].newInstance(Integer.parseInt(effet[i].split(":")[0]));
 						}
 					}
-					
+
 					((Monstre) c).setParametres_incident(parametres);
-					
+
 				}
 				else if(chaine[1].equals("equipement")){
 
@@ -392,7 +396,7 @@ public class Partie {
 			setTourjoueur(getTourjoueur()+1);
 		}
 	}
-	
+
 	public void changerMoment(){
 		Joueur joueuractuel=getJoueurs().get(tourjoueur);
 		if(EtatPartie.equals("pioche1")){
@@ -456,15 +460,23 @@ public class Partie {
 		String action="";
 		if (j.getMain().contains(c)){
 			if(getJoueurs().get(tourjoueur).getNom().equals(j.getNom())){
-				if ((c.getMoment().equals("tout")) || (EtatPartie.equals(c.getMoment()))) {
+				if ((c.getMoment().equals("tous")) || (EtatPartie.equals(c.getMoment()))) {
 					if (c instanceof Monstre) {
-						monstre_a_combattre=(Monstre)c;
+						monstre_a_combattre=new Monstre(c.getNom(), c.getDescription(), c.getMoment(), c.getEffects(), c.getType(), c.getRecompense_tresors(), c.getRecompense_niveau(), c.getIncident_facheux(), c.getNiveau());
+						for (int i=0;i<c.getEffects().size();i++){
+							monstre_a_combattre.setParametres_effets(i,c.getParametres_effets(i));
+						}
 						j.removeCarteMain(c);
 						action="lancerlinterfacecombat";
+						changerMoment();
 						//pop interface de combatS
 					}
 					else if (c instanceof Equipement) {
-						Equipement equ=(Equipement)c;
+						
+						Equipement equ=new Equipement(c.getNom(),c.getDescription(),c.getMoment(), c.getEffects(), c.getType(), c.getPartie_corps(), c.isGros(), c.getContraintes());
+						for (int i=0;i<c.getEffects().size();i++){
+							equ.setParametres_effets(i,c.getParametres_effets(i));
+						}
 						boolean nain=false;
 						ArrayList<Equipement> armes= new ArrayList<Equipement>();
 						ArrayList<Equipement> suppression= new ArrayList<Equipement>();
@@ -485,7 +497,7 @@ public class Partie {
 							if(equipement.getPartie_corps().contains("arme")){
 								arme=arme+Integer.parseInt(equipement.getPartie_corps().substring(3,4));
 								armes.add(equipement);
-								
+
 							}
 							if((!equ.getPartie_corps().contains("arme"))&&(equ.getPartie_corps().equals(equipement.getPartie_corps()))){
 								if(equ!=null){
@@ -505,7 +517,7 @@ public class Partie {
 									else if(arme==2){
 										suppression.addAll(armes);
 									}
-									
+
 								}
 							}
 
@@ -629,7 +641,7 @@ public class Partie {
 				}
 				else //pas le tour du joueur
 				{
-					if ((c.getMoment().equals("tout")) || ((EtatPartie.equals(c.getMoment()))&&(!c.getMoment().equals("tour"))&&(!c.getMoment().equals("pioche2")))) {
+					if ((c.getMoment().equals("tous")) || ((EtatPartie.equals(c.getMoment()))&&(!c.getMoment().equals("tour"))&&(!c.getMoment().equals("pioche2")))) {
 						if (c instanceof Malediction) {
 							Malediction mal=(Malediction)c;
 							mal.setCible((Joueur)cible);
@@ -658,10 +670,10 @@ public class Partie {
 			}
 		}
 		return erreur+";"+action;
-		}
-
-
-		public static void main(String[] args) {
-			new Partie();
-		}
 	}
+
+
+	public static void main(String[] args) {
+		new Partie();
+	}
+}

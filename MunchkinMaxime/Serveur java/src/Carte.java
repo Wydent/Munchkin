@@ -165,4 +165,9 @@ public class Carte {
 		}
 	}
 
+	public ArrayList<String> getContraintes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
