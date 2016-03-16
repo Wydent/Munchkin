@@ -44,6 +44,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -55,6 +56,7 @@ public class FragmentsMainActivity extends FragmentActivity {
     private static final String SERVER_IP = "10.0.2.2";
     InputStream stream = null;
 
+    LinearLayout layoutPioche;
     ImageView ivPioche;
     TextView tvInfoBulle;
     TextView tvNomJoueur;
@@ -177,12 +179,6 @@ public class FragmentsMainActivity extends FragmentActivity {
                 while ((line = reader.readLine()) != null) {
                     System.out.println("Serveur dit : " + line);
 
-                    if (line.contains("actionClicPiocheDonjon")) {
-
-                        actionClicPiocheDonjon(line);
-
-                    }
-
                     if (line.contains("auTourDe")) {
 
                         afficherNomJoueur(line);
@@ -251,7 +247,7 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                     }
 
-                    if (line.contains("LancerInterfaceCombat")) {
+                    if (line.contains("lancerlinterfacecombat")) {
 
                         final String nomJoueur = line.split("-")[1];
                         final String levelJoueur = line.split("-")[2];
@@ -272,9 +268,13 @@ public class FragmentsMainActivity extends FragmentActivity {
                         final String attaqueJoueur = line.split("-")[3];
                         final String nomImage = line.split("-")[4];
                         final String typeCarte = line.split("-")[5];
+                        final String descriptionCarte = line.split("-")[6];
+                        final String levelMonstre = line.split("-")[7];
+                        final String recompensesTresors = line.split("-")[8];
+                        final String recompensesNiveaux = line.split("-")[9];
 
                         afficherInfosCartePiochee(nomJoueur, nomImage);
-                        afficherCartePiochee(nomImage);
+                        afficherCartePiochee(nomImage, descriptionCarte, levelMonstre, recompensesTresors, recompensesNiveaux);
 
                     }
 
@@ -380,7 +380,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                     tvJoueur.setPadding(padding, padding, padding, padding);
                     tvJoueur.setBackgroundColor(Color.parseColor("black"));
                     tvJoueur.setTextColor(Color.parseColor("white"));
-                    tvJoueur.setText(idj + nomJoueur);
+                    tvJoueur.setText(nomJoueur);
                     // id important
                     tvJoueur.setId(idj);
                     tvJoueur.setVisibility(View.VISIBLE);
@@ -412,7 +412,7 @@ public class FragmentsMainActivity extends FragmentActivity {
             // variables
             final String nomJoueur = line.split("-")[1];
             String sexeJoueur = line.split("-")[2];
-            int niveauJoueur = Integer.parseInt(line.split("-")[3]);
+            final int niveauJoueur = Integer.parseInt(line.split("-")[3]);
             int attaqueJoueur = Integer.parseInt(line.split("-")[4]);
 
             final int nombreClasses = Integer.parseInt(line.split("-")[5].substring(0, line.split("-")[5].indexOf("classe[")));
@@ -455,6 +455,12 @@ public class FragmentsMainActivity extends FragmentActivity {
                                   layoutInterne.removeAllViews();
 
                                   LinearLayout.LayoutParams lp = null;
+
+                                  // level du joueur
+                                  final TextView tvLevel = new TextView(getApplicationContext());
+                                  tvLevel.setText(niveauJoueur + "");
+                                  tvLevel.setTextColor(Color.parseColor("green"));
+                                  layoutInterne.addView(tvLevel);
 
                                   // image du joueur
                                   final ImageView imageJoueur = new ImageView(getApplicationContext());
@@ -975,35 +981,6 @@ public class FragmentsMainActivity extends FragmentActivity {
             });
         }
 
-        // action liée à un clic sur la pioche donjon
-        public void actionClicPiocheDonjon(final String line) {
-
-            final String nomJoueur = line.split("-")[1];
-            final String levelJoueur = line.split("-")[2];
-            final String attaqueJoueur = line.split("-")[3];
-            final String nomImage = line.split("-")[4];
-            final String typeCarte = line.split("-")[5];
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    afficherCartePiochee(nomImage);
-                    afficherInfosCartePiochee(nomJoueur, nomImage);
-
-                    if (typeCarte.equals("class Monstre")) {
-
-                        final String levelMonstre = line.split("-")[6];
-                        final String ataqueMonstre = line.split("-")[7];
-
-                        combattre(line, nomJoueur, levelJoueur, attaqueJoueur, nomImage, levelMonstre, ataqueMonstre);
-                    }
-
-                }
-            });
-
-        }
-
         // affichage des infos dans l'infobulle
         public void afficherInfosCartePiochee(final String nomJoueur, final String nomImage) {
 
@@ -1023,13 +1000,40 @@ public class FragmentsMainActivity extends FragmentActivity {
 
         // affichage de la carte piochée
 
-        public void afficherCartePiochee(final String nomImage) {
+        public void afficherCartePiochee(final String nomImage, final String descriptionCarte, final String niveauCarte, final String recompensesTresors, final String recompensesNiveaux) {
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     ivPioche = (ImageView) findViewById(R.id.imagePioche);
+                    layoutPioche = (LinearLayout) findViewById(R.id.layoutPioche);
+
+                    // affichage de la carte
                     ivPioche.setImageResource(getResources().getIdentifier(new String(nomImage).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
+
+                    // affichage du niveau du monstre
+                    TextView tv = new TextView(getApplicationContext());
+                    tv.setText("level " + niveauCarte);
+                    tv.setTextColor(Color.parseColor("green"));
+                    layoutPioche.addView(tv);
+
+                    // affichage des récompenses tresors
+                    TextView tv2 = new TextView(getApplicationContext());
+                    tv2.setText("tresors : " + recompensesTresors);
+                    tv2.setTextColor(Color.parseColor("purple"));
+                    layoutPioche.addView(tv2);
+
+                    // affichage des récompenses niveaux
+                    TextView tv4 = new TextView(getApplicationContext());
+                    tv4.setText("niveaux offerts : " + recompensesTresors);
+                    tv4.setTextColor(Color.parseColor("red"));
+                    layoutPioche.addView(tv4);
+
+                    // affichage de la description de la carte
+                    TextView tv3 = new TextView(getApplicationContext());
+                    tv3.setText(descriptionCarte);
+                    tv3.setTextColor(Color.parseColor("black"));
+                    layoutPioche.addView(tv3);
                 }
             });
         }
@@ -1128,6 +1132,23 @@ public class FragmentsMainActivity extends FragmentActivity {
 
     }
 
+    public void test2(View v) {
+
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream())),
+                    true);
+            out.println("clicPiocheTresor");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public void clicCarteMainEquipement(String nomEquipement) {
 
         try {
@@ -1190,7 +1211,6 @@ public class FragmentsMainActivity extends FragmentActivity {
             listItems.put(id, listeJoueurs[i]);
 
         }
-
     }
 
     public void envoyerMessageChat(View v) {
