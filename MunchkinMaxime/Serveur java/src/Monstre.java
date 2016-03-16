@@ -15,6 +15,20 @@ public class Monstre extends Carte{
 	int recompense_tresors;
 	Object[] parametre_incident;
 
+	/**
+	 * @return the parametre_incident
+	 */
+	public Object[] getParametre_incident() {
+		return parametre_incident;
+	}
+
+	/**
+	 * @param parametre_incident the parametre_incident to set
+	 */
+	public void setParametre_incident(Object[] parametre_incident) {
+		this.parametre_incident = parametre_incident;
+	}
+
 	public Monstre(String nom, String description, String moment, ArrayList<Method> effects, String type, int recompense_tresors, int recompense_niveau, Method incident_facheux, int niveau) {
 		super(nom, description, moment, effects, type);
 		this.attaque = niveau;
@@ -74,7 +88,9 @@ public class Monstre extends Carte{
 		parametre_incident=new Object[objects.length];
 		for(int i=0 ;i<objects.length;i++){
 			parametre_incident[i]=objects[i];
+			
 		}
+		System.out.println("taille2 : "+parametre_incident.length);
 
 	}
 
@@ -85,13 +101,12 @@ public class Monstre extends Carte{
 	}
 
 	public void changerJoueurIncident(Joueur j){
+
 		if(incident_facheux!=null){
-			for(int i=0;i<parametre_incident.length;i++){
-				if(parametre_incident[i] instanceof Joueur){
-					parametre_incident[i]=j;
-				}
-			}
+			System.out.println(parametre_incident[0].toString());
+			parametre_incident[0]=j;
 		}
+			
 
 	}
 

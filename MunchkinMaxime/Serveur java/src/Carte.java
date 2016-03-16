@@ -129,10 +129,10 @@ public class Carte {
 		setParametres_effets(numero_methode, parametres);
 	}
 	
-	public void changerJoueurcible(Joueur j){
+	public void changerCible(Object cible){
 		if(effects.size()>0){
 			for(int i=0;i<effects.size();i++){
-				changerParametre(i,1,j);	
+				changerParametre(i,1,cible);	
 			}
 		}
 		
@@ -166,6 +166,11 @@ public class Carte {
 	}
 
 	public ArrayList<String> getContraintes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object[] getParametre_incident() {
 		// TODO Auto-generated method stub
 		return null;
 	}

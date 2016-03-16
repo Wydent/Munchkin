@@ -7,16 +7,21 @@ import java.util.ArrayList;
  */
 public class Effet {
 	public void modifierNiveau(Integer nbniveau,Joueur joueur){
-		int niveau=joueur.getNiveau()+nbniveau;
-		if(niveau<1){
-		joueur.setNiveau(1);
-		}else{
-		joueur.setNiveau(niveau);
-		}
-			
+			int niveau=joueur.getNiveau()+nbniveau;
+			if(niveau<1){
+				joueur.setNiveau(1);
+			}else{
+				joueur.setNiveau(niveau);
+			}
 	}
-	public void modifierAttaque(Integer nbniveau,Joueur joueur){
-		joueur.setAttaque(joueur.getAttaque()+nbniveau);
+	public void modifierAttaque(Integer nbniveau,Object cible){
+		if(cible instanceof Joueur){
+			Joueur joueur=(Joueur) cible;
+			joueur.setAttaque(joueur.getAttaque()+nbniveau);
+		}else if(cible instanceof Carte){
+			Monstre monstre=(Monstre) cible;
+			monstre.setAttaque(monstre.getAttaque()+nbniveau);
+		}
 	}
 	public void mort(Joueur joueur){
 		joueur.setNiveau(1);
@@ -28,9 +33,9 @@ public class Effet {
 		joueur.setEstSangMelee(false);
 		joueur.setEstSuperMunckhin(false);
 		joueur.setMain(new ArrayList<Carte>());
-		
+
 	}
-	public void perte_equipement(String emplacement,Joueur joueur){
+	public void perte_equipement(Joueur joueur,String emplacement){
 		for(Equipement e:joueur.getEquipements()){
 			if(e.getPartie_corps().equals(emplacement)){
 				joueur.getEquipements().remove(e);

@@ -35,17 +35,19 @@ public class Partie {
 	public HashMap<Joueur, ThreadChat> chat = new HashMap<Joueur, ThreadChat>();
 
 	public Partie() {
-		EtatPartie=new String("pioche1");
+		EtatPartie=new String("init");
 		tourjoueur=0;
 		init_cartes("cartes.txt",this);
-		TrierPaquetDonjonEtTresor();
-		System.out.println("paquet tresors " + paquet_tresors.get(2).nom);
+	;
+	TrierPaquetDonjonEtTresor();
+		
+	
 		try {
 			String etiquette = new String("");
 			ServerSocket serverSocket = new ServerSocket(PORT);
 			System.out.println("Serveur prêt ");
 			int i = 1;
-			while (chat.size() < 2) {
+			while (chat.size() < 1) {
 				System.out.println("Serveur en Attente");
 				Socket socket = serverSocket.accept();
 				System.out.println(new Date() + " Client connecté");
@@ -63,6 +65,8 @@ public class Partie {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		distribuerMains();
+		setEtatPartie("pioche1");
 	}
 
 	public Partie(ArrayList<Carte> paquet_donjons, ArrayList<Carte> paquet_tresors,
@@ -152,7 +156,8 @@ public class Partie {
 					for (int i=0;i<c.getEffects().size();i++){
 						monstre_a_combattre.setParametres_effets(i,c.getParametres_effets(i));
 					}
-					retour="LancerInterfaceCombat-" + j.getNom() + "-" + j.getNiveau()
+					monstre_a_combattre.setParametre_incident(c.getParametre_incident());
+					retour="lancerlinterfacecombat-" + j.getNom() + "-" + j.getNiveau()
 							+ "-" + j.getAttaque() + "-" + c.getNom() + "-" + c.getType() + "-"
 							+ c.getNiveau() + "-" + c.getNiveau();
 					j.setMonstrePremierePioche(true);
@@ -224,7 +229,8 @@ public class Partie {
 	public void distribuerMains(){
 		for(Joueur j:getJoueurs()){
 			piocher(2,"tresor",j);
-			piocher(2,"donjon",j);
+			piocher(1,"donjon",j);
+			piocher(1,"donjon",j);
 		}
 	}
 	public void init_cartes(String path,Partie p){
@@ -265,15 +271,18 @@ public class Partie {
 						if(classes[i-1].equals(Joueur.class)){
 							parametres[i-1]=classes[i-1].getConstructors()[0].newInstance("pardefaut");	
 						}
+						
 						else if(classes[i-1].equals(String.class)){
 							parametres[i-1]=classes[i-1].getConstructors()[11].newInstance(effet[i].split(":")[0]);
 						}
 						else{
 							parametres[i-1]=classes[i-1].getConstructors()[0].newInstance(Integer.parseInt(effet[i].split(":")[0]));
 						}
+						System.out.println(parametres[i-1].toString());
 					}
 
 					((Monstre) c).setParametres_incident(parametres);
+					System.out.println("carte : "+c.getNom() +" taille parametre : "+((Monstre)c).parametre_incident.length);
 
 				}
 				else if(chaine[1].equals("equipement")){
@@ -304,6 +313,9 @@ public class Partie {
 						System.out.println(classes[i-1].getConstructors()[0].toString());
 						if(classes[i-1].equals(Joueur.class)){
 							parametres[i-1]=classes[i-1].getConstructors()[0].newInstance("pardefaut");	
+						}
+						else if(classes[i-1].equals(Object.class)){
+							parametres[i-1]=classes[i-1].getConstructors()[0].newInstance();	
 						}
 						else{
 							parametres[i-1]=classes[i-1].getConstructors()[0].newInstance(Integer.parseInt(effet[i].split(":")[0]));
@@ -356,8 +368,11 @@ public class Partie {
 		}
 
 		if (monstre_a_combattre.getAttaque()>totalAttaque) {
-
-			//Appliquer l'effet facheux jojo? 
+			for(Participation p:liste_participants){
+				monstre_a_combattre.changerJoueurIncident(p.getJoueur_allie());
+				monstre_a_combattre.declencher_incident();
+			}
+			
 		}
 		else if(monstre_a_combattre.getAttaque()==totalAttaque){
 			boolean guerrier=false;
@@ -377,7 +392,10 @@ public class Partie {
 				i++;
 			}
 			if(guerrier==false){
-				//Appliquer l'effet facheux jojo? 
+				for(Participation p:liste_participants){
+					monstre_a_combattre.changerJoueurIncident(p.getJoueur_allie());
+					monstre_a_combattre.declencher_incident();
+				}
 			}
 			else{
 				attribuer_recompense(liste_participants);
@@ -386,6 +404,7 @@ public class Partie {
 		else{ //Victoire des joueurs , r�partition des r�compenses.
 			attribuer_recompense(liste_participants);
 		}
+		changerMoment();
 	}
 
 	public void changertour(){
@@ -466,10 +485,12 @@ public class Partie {
 						for (int i=0;i<c.getEffects().size();i++){
 							monstre_a_combattre.setParametres_effets(i,c.getParametres_effets(i));
 						}
+						monstre_a_combattre.setParametre_incident(c.getParametre_incident());
 						j.removeCarteMain(c);
-						action="lancerlinterfacecombat";
+						action="lancerlinterfacecombat-" + j.getNom() + "-" + j.getNiveau()
+							+ "-" + j.getAttaque() + "-" + c.getNom() + "-" + c.getType() + "-"
+							+ c.getNiveau() + "-" + c.getNiveau();
 						changerMoment();
-						//pop interface de combatS
 					}
 					else if (c instanceof Equipement) {
 						
@@ -524,7 +545,7 @@ public class Partie {
 						}
 						if(compatible==true){
 							j.getEquipements().removeAll(suppression);
-							equ.changerJoueurcible(j);
+							equ.changerCible(j);
 							equ.joueur_effets();
 							j.getEquipements().add(equ);
 							j.removeCarteMain(equ);
@@ -542,7 +563,7 @@ public class Partie {
 							mal.setCible((Joueur)cible);
 
 						}
-						mal.changerJoueurcible(mal.getCible());
+						mal.changerCible(mal.getCible());
 						mal.joueur_effets();
 						mal.setTempsRestant(mal.getTempsInitial());
 						mal.getCible().getMaledictions().add(mal);
@@ -627,13 +648,12 @@ public class Partie {
 					}
 					else{
 						if(cible instanceof Monstre){
-							/*
-							 c.changerMonstreCible((Monstre)cible);
+							 c.changerCible((Monstre)cible);
 							 c.joueur_effets();
-							 */
+							 
 						}
 						else{
-							c.changerJoueurcible((Joueur)cible);
+							c.changerCible((Joueur)cible);
 							c.joueur_effets();
 						}
 					}
@@ -645,20 +665,20 @@ public class Partie {
 						if (c instanceof Malediction) {
 							Malediction mal=(Malediction)c;
 							mal.setCible((Joueur)cible);
-							mal.changerJoueurcible(mal.getCible());
+							mal.changerCible(mal.getCible());
 							mal.joueur_effets();
 							mal.setTempsRestant(mal.getTempsInitial());
 							mal.getCible().getMaledictions().add(mal);
 						}
 						else if((c instanceof Carte)){
 							if(cible instanceof Monstre){
-								/*
-								 c.changerMonstreCible((Monstre)cible);
+								
+								 c.changerCible((Monstre)cible);
 								 c.joueur_effets();
-								 */
+								 
 							}
 							else{
-								c.changerJoueurcible((Joueur)cible);
+								c.changerCible((Joueur)cible);
 								c.joueur_effets();
 							}
 						}
