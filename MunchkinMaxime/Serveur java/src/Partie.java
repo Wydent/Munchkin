@@ -4,17 +4,28 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
+
+
 
 /**
- * Created by jojo on 02/02/2016.
+ * class Partie qui gère le serveur
+ * Elle permet de gérer les connexions et de lancer la partie à partir d'un certain nombre de joueurs.
+ * Elle implémente aussi les règles du munchkin, le jeu contient un paquet de carte donjon et trésors et leurs défausses respectives
+ * 
+ */
+/**
+ * @author jojo
+ *
+ */
+/**
+ * @author jojo
+ *
  */
 public class Partie {
 	static ArrayList<Carte> paquet_donjons;
@@ -25,6 +36,7 @@ public class Partie {
 	Monstre monstre_a_combattre;
 	static String EtatPartie;
 	ArrayList<Participation> liste_participants;
+	Carte carteTiree;
 
 	static final int PORT = 6666;
 
@@ -34,14 +46,25 @@ public class Partie {
 	// nouvelle HashMap d'enregistrement des joueurs
 	public HashMap<Joueur, ThreadChat> chat = new HashMap<Joueur, ThreadChat>();
 
+	/**
+	 * constructeur par défaut de la partie , elle gère les demandes de connexions et quand le nombre de connexions maximum est 
+	 * atteint elle lance la partie en initialisant la pioche et distribue les cartes au joueur 
+	 * La partie commence aussi avec le tour du joueur qui a crée la partie 
+	 */
 	public Partie() {
+		carteTiree=new Carte(null, null, null, null, null);
 		EtatPartie=new String("init");
 		tourjoueur=0;
-		init_cartes("cartes.txt",this);
-	;
-	TrierPaquetDonjonEtTresor();
+		defausse_donjons=new ArrayList<Carte>();
+		defausse_tresors=new ArrayList<Carte>();
+		monstre_a_combattre=new Monstre("vide", null, null, null, null, tourjoueur, tourjoueur, null, tourjoueur);
 		
-	
+		
+		init_cartes("cartes.txt",this);
+		System.out.println("description : "+paquet_donjons.get(5).description);
+		TrierPaquetDonjonEtTresor();
+
+
 		try {
 			String etiquette = new String("");
 			ServerSocket serverSocket = new ServerSocket(PORT);
@@ -136,6 +159,14 @@ public class Partie {
 		return chat;
 	}
 
+	/**
+	 * Méthode qui permet de piocher nombrecarte dans un paquet pour un joueur j , la méthode retourne un string qui 
+	 * sert uniquement quand un combat est à lancer donc lorsque on pioche un monstre en première pioche
+	 * @param nombrecarte
+	 * @param paquet
+	 * @param j
+	 * @return
+	 */
 	public String piocher(int nombrecarte, String paquet, Joueur j) {
 		String retour="";
 		if (paquet.equals("tresor")) {
@@ -147,6 +178,7 @@ public class Partie {
 		else if (paquet.equals("donjon")) {
 			Carte c=paquet_donjons.get(0);
 			if(EtatPartie.equals("pioche1")){
+				carteTiree=c;
 				if(c instanceof Malediction){
 					((Malediction) c).setCible(j);
 					JouerCarte(j, c, j);
@@ -158,13 +190,13 @@ public class Partie {
 					}
 					monstre_a_combattre.setParametre_incident(c.getParametre_incident());
 					retour="lancerlinterfacecombat-" + j.getNom() + "-" + j.getNiveau()
-							+ "-" + j.getAttaque() + "-" + c.getNom() + "-" + c.getType() + "-"
-							+ c.getNiveau() + "-" + c.getNiveau();
+							+ "-" + j.getAttaque() + "-" + monstre_a_combattre.getNom() + "-" + monstre_a_combattre.getType() + "-"
+							+ monstre_a_combattre.getNiveau() + "-" + monstre_a_combattre.getNiveau();
 					j.setMonstrePremierePioche(true);
 				}
 				else{
 					j.addCarteMain(paquet_donjons.get(0));
-					
+
 				}
 
 			}
@@ -176,12 +208,20 @@ public class Partie {
 		}
 		return retour;
 	}
+	/**
+	 * Méthode retournant la liste des joueurs connectés à la partie
+	 * @return
+	 */
 	public ArrayList<Joueur> getJoueurs(){
 		ArrayList<Joueur> joueurs=new ArrayList<Joueur>();
 		joueurs.addAll(chat.keySet());
 		return joueurs;
 	}
 
+	/**
+	 * Méthode renvoyant -1 si la partie n'est pas finie ou l'indice du joueur gagnant
+	 * @return
+	 */
 	public int findepartie() {
 		int numeroJoueurGagnant=-1;
 		for (int i = 0; i < chat.size(); i++) {
@@ -191,6 +231,10 @@ public class Partie {
 		}
 		return numeroJoueurGagnant;
 	}
+	
+	/**
+	 * Methode permettant de trier au hasard les cartes des pioches donjons et trésors
+	 */
 	public void TrierPaquetDonjonEtTresor() {
 		Integer nombreAleatoire;
 		ArrayList<Integer> NombreUtilises = new ArrayList<Integer>();
@@ -226,6 +270,9 @@ public class Partie {
 		paquet_tresors=paquet_tresors_tmp;
 	}
 
+	/**
+	 * Methode permettant de distribuer les mains des joueurs , on l'utilise la méthode pioche pour cela
+	 */
 	public void distribuerMains(){
 		for(Joueur j:getJoueurs()){
 			piocher(2,"tresor",j);
@@ -233,6 +280,12 @@ public class Partie {
 			piocher(1,"donjon",j);
 		}
 	}
+	/**
+	 * Methode permettant de créer les cartes à partir d'un fichier texte
+	 * On utilise un système de recuperation de méthode en passant par la classe Effet pour les effets des cartes
+	 * @param path
+	 * @param p
+	 */
 	public void init_cartes(String path,Partie p){
 		String[] chaine;
 
@@ -271,7 +324,7 @@ public class Partie {
 						if(classes[i-1].equals(Joueur.class)){
 							parametres[i-1]=classes[i-1].getConstructors()[0].newInstance("pardefaut");	
 						}
-						
+
 						else if(classes[i-1].equals(String.class)){
 							parametres[i-1]=classes[i-1].getConstructors()[11].newInstance(effet[i].split(":")[0]);
 						}
@@ -372,7 +425,7 @@ public class Partie {
 				monstre_a_combattre.changerJoueurIncident(p.getJoueur_allie());
 				monstre_a_combattre.declencher_incident();
 			}
-			
+
 		}
 		else if(monstre_a_combattre.getAttaque()==totalAttaque){
 			boolean guerrier=false;
@@ -475,8 +528,8 @@ public class Partie {
 	}
 
 	public String JouerCarte(Joueur j, Carte c, Object cible){
-		String erreur="";
-		String action="";
+		String erreur=" ";
+		String action=" ";
 		if (j.getMain().contains(c)){
 			if(getJoueurs().get(tourjoueur).getNom().equals(j.getNom())){
 				if ((c.getMoment().equals("tous")) || (EtatPartie.equals(c.getMoment()))) {
@@ -488,12 +541,12 @@ public class Partie {
 						monstre_a_combattre.setParametre_incident(c.getParametre_incident());
 						j.removeCarteMain(c);
 						action="lancerlinterfacecombat-" + j.getNom() + "-" + j.getNiveau()
-							+ "-" + j.getAttaque() + "-" + c.getNom() + "-" + c.getType() + "-"
-							+ c.getNiveau() + "-" + c.getNiveau();
+								+ "-" + j.getAttaque() + "-" + monstre_a_combattre.getNom() + "-" + monstre_a_combattre.getType() + "-"
+								+ monstre_a_combattre.getNiveau() + "-" + monstre_a_combattre.getNiveau();
 						changerMoment();
 					}
 					else if (c instanceof Equipement) {
-						
+
 						Equipement equ=new Equipement(c.getNom(),c.getDescription(),c.getMoment(), c.getEffects(), c.getType(), c.getPartie_corps(), c.isGros(), c.getContraintes());
 						for (int i=0;i<c.getEffects().size();i++){
 							equ.setParametres_effets(i,c.getParametres_effets(i));
@@ -648,9 +701,9 @@ public class Partie {
 					}
 					else{
 						if(cible instanceof Monstre){
-							 c.changerCible((Monstre)cible);
-							 c.joueur_effets();
-							 
+							c.changerCible((Monstre)cible);
+							c.joueur_effets();
+
 						}
 						else{
 							c.changerCible((Joueur)cible);
@@ -672,10 +725,10 @@ public class Partie {
 						}
 						else if((c instanceof Carte)){
 							if(cible instanceof Monstre){
-								
-								 c.changerCible((Monstre)cible);
-								 c.joueur_effets();
-								 
+
+								c.changerCible((Monstre)cible);
+								c.joueur_effets();
+
 							}
 							else{
 								c.changerCible((Joueur)cible);
