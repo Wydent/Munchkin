@@ -4,9 +4,9 @@ tresor;carte;potion de force;+5 d'attaque pour le joueur;combat;modifierAttaque/
 tresor;carte;erreur de calcul;+1 gain de niveau;tour;modifierNiveau/1:java.lang.Integer/null:Joueur
 tresor;carte;hé un niveau;+1 gain de niveau;tour;modifierNiveau/1:java.lang.Integer/null:Joueur
 tresor;equipement;épée en bois;+1 d'attaque;tour;modifierAttaque/3:java.lang.Integer/null:java.lang.Object;arme1;false
-donjon;malediction;courir derrière un canard;tous;perdez 2 niveaux;modifierNiveau/-2:java.lang.Integer/null:Joueur; ;0
-donjon;monstre;le balai de Potter;pioche2;il vous tape au derrière jusqu'a la mort; ;2; ;1;1;mort/null:Joueur
-donjon;malediction;fracture du doigt de pied;tous;perdez 1 niveaux;modifierNiveau/-1:java.lang.Integer/null:Joueur; ;0
-donjon;monstre;justin bibière;pioche2;il vous p�te les tymphans; ;6; ;1;3;perte_equipement/null:Joueur/arme1:java.lang.String
-donjon;monstre;mégaphone hurleur;pioche2;il vous p�te les tymphans; ;6; ;1;3;perte_equipement/null:Joueur/arme1:java.lang.String
-donjon;monstre;chuchmur sauvage;pioche2;il vous p�te les tymphans; ;6; ;1;3;mort/null:Joueur
+donjon;malediction;courir derrière un canard;perdez 2 niveaux;tous;modifierNiveau/-2:java.lang.Integer/null:Joueur; ;0
+donjon;monstre;le balai de Potter;il vous tape au derrière jusqu'a la mort;pioche2; ;2; ;1;1;mort/null:Joueur
+donjon;malediction;fracture du doigt de pied;perdez 1 niveaux;tous;modifierNiveau/-1:java.lang.Integer/null:Joueur; ;0
+donjon;monstre;justin bibière;il vous pète les tymphans;pioche2; ;6; ;1;3;perte_equipement/null:Joueur/arme1:java.lang.String
+donjon;monstre;mégaphone hurleur;il vous pète les tymphans;pioche2; ;6; ;1;3;perte_equipement/null:Joueur/arme1:java.lang.String
+donjon;monstre;chuchmur sauvage;il vous pète les tymphans;pioche2; ;6; ;1;3;mort/null:Joueur
