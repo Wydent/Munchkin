@@ -191,7 +191,7 @@ public class Partie {
 					monstre_a_combattre.setParametre_incident(c.getParametre_incident());
 					retour="lancerlinterfacecombat-" + j.getNom() + "-" + j.getNiveau()
 							+ "-" + j.getAttaque() + "-" + monstre_a_combattre.getNom() + "-" + monstre_a_combattre.getType() + "-"
-							+ monstre_a_combattre.getNiveau() + "-" + monstre_a_combattre.getNiveau();
+							+ monstre_a_combattre.getNiveau() + "-" + monstre_a_combattre.getNiveau() + "-" + c.getDescription();
 					j.setMonstrePremierePioche(true);
 				}
 				else{
@@ -542,7 +542,7 @@ public class Partie {
 						j.removeCarteMain(c);
 						action="lancerlinterfacecombat-" + j.getNom() + "-" + j.getNiveau()
 								+ "-" + j.getAttaque() + "-" + monstre_a_combattre.getNom() + "-" + monstre_a_combattre.getType() + "-"
-								+ monstre_a_combattre.getNiveau() + "-" + monstre_a_combattre.getNiveau();
+								+ monstre_a_combattre.getNiveau() + "-" + monstre_a_combattre.getNiveau() + "-" + c.getDescription();
 						changerMoment();
 					}
 					else if (c instanceof Equipement) {

@@ -39,6 +39,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.Transformation;
+import android.widget.ActionMenuView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -256,8 +257,9 @@ public class FragmentsMainActivity extends FragmentActivity {
                         final String typeCarte = line.split("-")[5];
                         final String levelMonstre = line.split("-")[6];
                         final String ataqueMonstre = line.split("-")[7];
+                        final String descriptionMonstre = line.split("-")[8];
 
-                        combattre(line, nomJoueur, levelJoueur, attaqueJoueur, nomImage, levelMonstre, ataqueMonstre);
+                        combattre(line, nomJoueur, levelJoueur, attaqueJoueur, nomImage, levelMonstre, ataqueMonstre, descriptionMonstre);
 
                     }
 
@@ -413,7 +415,7 @@ public class FragmentsMainActivity extends FragmentActivity {
             final String nomJoueur = line.split("-")[1];
             String sexeJoueur = line.split("-")[2];
             final int niveauJoueur = Integer.parseInt(line.split("-")[3]);
-            int attaqueJoueur = Integer.parseInt(line.split("-")[4]);
+            final int attaqueJoueur = Integer.parseInt(line.split("-")[4]);
 
             final int nombreClasses = Integer.parseInt(line.split("-")[5].substring(0, line.split("-")[5].indexOf("classe[")));
 
@@ -458,9 +460,15 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                                   // level du joueur
                                   final TextView tvLevel = new TextView(getApplicationContext());
-                                  tvLevel.setText(niveauJoueur + "");
+                                  tvLevel.setText("lvl " + niveauJoueur);
                                   tvLevel.setTextColor(Color.parseColor("green"));
                                   layoutInterne.addView(tvLevel);
+
+                                  // attaque du joueur
+                                  final TextView tvAttaque = new TextView(getApplicationContext());
+                                  tvLevel.setText("force " + attaqueJoueur);
+                                  tvLevel.setTextColor(Color.parseColor("blue"));
+                                  layoutInterne.addView(tvAttaque);
 
                                   // image du joueur
                                   final ImageView imageJoueur = new ImageView(getApplicationContext());
@@ -710,10 +718,14 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       String partieCorps = finalAttributsEquipement[i + 2];
                                       String isGros = finalAttributsEquipement[i + 3];
 
-                                      final ImageView imageEquipement = new ImageView(getApplicationContext());
+                                      final RelativeLayout relativeLayout = new RelativeLayout(getApplicationContext());
                                       LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      relativeLayout.setLayoutParams(lp);
+
+                                      final ImageView imageEquipement = new ImageView(getApplicationContext());
+                                      LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(widthImage, heightImage);
                                       lp.setMargins(padding, padding, padding, padding);
-                                      imageEquipement.setLayoutParams(lp);
+                                      imageEquipement.setLayoutParams(lp2);
                                       imageEquipement.setScaleType(ImageView.ScaleType.CENTER_CROP);
                                       imageEquipement.setImageResource(getResources().getIdentifier(new String(nomEquipement).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       imageEquipement.setOnClickListener(new View.OnClickListener() {
@@ -724,7 +736,22 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                                           }
                                       });
-                                      equipementLayout.addView(imageEquipement);
+
+                                      TextView tvDescriptionCarte = new TextView(getApplicationContext());
+                                      tvDescriptionCarte.setTextColor(Color.parseColor("black"));
+                                      LinearLayout.LayoutParams lp4 = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      tvDescriptionCarte.setLayoutParams(lp4);
+                                      tvDescriptionCarte.setText(descriptionEquipement);
+
+                                      LinearLayout linearLayout = new LinearLayout(getApplicationContext());
+                                      LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      linearLayout.setLayoutParams(lp3);
+                                      linearLayout.addView(tvDescriptionCarte);
+
+
+                                      equipementLayout.addView(relativeLayout);
+                                      relativeLayout.addView(imageEquipement);
+                                      relativeLayout.addView(linearLayout);
 
                                   }
 
@@ -753,10 +780,14 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       final String nomBonus = finalAttributsBonus[i];
                                       String descriptionBonus = finalAttributsBonus[i + 1];
 
-                                      final ImageView imageBonus = new ImageView(getApplicationContext());
+                                      final RelativeLayout relativeLayout = new RelativeLayout(getApplicationContext());
                                       LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      relativeLayout.setLayoutParams(lp);
+
+                                      final ImageView imageBonus = new ImageView(getApplicationContext());
+                                      LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(widthImage, heightImage);
                                       lp.setMargins(padding, padding, padding, padding);
-                                      imageBonus.setLayoutParams(lp);
+                                      imageBonus.setLayoutParams(lp2);
                                       imageBonus.setScaleType(ImageView.ScaleType.CENTER_CROP);
                                       imageBonus.setImageResource(getResources().getIdentifier(new String(nomBonus).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       registerForContextMenu(imageBonus);
@@ -770,7 +801,21 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                                           }
                                       });
-                                      bonusMaledictionLayout.addView(imageBonus);
+
+                                      TextView tvDescriptionCarte = new TextView(getApplicationContext());
+                                      tvDescriptionCarte.setTextColor(Color.parseColor("black"));
+                                      LinearLayout.LayoutParams lp4 = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      tvDescriptionCarte.setLayoutParams(lp4);
+                                      tvDescriptionCarte.setText(descriptionBonus);
+
+                                      LinearLayout linearLayout = new LinearLayout(getApplicationContext());
+                                      LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      linearLayout.setLayoutParams(lp3);
+                                      linearLayout.addView(tvDescriptionCarte);
+
+                                      bonusMaledictionLayout.addView(relativeLayout);
+                                      relativeLayout.addView(imageBonus);
+                                      relativeLayout.addView(linearLayout);
 
                                   }
 
@@ -778,12 +823,16 @@ public class FragmentsMainActivity extends FragmentActivity {
                                   for (int i = 0; i < finalNombreMaledictions * 2; i = i + 2) {
 
                                       final String nomMalediction = finalAttributsMalediction[i];
-                                      String descriptionBonus = finalAttributsMalediction[i + 1];
+                                      String descriptionMalediction = finalAttributsMalediction[i + 1];
+
+                                      final RelativeLayout relativeLayout = new RelativeLayout(getApplicationContext());
+                                      LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      relativeLayout.setLayoutParams(lp);
 
                                       final ImageView imageMalediction = new ImageView(getApplicationContext());
-                                      LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(widthImage, heightImage);
                                       lp.setMargins(padding, padding, padding, padding);
-                                      imageMalediction.setLayoutParams(lp);
+                                      imageMalediction.setLayoutParams(lp2);
                                       imageMalediction.setScaleType(ImageView.ScaleType.CENTER_CROP);
                                       imageMalediction.setImageResource(getResources().getIdentifier(new String(nomMalediction).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
                                       registerForContextMenu(imageMalediction);
@@ -797,7 +846,21 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                                           }
                                       });
-                                      bonusMaledictionLayout.addView(imageMalediction);
+
+                                      TextView tvDescriptionCarte = new TextView(getApplicationContext());
+                                      tvDescriptionCarte.setTextColor(Color.parseColor("black"));
+                                      LinearLayout.LayoutParams lp4 = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      tvDescriptionCarte.setLayoutParams(lp4);
+                                      tvDescriptionCarte.setText(descriptionMalediction);
+
+                                      LinearLayout linearLayout = new LinearLayout(getApplicationContext());
+                                      LinearLayout.LayoutParams lp3 = new LinearLayout.LayoutParams(widthImage, heightImage);
+                                      linearLayout.setLayoutParams(lp3);
+                                      linearLayout.addView(tvDescriptionCarte);
+
+                                      bonusMaledictionLayout.addView(relativeLayout);
+                                      relativeLayout.addView(imageMalediction);
+                                      relativeLayout.addView(linearLayout);
 
                                   }
                               }
@@ -1008,6 +1071,9 @@ public class FragmentsMainActivity extends FragmentActivity {
                     ivPioche = (ImageView) findViewById(R.id.imagePioche);
                     layoutPioche = (LinearLayout) findViewById(R.id.layoutPioche);
 
+                    // réinitialisation de l'affichage
+                    layoutPioche.removeAllViews();
+
                     // affichage de la carte
                     ivPioche.setImageResource(getResources().getIdentifier(new String(nomImage).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
 
@@ -1061,7 +1127,7 @@ public class FragmentsMainActivity extends FragmentActivity {
             });
         }
 
-        public void combattre(String line, String nomJoueur, String levelJoueur, String attaqueJoueur, String nomMonstre, String levelMonstre, String attaqueMonstre) {
+        public void combattre(String line, String nomJoueur, String levelJoueur, String attaqueJoueur, String nomMonstre, String levelMonstre, String attaqueMonstre, String descriptionMonstre) {
 
             String joueurActuel = line.split("-")[1];
 
@@ -1075,6 +1141,7 @@ public class FragmentsMainActivity extends FragmentActivity {
             args.putString("nomMonstre", nomMonstre);
             args.putString("levelMonstre", levelMonstre);
             args.putString("attaqueMonstre", attaqueMonstre);
+            args.putString("descriptionMonstre", descriptionMonstre);
             // si c'est à nous de jouer
             if (joueurActuel.equals(nomJoueur)) {
 
@@ -1172,7 +1239,7 @@ public class FragmentsMainActivity extends FragmentActivity {
             PrintWriter out = new PrintWriter(new BufferedWriter(
                     new OutputStreamWriter(socket.getOutputStream())),
                     true);
-            out.println("clicCarteMainBonusMalediction-" + nomBonusMalediction);
+            out.println("clicCarteMainBonusMalediction-" + nomBonusMalediction + "-" + joueurCible);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -1197,6 +1264,23 @@ public class FragmentsMainActivity extends FragmentActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void clicBoutonCombattre(View v) {
+
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream())),
+                    true);
+            out.println("clicBoutonCombattre");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void actualiserMenu(final String line) {

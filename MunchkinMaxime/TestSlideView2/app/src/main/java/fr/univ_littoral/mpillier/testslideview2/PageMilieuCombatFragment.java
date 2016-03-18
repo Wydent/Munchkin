@@ -23,6 +23,7 @@ public class PageMilieuCombatFragment extends Fragment {
         String nomMonstre = args.getString("nomMonstre");
         String levelMonstre = args.getString("levelMonstre");
         String attaqueMonstre = args.getString("attaqueMonstre");
+        String descriptionMonstre = args.getString("descriptionMonstre");
         boolean isTonTour = args.getBoolean("isTonTour");
 
         TextView tvNomJoueurCombat = (TextView) view.findViewById(R.id.nomJoueurCombat);
@@ -31,6 +32,7 @@ public class PageMilieuCombatFragment extends Fragment {
         TextView tvNomMonstreCombat = (TextView) view.findViewById(R.id.nomMonstreCombat);
         TextView tvLevelMonstre = (TextView) view.findViewById(R.id.levelMonstre);
         TextView tvAttaqueMonstre = (TextView) view.findViewById(R.id.attaqueMonstre);
+        TextView tvDescriptionMonstre = (TextView) view.findViewById(R.id.descriptionMonstre);
 
         tvNomJoueurCombat.setText(nomJoueur);
         tvLevelJoueur.setText("lvl "+levelJoueur);
@@ -38,6 +40,7 @@ public class PageMilieuCombatFragment extends Fragment {
         tvNomMonstreCombat.setText(nomMonstre);
         tvLevelMonstre.setText("lvl "+levelMonstre);
         tvAttaqueMonstre.setText("force "+attaqueMonstre);
+        tvDescriptionMonstre.setText(descriptionMonstre);
 
         Button boutonCombattre = (Button) view.findViewById(R.id.boutonCombattre);
         Button boutonFuir = (Button) view.findViewById(R.id.boutonFuir);

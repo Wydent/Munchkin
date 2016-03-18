@@ -334,7 +334,7 @@ public class ThreadChat {
 				// l'accordéon
 				synchronized (this) {
 					try {
-						wait(5000);
+						wait(7000);
 					} catch (InterruptedException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -354,7 +354,7 @@ public class ThreadChat {
 				// on attend que le client ait bien pris en compte toute la main
 				synchronized (this) {
 					try {
-						wait(3000);
+						wait(7000);
 					} catch (InterruptedException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -398,7 +398,7 @@ public class ThreadChat {
 						if (line.equals("clicPiocheDonjon")) {
 
 							String retour = serveur.piocher(1, "donjon", joueur);
-							Carte carteTiree = joueur.getMain().get(joueur.getMain().size() - 1);
+							Carte carteTiree = serveur.carteTiree;
 							String nomCarte = carteTiree.getNom();
 							String typeCarte = carteTiree.getClass().toString();
 							String descriptionCarte = carteTiree.getDescription();
@@ -447,6 +447,7 @@ public class ThreadChat {
 
 								// incindent fâcheux
 								Monstre m = serveur.monstre_a_combattre;
+								System.out.println("nom monstre : "+m.getNom());
 								m.changerJoueurIncident(joueur);
 								m.declencher_incident();
 
@@ -485,15 +486,16 @@ public class ThreadChat {
 							String[] t = retour.split(";");
 							String erreur = t[0];
 							String action = t[1];
-							if (erreur.equals("")) {
-								if (!action.equals("")) {
+							if (erreur.equals(" ")) {
+								if (!action.equals(" ")) {
 									envoi_message("lancerlinterfacecombat-" + joueur.getNom() + "-" + joueur.getNiveau()
 											+ "-" + joueur.getAttaque() + "-" + nomCarte + "-" + c.getType() + "-"
-											+ c.getNiveau() + "-" + c.getNiveau());
+											+ c.getNiveau() + "-" + c.getNiveau() + "-" + c.getDescription());
 								}
 
 								envoyerMain();
 								envoyerAccordeon("afficher");
+								
 							} else {
 								envoi_message("ErreurJouerCarte-" + erreur);
 							}
@@ -534,9 +536,30 @@ public class ThreadChat {
 							}
 
 							serveur.JouerCarte(joueur, c, j);
+							
+							/* actualisation des affichages */
 							envoyerMain();
 							envoyerAccordeon("afficher");
 
+						}
+						
+						if(line.contains("changementTour")) {
+							
+							// changement de tour
+							serveur.changerMoment();
+							
+							// affichage du tour du joueur
+							envoi_message("auTourDe-" + serveur.getJoueurs().get(serveur.tourjoueur).getNom());
+							
+						}
+						
+						if(line.contains("clicBoutonCombattre")) {
+							
+							serveur.Combattre();
+							
+							envoyerMain();
+							envoyerAccordeon("afficher");
+							
 						}
 					}
 
