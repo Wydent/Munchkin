@@ -498,17 +498,21 @@ public void changertour(){
 		if(EtatPartie.equals("pioche1")){
 			if(joueuractuel.isMonstrePremierePioche()==false){
 				setEtatPartie("pioche2");
+				System.out.println("Je vais de p1 vers p2");
 			}
 			else{
 				setEtatPartie("combat");
+				System.out.println("Je vais de p1 vers c");
 			}
 		}
 		else if(EtatPartie.equals("pioche2")){
 			if(monstre_a_combattre.getNom().equals("vide")){
 				setEtatPartie("tour");
+				System.out.println("Je vais de p2 vers t");
 			}
 			else{
 				setEtatPartie("combat");
+				System.out.println("Je vais de p2 vers c");
 			}
 		}
 		else if(EtatPartie.equals("combat")){
@@ -582,11 +586,8 @@ public void changertour(){
 						changerMoment();
 					}
 					else if (c instanceof Equipement) {
-
-						Equipement equ=new Equipement(c.getNom(),c.getDescription(),c.getMoment(), c.getEffects(), c.getType(), c.getPartie_corps(), c.isGros(), c.getContraintes());
-						for (int i=0;i<c.getEffects().size();i++){
-							equ.setParametres_effets(i,c.getParametres_effets(i));
-						}
+						Equipement equ=(Equipement)c;
+						
 						boolean nain=false;
 						ArrayList<Equipement> armes= new ArrayList<Equipement>();
 						ArrayList<Equipement> suppression= new ArrayList<Equipement>();
@@ -606,6 +607,7 @@ public void changertour(){
 							}
 							if(equipement.getPartie_corps().contains("arme")){
 								arme=arme+Integer.parseInt(equipement.getPartie_corps().substring(4,5));
+								System.out.println("ahah j'ai plein d'armes j'en ai :"+arme);
 								armes.add(equipement);
 
 							}
@@ -617,12 +619,12 @@ public void changertour(){
 							if((equ.getPartie_corps().contains("arme"))&&(arme<=2)){
 								if(equ.getPartie_corps().equals("arme1")){
 									if(arme==2){
-										suppression.add((Equipement)cible);
+										suppression.add(equipement);
 									}
 								}
 								else if(equ.getPartie_corps().equals("arme2")){
 									if(arme==1){
-										suppression.add((Equipement)cible);
+										suppression.add(equipement);
 									}
 									else if(arme==2){
 										suppression.addAll(armes);
@@ -779,11 +781,12 @@ public void changertour(){
 			}
 		}
 		System.out.println("------------------------JOUER CARTE------------------------------");
+		rafraichirAttaque(j);
 		System.out.println("Cartes en main : "+j.getMain().size());
 		System.out.println("Joueur de niveau : "+j.getNiveau());
 		System.out.println("Joueur d'attaque : "+j.getAttaque());
 		System.out.println("-----------------------------------------------------------------------");
-		rafraichirAttaque(j);
+		
 		return erreur+";"+action;
 		
 	}

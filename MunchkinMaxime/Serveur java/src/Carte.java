@@ -119,7 +119,11 @@ public class Carte {
 	}
 	
 	public void setParametres_effets(int i,Object[] objects){
-		parametres_effets.replace(i,objects);
+		for(int j=0;j<parametres_effets.get(i).length;j++){
+			System.out.println("Je passe par la ");
+			parametres_effets.get(i)[j]=objects[j];
+		}
+		System.out.println("tailleeffets : "+parametres_effets.get(i).length);
 	}
 	
 	public void ajouterParametre_effect(Object[] objet){

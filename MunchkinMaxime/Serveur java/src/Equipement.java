@@ -30,6 +30,7 @@ public class Equipement extends Carte {
 	 * @return the attaque
 	 */
 	public int getAttaque() {
+		System.out.println((Integer) parametres_effets.get(0)[0]);
 		return (Integer) parametres_effets.get(0)[0];
 	}
 

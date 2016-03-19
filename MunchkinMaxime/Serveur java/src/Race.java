@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 
 /**
- * Carte qui représente les races dans le jeu , les races n'ont pas été vraiment géré 
+ * Classe qui représente les races dans le jeu , les races n'ont pas été vraiment géré 
  *
  * 
  * Created by jojo on 02/02/2016.
