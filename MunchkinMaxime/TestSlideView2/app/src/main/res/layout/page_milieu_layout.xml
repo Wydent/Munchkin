@@ -93,7 +93,6 @@
                 android:layout_width="80dp"
                 android:layout_height="120dp"
                 android:scaleType="centerCrop"
-                android:onClick="test2"
                 android:src="@drawable/tresor" />
 
             <ImageView

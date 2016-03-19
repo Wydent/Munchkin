@@ -362,7 +362,7 @@ public class ThreadChat {
 				}
 
 				/* envoi du menu contextuel contenant la liste des joueurs */
-				String s = "actualiserMenu-";
+				String s = "actualiserMenu-monstre-";
 				int temp = 0;
 
 				for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
@@ -508,6 +508,7 @@ public class ThreadChat {
 							String nomJoueurCible = line.split("-")[2];
 							Carte c = null;
 							Joueur j = null;
+							Monstre m = serveur.monstre_a_combattre;
 
 							System.out.println("joueur cible : " + nomJoueurCible);
 
@@ -523,19 +524,26 @@ public class ThreadChat {
 
 							}
 
-							// récupération du joueur
-							for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
+							// récupération du joueur (ou pas si c'est sur un monstre)
+							if(nomJoueurCible.equals("monstre")) {
+								
+								serveur.JouerCarte(joueur, c, m);
+								
+							} else {
+								for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
 
-								if (e.getKey().getNom().equals(nomJoueurCible)) {
+									if (e.getKey().getNom().equals(nomJoueurCible)) {
 
-									System.out.println("nom du joueur cible : " + e.getKey().getNom());
-									j = e.getKey();
+										System.out.println("nom du joueur cible : " + e.getKey().getNom());
+										j = e.getKey();
+
+									}
 
 								}
-
+								
+								serveur.JouerCarte(joueur, c, j);
 							}
 
-							serveur.JouerCarte(joueur, c, j);
 							
 							/* actualisation des affichages */
 							envoyerMain();

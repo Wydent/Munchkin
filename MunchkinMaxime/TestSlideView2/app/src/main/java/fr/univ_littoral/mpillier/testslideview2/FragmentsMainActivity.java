@@ -758,7 +758,7 @@ public class FragmentsMainActivity extends FragmentActivity {
                                   // affichage des monstres en main
                                   for (int i = 0; i < finalNombreMonstres * 5; i = i + 5) {
 
-                                      String nomMonstre = finalAttributsMonstres[i];
+                                      final String nomMonstre = finalAttributsMonstres[i];
                                       String descriptionMonstre = finalAttributsMonstres[i + 1];
                                       String niveauMonstre = finalAttributsMonstres[i + 2];
                                       String recompenseNiveaux = finalAttributsMonstres[i + 3];
@@ -770,6 +770,14 @@ public class FragmentsMainActivity extends FragmentActivity {
                                       imageMonstre.setLayoutParams(lp);
                                       imageMonstre.setScaleType(ImageView.ScaleType.CENTER_CROP);
                                       imageMonstre.setImageResource(getResources().getIdentifier(new String(nomMonstre).replaceAll("[éè]", "e").replaceAll(" ", "_").toLowerCase(), "drawable", getPackageName()));
+                                      imageMonstre.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+
+                                              clicCarteMainEquipement(nomMonstre);
+
+                                          }
+                                      });
                                       monstreLayout.addView(imageMonstre);
 
                                   }
