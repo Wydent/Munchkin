@@ -2,6 +2,13 @@
 import java.util.ArrayList;
 
 /**
+ * Classe qui représente un joueur dans le jeu 
+ * Elle contient beaucoup d'attribut comme le nom du joueur , son niveau , son attaque, ses classes et ses races
+ * ses équipements , ses malédictions, sa main qui correspond à ces cartes qu'il a dans sa main, son sexe , sa puissance de fuite 
+ * qui est de base à 0 , c'est à dire que le joueur doit faire 5 ou 6 à un dé s'il veut fuir le combat et si le chiffre passe à 1 grâce par exemple 
+ * à une classe lui permettant il faudra qu'il fasse 4,5,6 alors que si il est à -1 il devra faire 6.
+ * Le joueur possède aussi des booléens Supermunchkin et SangMélée qui est en fait des cartes spéciales qui permettent d'avoir deux classes et deux races
+ * et MonstrePremierePioche pour garder en mémoire si le joueur a eu un monstre dans la première pioche pendant le tour  
  * Created by jojo on 02/02/2016.
  */
 public class Joueur {
@@ -61,6 +68,9 @@ public class Joueur {
 		EstSangMelee = estSangMelee;
 	}
 
+	/**
+	 * Au début le joueur est de niveau 1 humain de sexe du joueur ici homme 
+	 */
 	public Joueur(String nom){
     	setNom(nom);
         setNiveau(1);

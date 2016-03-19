@@ -14,18 +14,16 @@ import java.util.HashMap;
 
 
 /**
- * class Partie qui gère le serveur
+
  * Elle permet de gérer les connexions et de lancer la partie à partir d'un certain nombre de joueurs.
  * Elle implémente aussi les règles du munchkin, le jeu contient un paquet de carte donjon et trésors et leurs défausses respectives
- * 
+ * Elle contient aussi la liste des participants à un combat lorsque le joueur demande de l'aide contre un monstre
+ * Elle possède aussi certains attribut comme tourjoueur qui désigne le tour du joueur qui joue actuellement,le monstre 
+ * à combattre qui est le monstre qui est en combat actuellement pendant un combat, l'Etat de la partie qui représente le moment actuel de la partie
+ * (voir rapport pour les différents moments possibles) et carteTirée qui représente lcarte tirée pendant les moments de pioche.
  */
 /**
- * @author jojo
- *
- */
-/**
- * @author jojo
- *
+*
  */
 public class Partie {
 	static ArrayList<Carte> paquet_donjons;
@@ -57,11 +55,18 @@ public class Partie {
 		tourjoueur=0;
 		defausse_donjons=new ArrayList<Carte>();
 		defausse_tresors=new ArrayList<Carte>();
+		liste_participants=new ArrayList<Participation>();
 		monstre_a_combattre=new Monstre("vide", null, null, null, null, tourjoueur, tourjoueur, null, tourjoueur);
 		
 		
 		init_cartes("cartes.txt",this);
-		System.out.println("description : "+paquet_donjons.get(5).description);
+		
+		/*Joueur jojo = new Joueur("jojo");
+		System.out.println("carte : "+paquet_tresors.get(5).getNom());
+		System.out.println("attaque : "+jojo.getAttaque());
+		paquet_tresors.get(5).changerCible(jojo);
+		paquet_tresors.get(5).joueur_effets();
+		System.out.println("attaque après : "+jojo.getAttaque());*/
 		TrierPaquetDonjonEtTresor();
 
 
@@ -77,7 +82,6 @@ public class Partie {
 				InputStream stream = socket.getInputStream();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 				etiquette = reader.readLine();
-				System.out.println(etiquette);
 				if (!chat.containsKey(etiquette)){
 					System.out.println(etiquette);
 					Joueur j= new Joueur(etiquette);
@@ -168,6 +172,7 @@ public class Partie {
 	 * @return
 	 */
 	public String piocher(int nombrecarte, String paquet, Joueur j) {
+		
 		String retour="";
 		if (paquet.equals("tresor")) {
 			for (int i = 0; i < nombrecarte; i++) {
@@ -176,7 +181,12 @@ public class Partie {
 			} 
 		}
 		else if (paquet.equals("donjon")) {
+			
 			Carte c=paquet_donjons.get(0);
+			System.out.println("---------------------------PIOCHE---------------------------------");
+			System.out.println("Carte Piochée : "+c.getNom());
+			System.out.println("Moment de la Partie : "+EtatPartie);
+			System.out.println("------------------------------------------------------------------");
 			if(EtatPartie.equals("pioche1")){
 				carteTiree=c;
 				if(c instanceof Malediction){
@@ -320,7 +330,6 @@ public class Partie {
 					((Monstre) c).setIncident_facheux(m);
 					Object[] parametres=new Object[effet.length-1];
 					for(int i=1;i<effet.length;i++){
-						System.out.println(classes[i-1].getConstructors()[0].toString());
 						if(classes[i-1].equals(Joueur.class)){
 							parametres[i-1]=classes[i-1].getConstructors()[0].newInstance("pardefaut");	
 						}
@@ -331,11 +340,9 @@ public class Partie {
 						else{
 							parametres[i-1]=classes[i-1].getConstructors()[0].newInstance(Integer.parseInt(effet[i].split(":")[0]));
 						}
-						System.out.println(parametres[i-1].toString());
 					}
 
 					((Monstre) c).setParametres_incident(parametres);
-					System.out.println("carte : "+c.getNom() +" taille parametre : "+((Monstre)c).parametre_incident.length);
 
 				}
 				else if(chaine[1].equals("equipement")){
@@ -363,7 +370,6 @@ public class Partie {
 					c.ajouterEffect(m);
 					Object[] parametres=new Object[effet.length-1];
 					for(int i=1;i<effet.length;i++){
-						System.out.println(classes[i-1].getConstructors()[0].toString());
 						if(classes[i-1].equals(Joueur.class)){
 							parametres[i-1]=classes[i-1].getConstructors()[0].newInstance("pardefaut");	
 						}
@@ -396,7 +402,11 @@ public class Partie {
 
 
 	}
-
+	/**
+	 * Méthode permettant d'attribuer les récompenses en niveau et en carte à un joueur ayant gagné un combat
+	 * On donne les récompenses aussi à ceux qui ont aidé par rapport à ce qui a été décidé par les joueurs
+	 * @param participants
+	 */
 	public void attribuer_recompense(ArrayList<Participation> participants){
 		int total_niveaux_attribues=0;
 		int total_tresors_attribues=0;
@@ -412,12 +422,19 @@ public class Partie {
 		piocher(monstre_a_combattre.getRecompense_niveau()-total_tresors_attribues, "tresor",getJoueurs().get(tourjoueur));
 	}
 
+	/**
+	 * Méthode qui permet de simuler le combat , il s'agit seulement de la comparaison d'attaque du monstre avec celle 
+	 * des participants . Si elle est supérieure, les joueurs subissent l'incident facheux ,si elle est inférieure les joueurs 
+	 * battent le monstre et gagne les récompenses et si il y'a match nul , cela dépend si un joueur du groupe est guerrier
+	 */
 	public void Combattre (){
 		int totalAttaque;
 		totalAttaque=getJoueurs().get(tourjoueur).getAttaque();
 
+		if(liste_participants.size()>0){
 		for(Participation p:liste_participants){
 			totalAttaque=totalAttaque+ p.getJoueur_allie().getAttaque();
+		}
 		}
 
 		if (monstre_a_combattre.getAttaque()>totalAttaque) {
@@ -460,7 +477,10 @@ public class Partie {
 		changerMoment();
 	}
 
-	public void changertour(){
+/**
+ * Méthode permettant de changer le tour de jeu . La méthode est appelé lorsque le joueur appuie sur fin de tour
+ */
+public void changertour(){
 		if(tourjoueur==chat.size()-1){
 			setTourjoueur(0);
 		}
@@ -469,6 +489,10 @@ public class Partie {
 		}
 	}
 
+	/**
+	 * Méthode permettant de changer le moment elle utlise aussi la fonction changetour car elle gère tous les cas de changement de moment
+	 * 
+	 */
 	public void changerMoment(){
 		Joueur joueuractuel=getJoueurs().get(tourjoueur);
 		if(EtatPartie.equals("pioche1")){
@@ -491,9 +515,11 @@ public class Partie {
 			defausse_donjons.add(monstre_a_combattre);
 			monstre_a_combattre=new Monstre("vide", null, null, null, null, tourjoueur, tourjoueur, null, tourjoueur);
 			setEtatPartie("tour");
+			rafraichirAttaque(joueuractuel);
 		}
 		else if(EtatPartie.equals("tour")){
 			changertour();
+			getJoueurs().get(tourjoueur).setMonstrePremierePioche(false);
 			setEtatPartie("pioche1");
 		}
 	}
@@ -527,11 +553,22 @@ public class Partie {
 		EtatPartie = etatPartie;
 	}
 
+	/**Cette méthode est au coeur du jeu , elle permet de jouer une carte c'est à dire de vérifier tout d'abord
+	 * si la carte valide toutes les conditions pour qu'elle puisse etre jouer comme le moment , si elle est bien dans la 
+	 * main etc ensuite par rapport au type de la carte à jouer , il se passe un code différent par exemple si c un monstre
+	 * on enverra au thread un ordre de combat si cest une carte bonus on appliquera les effets de celui-ci sur la cible
+	 * 
+	 * @param j
+	 * @param c
+	 * @param cible
+	 * @return
+	 */
 	public String JouerCarte(Joueur j, Carte c, Object cible){
 		String erreur=" ";
 		String action=" ";
 		if (j.getMain().contains(c)){
 			if(getJoueurs().get(tourjoueur).getNom().equals(j.getNom())){
+				System.out.println("Moment de la carte : "+c.getMoment() +" et moment du tour : "+EtatPartie);
 				if ((c.getMoment().equals("tous")) || (EtatPartie.equals(c.getMoment()))) {
 					if (c instanceof Monstre) {
 						monstre_a_combattre=new Monstre(c.getNom(), c.getDescription(), c.getMoment(), c.getEffects(), c.getType(), c.getRecompense_tresors(), c.getRecompense_niveau(), c.getIncident_facheux(), c.getNiveau());
@@ -539,7 +576,6 @@ public class Partie {
 							monstre_a_combattre.setParametres_effets(i,c.getParametres_effets(i));
 						}
 						monstre_a_combattre.setParametre_incident(c.getParametre_incident());
-						j.removeCarteMain(c);
 						action="lancerlinterfacecombat-" + j.getNom() + "-" + j.getNiveau()
 								+ "-" + j.getAttaque() + "-" + monstre_a_combattre.getNom() + "-" + monstre_a_combattre.getType() + "-"
 								+ monstre_a_combattre.getNiveau() + "-" + monstre_a_combattre.getNiveau() + "-" + c.getDescription();
@@ -569,7 +605,7 @@ public class Partie {
 								compatible=false;
 							}
 							if(equipement.getPartie_corps().contains("arme")){
-								arme=arme+Integer.parseInt(equipement.getPartie_corps().substring(3,4));
+								arme=arme+Integer.parseInt(equipement.getPartie_corps().substring(4,5));
 								armes.add(equipement);
 
 							}
@@ -597,11 +633,12 @@ public class Partie {
 
 						}
 						if(compatible==true){
+							int attaque=0;
 							j.getEquipements().removeAll(suppression);
 							equ.changerCible(j);
 							equ.joueur_effets();
 							j.getEquipements().add(equ);
-							j.removeCarteMain(equ);
+							
 						}
 						else{
 							erreur="Impossible d'�quiper!Vous avez d�ja un �quipement gros et vous n'�tes pas un nain!";
@@ -658,7 +695,6 @@ public class Partie {
 							j.getClasses().remove(j.getClasses().indexOf(classe_remplace));
 							j.getClasses().add(cla);
 						}
-						j.removeCarteMain(cla);
 
 					}
 					else if (c instanceof Race) {
@@ -697,7 +733,6 @@ public class Partie {
 							j.getRaces().remove(j.getRaces().indexOf(race_remplace));
 							j.getRaces().add(cla);
 						}	
-						j.removeCarteMain(cla);
 					}
 					else{
 						if(cible instanceof Monstre){
@@ -710,7 +745,7 @@ public class Partie {
 							c.joueur_effets();
 						}
 					}
-
+					j.removeCarteMain(c);
 				}
 				else //pas le tour du joueur
 				{
@@ -735,6 +770,7 @@ public class Partie {
 								c.joueur_effets();
 							}
 						}
+						j.removeCarteMain(c);
 					}else{
 						System.out.println("erreur");
 						erreur="Impossible de jouer cette carte � ce moment de la partie";
@@ -742,7 +778,27 @@ public class Partie {
 				}
 			}
 		}
+		System.out.println("------------------------JOUER CARTE------------------------------");
+		System.out.println("Cartes en main : "+j.getMain().size());
+		System.out.println("Joueur de niveau : "+j.getNiveau());
+		System.out.println("Joueur d'attaque : "+j.getAttaque());
+		System.out.println("-----------------------------------------------------------------------");
+		rafraichirAttaque(j);
 		return erreur+";"+action;
+		
+	}
+	
+	/**
+	 * Méthode permettant de rafraichir l'attaque car l'attaque se constitue du niveau + des équipements liées+ bonus(pendant combat)
+	 * @param j
+	 */
+	public void rafraichirAttaque(Joueur j){
+		int attaquetotale=0;
+		for(int i=0;i<j.getEquipements().size();i++){
+			attaquetotale=attaquetotale+j.getEquipements().get(i).getAttaque();
+		}
+		attaquetotale=attaquetotale+j.getNiveau();
+		j.setAttaque(attaquetotale);
 	}
 
 

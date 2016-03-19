@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
+ * Classe réprensentant une carte du jeu
+ * Elle contient un id, un nom , une description , un moment , des effets représentés par des méthodes,
+ * un type qui signifie dans quel paquet elle peut etre tirée et les parametres des effets qui sont juste les parametres
+ * des méthodes d'effets.
  * Created by jojo on 02/02/2016.
  */
 public class Carte {
@@ -129,6 +133,13 @@ public class Carte {
 		setParametres_effets(numero_methode, parametres);
 	}
 	
+	/**
+	 * La méthode changercible permet de simplifier l'utilisation du code dans le serveur , en fait cela permet juste
+	 * de changer le joueur cible d'une carte pour lui appliquer les effets mais en fait cela représente juste un paramètre 
+	 * des fonctions effets.Cela correspond en fait tout le temps au deuxième paramètres de la fonction car à la création des méthodes
+	 * il a été ajouté en deuxième dans le fichier texte cartes.txt
+	 * @param cible
+	 */
 	public void changerCible(Object cible){
 		if(effects.size()>0){
 			for(int i=0;i<effects.size();i++){
@@ -138,6 +149,10 @@ public class Carte {
 		
 	}
 	
+	/**
+	 * Cette méthode permet de jouer les effets d'une carte . Comme tout les parametres des effets sont stockés , la fonction
+	 * en elle-meme n'a pas besoin de paramètre pour fonctionner en fait cette fonction cache de la reflexion.
+	 */
 	public void joueur_effets(){
 		Object t = null;
 		try {

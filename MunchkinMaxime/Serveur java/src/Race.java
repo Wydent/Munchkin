@@ -2,7 +2,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 
+
 /**
+ * Carte qui représente les races dans le jeu , les races n'ont pas été vraiment géré 
+ *
+ * 
  * Created by jojo on 02/02/2016.
  */
 public class Race extends Carte {

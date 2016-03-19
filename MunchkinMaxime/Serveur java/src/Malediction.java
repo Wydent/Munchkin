@@ -3,6 +3,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
+ * Classe qui représente une malédiction dans le jeu , et qui hérite de carte car une malédiction est une carte
+ * en plus d'hériter des attributs de cartes, elle possède une cible qui est le joueur pris pour cible de la malédiction
+ *  et un temps initial et restant car certaines malédictions sont chronométrés en tour.
  * Created by jojo on 02/02/2016.
  */
 public class Malediction extends Carte {

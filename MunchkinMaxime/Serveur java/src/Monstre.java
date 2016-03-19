@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
+ * Cette classe représente un monstre dans le jeu et hérite de Carte car un Monstre est une carte
+ * Il possède en plus des attributs de cartes, un niveau , une attaque car niveau=attaque sauf en combat où le monstre peut etre amélioré
+ * une méthode applicable à la mort du joueur contre le monstre , l'incident facheux ainsi que ses parametres : parametres_incidents.
+ * Mais aussi récompense_niveau et trésors qui sont les récompenses qu'offre le monstre si le ou les joueur(s) le bat(tent).
  * Created by jojo on 02/02/2016.
  */
 public class Monstre extends Carte{
@@ -100,6 +104,10 @@ public class Monstre extends Carte{
 		parametre_incident[numero_parametre]=objet;
 	}
 
+	/**
+	 * Meme fonction que dans carte sauf qu'une carte peut posséder plusieurs effets mais un incident facheux il y'en a qu'un
+	 * @param j
+	 */
 	public void changerJoueurIncident(Joueur j){
 
 		if(incident_facheux!=null){
@@ -110,7 +118,9 @@ public class Monstre extends Carte{
 
 	}
 
-	public void declencher_incident(){
+	/**
+	 * Meme fonction que dans carte sauf qu'une carte peut posséder plusieurs effets mais un incident facheux il y'en a qu'un
+	 */public void declencher_incident(){
 		Object t = null;
 		try {
 			t = Effet.class.newInstance();

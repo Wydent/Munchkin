@@ -3,6 +3,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream.GetField;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -10,6 +11,11 @@ import java.util.HashMap;
 
 
 
+/**
+ * Classe permettant de tester les points un peu difficile du code et de valider certaines expÃ©riences.
+ * @author jojo
+ *
+ */
 public class Test {
 	
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException{
@@ -47,25 +53,10 @@ public class Test {
 		}
 	}
 	
-	System.out.println("Test après effet : "+j1.getNiveau());*/
-	String jojo = "java.lang.Integer";
-	try {
-	Integer go;
-	try {
-		System.out.println( Class.forName(jojo).getConstructors()[0].newInstance(2));
-		
-	} catch (IllegalArgumentException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} catch (InvocationTargetException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+	System.out.println("Test aprï¿½s effet : "+j1.getNiveau());*/
+		String[] t=new String(" ; ").split(";");
+		String erreur=t[0];
+		String action=t[1];
 
-	} catch (ClassNotFoundException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	
 	}
 }

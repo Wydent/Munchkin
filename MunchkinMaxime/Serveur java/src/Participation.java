@@ -1,5 +1,8 @@
 
 /**
+ * Classe qui représente l'aide dans le jeu , elle représente un joueur avec ce qu'il a demandé en échange de sa
+ * participation au combat donc on aura autant de participations que de joueurs participants dans le combat - celui qui combat de base
+ * 
  * Created by jojo on 03/02/2016.
  */
 public class Participation {
