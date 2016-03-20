@@ -61,12 +61,7 @@ public class Partie {
 		
 		init_cartes("cartes.txt",this);
 		
-		/*Joueur jojo = new Joueur("jojo");
-		System.out.println("carte : "+paquet_tresors.get(5).getNom());
-		System.out.println("attaque : "+jojo.getAttaque());
-		paquet_tresors.get(5).changerCible(jojo);
-		paquet_tresors.get(5).joueur_effets();
-		System.out.println("attaque après : "+jojo.getAttaque());*/
+		
 		TrierPaquetDonjonEtTresor();
 
 
@@ -600,8 +595,11 @@ public void changertour(){
 						boolean compatible=true;
 						int arme=0;
 						int i=0;
+						
 						while((i<j.getEquipements().size())&&(compatible==true)){
+							
 							Equipement equipement=j.getEquipements().get(i);
+							System.out.println("PLACE EQUIPEMENT "+equ.getPartie_corps()+" ET "+equipement.getPartie_corps());
 							if((equipement.gros==true)&&(equ.gros==true)&&(nain==false)){
 								compatible=false;
 							}
@@ -632,10 +630,10 @@ public void changertour(){
 
 								}
 							}
-
+							i++;
 						}
 						if(compatible==true){
-							int attaque=0;
+							
 							j.getEquipements().removeAll(suppression);
 							equ.changerCible(j);
 							equ.joueur_effets();
@@ -802,6 +800,17 @@ public void changertour(){
 		}
 		attaquetotale=attaquetotale+j.getNiveau();
 		j.setAttaque(attaquetotale);
+	}
+	/**
+	 * Méthode permettant de connaitre le nombre de trésors restants à distribuer
+	 * @param j
+	 */
+	public int tresors_a_distribuer(){
+		int tresors=monstre_a_combattre.getRecompense_tresors();
+		for(Participation p:liste_participants){
+			tresors=tresors-p.getRecompense_tresor_donne();
+		}
+		return tresors;
 	}
 
 
