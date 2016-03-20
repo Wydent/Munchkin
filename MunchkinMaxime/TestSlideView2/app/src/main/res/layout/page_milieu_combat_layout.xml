@@ -108,7 +108,6 @@
             android:background="@drawable/infobulle"
             android:gravity="center_horizontal"
             android:padding="10dp"
-            android:text="Kévin demande de l'aide..."
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/white"
             android:visibility="invisible" />
@@ -138,6 +137,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/boutonFuir"
+                android:onClick="clicBoutonAide"
                 android:text="Aide" />
 
         </RelativeLayout>

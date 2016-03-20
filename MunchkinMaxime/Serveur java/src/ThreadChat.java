@@ -567,8 +567,80 @@ public class ThreadChat {
 							
 							envoyerMain();
 							envoyerAccordeon("afficher");
+							envoi_message("auTourDe-" + serveur.getJoueurs().get(serveur.tourjoueur).getNom());
+							envoi_message("afficherInfobulle-Monstre combattu !");
 							
 						}
+						
+						if(line.contains("demanderAide")) {
+							
+							String joueurCible = line.split("-")[1];
+							String tresorsDemandes = line.split("-")[2];
+							ThreadChat tc = null;
+							Joueur j = null;
+							
+							// récupération du joueur
+							for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
+
+								if (e.getKey().getNom().equals(joueurCible)) {
+
+									System.out.println("nom du joueur cible (aide) : " + e.getKey().getNom());
+									j = e.getKey();
+									tc = e.getValue();
+
+								}
+
+							}
+							
+							// envoi da la commande de lancement de réponse au joueu ciblé
+							PrintWriter writer = null;
+							try {
+								writer = new PrintWriter(tc.soc.getOutputStream());
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							writer.print("lancerlinterfacereponse-" + joueur + joueurCible + "-" + tresorsDemandes);
+							writer.flush();
+							
+						}
+						
+						if(line.contains("validerAide")) {
+							
+							String joueurCible = line.split("-")[1];
+							String tresorsDemandes = line.split("-")[2];
+							Joueur j = null;
+							
+							// récupération du joueur
+							for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
+
+								if (e.getKey().getNom().equals(joueurCible)) {
+
+									System.out.println("nom du joueur cible (aide) : " + e.getKey().getNom());
+									j = e.getKey();
+
+								}
+
+							}
+							
+							serveur.getListe_participants().add(new Participation(j, 0, Integer.parseInt(tresorsDemandes)));
+							
+							System.out.println("Participation ok - "+j.getNom());
+							
+							envoi_message("lancerlinterfacecombat-" + joueur.getNom() + "-" + joueur.getNiveau()
+							+ "-" + joueur.getAttaque() + "-" + serveur.carteTiree.getNom() + "-" + serveur.carteTiree.getType() + "-"
+							+ serveur.carteTiree.getNiveau() + "-" + serveur.carteTiree.getNiveau() + "-" + serveur.carteTiree.getDescription());
+							
+						}
+						
+						if(line.contains("refuserAide")) {
+							
+							envoi_message("lancerlinterfacecombat-" + joueur.getNom() + "-" + joueur.getNiveau()
+							+ "-" + joueur.getAttaque() + "-" + serveur.carteTiree.getNom() + "-" + serveur.carteTiree.getType() + "-"
+							+ serveur.carteTiree.getNiveau() + "-" + serveur.carteTiree.getNiveau() + "-" + serveur.carteTiree.getDescription());
+							
+						}
+						
 					}
 
 					System.out.println("étiquette : " + etiquette);

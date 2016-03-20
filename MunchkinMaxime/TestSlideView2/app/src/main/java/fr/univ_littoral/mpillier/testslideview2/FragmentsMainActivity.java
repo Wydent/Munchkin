@@ -80,6 +80,9 @@ public class FragmentsMainActivity extends FragmentActivity {
     private Map<Integer, String> listItems = new HashMap<Integer, String>();
     private String selectionCarte = null;
 
+    private String joueurCibleAide = null;
+    private String tresorsDemandesAide = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,9 +130,9 @@ public class FragmentsMainActivity extends FragmentActivity {
         menuContextuel = menu;
 
         // création du menu contextuel à partir de tous les items : id item + valeur item
-        for(Map.Entry<Integer, String> e : listItems.entrySet()) {
+        for (Map.Entry<Integer, String> e : listItems.entrySet()) {
 
-            menuContextuel.add(0,e.getKey(),0,e.getValue());
+            menuContextuel.add(0, e.getKey(), 0, e.getValue());
 
         }
 
@@ -183,6 +186,14 @@ public class FragmentsMainActivity extends FragmentActivity {
                     if (line.contains("auTourDe")) {
 
                         afficherNomJoueur(line);
+
+                    }
+
+                    if (line.contains("afficherInfobulle")) {
+
+                        String message = line.split("-")[1];
+
+                        tvInfoBulle.setText(message);
 
                     }
 
@@ -280,9 +291,19 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                     }
 
-                    if(line.contains("actualiserMenu")) {
+                    if (line.contains("actualiserMenu")) {
 
                         actualiserMenu(line);
+
+                    }
+
+                    if(line.contains("lancerlinterfacereponse")) {
+
+                        final String joueurQuiDemande = line.split("-")[1];
+                        final String joueurCible = line.split("-")[2];
+                        final String tresors = line.split("-")[3];
+
+                        repondre(line, joueurQuiDemande, joueurCible, tresors);
 
                     }
 
@@ -1135,6 +1156,24 @@ public class FragmentsMainActivity extends FragmentActivity {
             });
         }
 
+        public void repondre(String line, String joueurQuiDemande, String joueurCible, String tresors) {
+
+            ReponseAideFragment f = new ReponseAideFragment();
+
+            // passage de paramètres au fragmentCombat
+            Bundle args = new Bundle();
+            args.putString("joueurQuiDemande", joueurQuiDemande);
+            args.putString("joueurCible", joueurCible);
+            args.putString("tresors", tresors);
+
+            f.setArguments(args);
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, f);
+            transaction.commit();
+
+        }
+
         public void combattre(String line, String nomJoueur, String levelJoueur, String attaqueJoueur, String nomMonstre, String levelMonstre, String attaqueMonstre, String descriptionMonstre) {
 
             String joueurActuel = line.split("-")[1];
@@ -1289,15 +1328,86 @@ public class FragmentsMainActivity extends FragmentActivity {
             e.printStackTrace();
         }
 
+        PageMilieuFragment f = new PageMilieuFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, f);
+        transaction.commit();
+
+    }
+
+    public void clicBoutonAide(View v) {
+
+        AideFragment f = new AideFragment();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, f);
+        transaction.commit();
+
+    }
+
+    public void validerAide(View v) {
+
+        EditText joueurCible = (EditText) findViewById(R.id.etJoueurCible);
+        EditText tresorsDemandes = (EditText) findViewById(R.id.etTresorsDemandes);
+
+        joueurCibleAide = joueurCible.getText().toString();
+        tresorsDemandesAide = tresorsDemandes.getText().toString();
+
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream())),
+                    true);
+            out.println("demanderAide-" + joueurCible.getText() + "-" + tresorsDemandes.getText());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void reponseAideOui(View v) {
+
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream())),
+                    true);
+            out.println("validerAide-" + joueurCibleAide + "-" + tresorsDemandesAide);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void reponseAideNon(View v) {
+
+        try {
+            PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new OutputStreamWriter(socket.getOutputStream())),
+                    true);
+            out.println("refuserAide");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void actualiserMenu(final String line) {
 
         String[] listeJoueurs = line.substring(line.indexOf("actualiserMenu-") + 15).split("-");
 
-        System.out.println("liste joueurs : "+listeJoueurs);
+        System.out.println("liste joueurs : " + listeJoueurs);
 
-        for(int i = 0; i < listeJoueurs.length; i++) {
+        for (int i = 0; i < listeJoueurs.length; i++) {
 
             int id = i;
             listItems.put(id, listeJoueurs[i]);
