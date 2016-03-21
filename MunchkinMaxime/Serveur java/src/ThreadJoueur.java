@@ -11,22 +11,22 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Vector;
 
-public class ThreadChat {
+public class ThreadJoueur {
 	public Socket soc;
 	int id;
 	Joueur joueur = null;
 
-	public ThreadChat(final int id, final Socket socket, final Partie serveur, final String etiquette) {
+	public ThreadJoueur(final int id, final Socket socket, final Partie serveur, final String etiquette) {
 		soc = socket;
 		this.id = id;
 		Runnable runnable = new Runnable() {
 			String deco = new String("");
 			InputStream stream = null;
 			String lui = new String("");
-			HashMap<Joueur, ThreadChat> v = serveur.envoi_liste();
+			HashMap<Joueur, ThreadJoueur> v = serveur.envoi_liste();
 
 			public void envoi_liste() {
-				for (ThreadChat tc : v.values()) {
+				for (ThreadJoueur tc : v.values()) {
 					PrintWriter writer = null;
 					try {
 						writer = new PrintWriter(tc.soc.getOutputStream());
@@ -40,7 +40,7 @@ public class ThreadChat {
 			}
 
 			public void envoi_message(String message) {
-				for (ThreadChat tc : v.values()) {
+				for (ThreadJoueur tc : v.values()) {
 					PrintWriter writer = null;
 					try {
 						writer = new PrintWriter(tc.soc.getOutputStream());
@@ -200,7 +200,7 @@ public class ThreadChat {
 
 			// envoi des informations des joueurs et de leurs cartes équipées
 			public void envoyerAccordeon(String prefixe) {
-				for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
+				for (Map.Entry<Joueur, ThreadJoueur> e : v.entrySet()) {
 					Joueur key = e.getKey();
 
 					ArrayList<String> attributsClasse = new ArrayList<String>();
@@ -301,9 +301,9 @@ public class ThreadChat {
 			public void run() {
 
 				// récupération du joueur
-				for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
+				for (Map.Entry<Joueur, ThreadJoueur> e : v.entrySet()) {
 					Joueur key = e.getKey();
-					ThreadChat value = e.getValue();
+					ThreadJoueur value = e.getValue();
 
 					if (value.getId() == getId()) {
 
@@ -365,7 +365,7 @@ public class ThreadChat {
 				String s = "actualiserMenu-monstre-";
 				int temp = 0;
 
-				for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
+				for (Map.Entry<Joueur, ThreadJoueur> e : v.entrySet()) {
 
 					temp++;
 
@@ -530,7 +530,7 @@ public class ThreadChat {
 								serveur.JouerCarte(joueur, c, m);
 								
 							} else {
-								for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
+								for (Map.Entry<Joueur, ThreadJoueur> e : v.entrySet()) {
 
 									if (e.getKey().getNom().equals(nomJoueurCible)) {
 
@@ -576,11 +576,11 @@ public class ThreadChat {
 							
 							String joueurCible = line.split("-")[1];
 							String tresorsDemandes = line.split("-")[2];
-							ThreadChat tc = null;
+							ThreadJoueur tc = null;
 							Joueur j = null;
 							
 							// récupération du joueur
-							for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
+							for (Map.Entry<Joueur, ThreadJoueur> e : v.entrySet()) {
 
 								if (e.getKey().getNom().equals(joueurCible)) {
 
@@ -612,7 +612,7 @@ public class ThreadChat {
 							Joueur j = null;
 							
 							// récupération du joueur
-							for (Map.Entry<Joueur, ThreadChat> e : v.entrySet()) {
+							for (Map.Entry<Joueur, ThreadJoueur> e : v.entrySet()) {
 
 								if (e.getKey().getNom().equals(joueurCible)) {
 

@@ -42,7 +42,7 @@ public class Partie {
 	// public HashMap<String,ThreadChat> chat=new HashMap<String,ThreadChat>();
 
 	// nouvelle HashMap d'enregistrement des joueurs
-	public HashMap<Joueur, ThreadChat> chat = new HashMap<Joueur, ThreadChat>();
+	public HashMap<Joueur, ThreadJoueur> chat = new HashMap<Joueur, ThreadJoueur>();
 
 	/**
 	 * constructeur par défaut de la partie , elle gère les demandes de connexions et quand le nombre de connexions maximum est 
@@ -80,7 +80,7 @@ public class Partie {
 				if (!chat.containsKey(etiquette)){
 					System.out.println(etiquette);
 					Joueur j= new Joueur(etiquette);
-					chat.put(new Joueur(etiquette),new ThreadChat(i,socket,this,etiquette));	
+					chat.put(new Joueur(etiquette),new ThreadJoueur(i,socket,this,etiquette));	
 					i++;
 				}	
 			}
@@ -154,20 +154,28 @@ public class Partie {
 		this.liste_participants = liste_participants;
 	}
 
-	public HashMap<Joueur, ThreadChat> envoi_liste() {
+	public HashMap<Joueur, ThreadJoueur> envoi_liste() {
 		return chat;
 	}
 
 	/**
 	 * Méthode qui permet de piocher nombrecarte dans un paquet pour un joueur j , la méthode retourne un string qui 
 	 * sert uniquement quand un combat est à lancer donc lorsque on pioche un monstre en première pioche
+	 * SI l'un des paquets , on le reconstitue grâce à la défausse.
 	 * @param nombrecarte
 	 * @param paquet
 	 * @param j
 	 * @return
 	 */
 	public String piocher(int nombrecarte, String paquet, Joueur j) {
-		
+		if(paquet_donjons.size()<=0){
+			setPaquet_donjons(defausse_donjons);
+			TrierPaquetDonjonEtTresor();
+		}
+		if(paquet_tresors.size()<=0){
+			setPaquet_tresors(defausse_tresors);
+			TrierPaquetDonjonEtTresor();
+		}
 		String retour="";
 		if (paquet.equals("tresor")) {
 			for (int i = 0; i < nombrecarte; i++) {
