@@ -23,7 +23,7 @@ import java.util.HashMap;
  * (voir rapport pour les différents moments possibles) et carteTirée qui représente lcarte tirée pendant les moments de pioche.
  */
 /**
-*
+ *
  */
 public class Partie {
 	static ArrayList<Carte> paquet_donjons;
@@ -57,11 +57,11 @@ public class Partie {
 		defausse_tresors=new ArrayList<Carte>();
 		liste_participants=new ArrayList<Participation>();
 		monstre_a_combattre=new Monstre("vide", null, null, null, null, tourjoueur, tourjoueur, null, tourjoueur);
-		
-		
+
+
 		init_cartes("cartes.txt",this);
-		
-		
+
+
 		TrierPaquetDonjonEtTresor();
 
 
@@ -177,47 +177,57 @@ public class Partie {
 			TrierPaquetDonjonEtTresor();
 		}
 		String retour="";
-		if (paquet.equals("tresor")) {
-			for (int i = 0; i < nombrecarte; i++) {
-				j.addCarteMain(paquet_tresors.get(0));
-				paquet_tresors.remove(0);
-			} 
+		if(EtatPartie.equals("init")){	
+			if (paquet.equals("tresor")) {
+				for (int i = 0; i < nombrecarte; i++) {
+					j.addCarteMain(paquet_tresors.get(0));
+					paquet_tresors.remove(0);
+				} 
+			}
+			else{
+				for (int i = 0; i < nombrecarte; i++) {
+					j.addCarteMain(paquet_donjons.get(0));
+					paquet_donjons.remove(0);
+				} 
+			}
 		}
-		else if (paquet.equals("donjon")) {
-			
-			Carte c=paquet_donjons.get(0);
-			System.out.println("---------------------------PIOCHE---------------------------------");
-			System.out.println("Carte Piochée : "+c.getNom());
-			System.out.println("Moment de la Partie : "+EtatPartie);
-			System.out.println("------------------------------------------------------------------");
-			if(EtatPartie.equals("pioche1")){
-				carteTiree=c;
-				if(c instanceof Malediction){
-					((Malediction) c).setCible(j);
-					JouerCarte(j, c, j);
-				}
-				else if(c instanceof Monstre){
-					monstre_a_combattre=new Monstre(c.getNom(), c.getDescription(), c.getMoment(), c.getEffects(), c.getType(), c.getRecompense_tresors(), c.getRecompense_niveau(), c.getIncident_facheux(), c.getNiveau());
-					for (int i=0;i<c.getEffects().size();i++){
-						monstre_a_combattre.setParametres_effets(i,c.getParametres_effets(i));
+		else if((EtatPartie.equals("pioche1"))||(EtatPartie.equals("pioche2"))){
+			if (paquet.equals("donjon")) {
+
+				Carte c=paquet_donjons.get(0);
+				System.out.println("---------------------------PIOCHE---------------------------------");
+				System.out.println("Carte Piochée : "+c.getNom());
+				System.out.println("Moment de la Partie : "+EtatPartie);
+				System.out.println("------------------------------------------------------------------");
+				if(EtatPartie.equals("pioche1")){
+					carteTiree=c;
+					if(c instanceof Malediction){
+						((Malediction) c).setCible(j);
+						JouerCarte(j, c, j);
 					}
-					monstre_a_combattre.setParametre_incident(c.getParametre_incident());
-					retour="lancerlinterfacecombat-" + j.getNom() + "-" + j.getNiveau()
-							+ "-" + j.getAttaque() + "-" + monstre_a_combattre.getNom() + "-" + monstre_a_combattre.getType() + "-"
-							+ monstre_a_combattre.getNiveau() + "-" + monstre_a_combattre.getNiveau() + "-" + c.getDescription();
-					j.setMonstrePremierePioche(true);
+					else if(c instanceof Monstre){
+						monstre_a_combattre=new Monstre(c.getNom(), c.getDescription(), c.getMoment(), c.getEffects(), c.getType(), c.getRecompense_tresors(), c.getRecompense_niveau(), c.getIncident_facheux(), c.getNiveau());
+						for (int i=0;i<c.getEffects().size();i++){
+							monstre_a_combattre.setParametres_effets(i,c.getParametres_effets(i));
+						}
+						monstre_a_combattre.setParametre_incident(c.getParametre_incident());
+						retour="lancerlinterfacecombat-" + j.getNom() + "-" + j.getNiveau()
+								+ "-" + j.getAttaque() + "-" + monstre_a_combattre.getNom() + "-" + monstre_a_combattre.getType() + "-"
+								+ monstre_a_combattre.getNiveau() + "-" + monstre_a_combattre.getNiveau() + "-" + c.getDescription();
+						j.setMonstrePremierePioche(true);
+					}
+					else{
+						j.addCarteMain(paquet_donjons.get(0));
+
+					}
+
 				}
 				else{
 					j.addCarteMain(paquet_donjons.get(0));
-
 				}
-
+				changerMoment();
+				paquet_donjons.remove(0);
 			}
-			else{
-				j.addCarteMain(paquet_donjons.get(0));
-			}
-			changerMoment();
-			paquet_donjons.remove(0);
 		}
 		return retour;
 	}
@@ -244,7 +254,7 @@ public class Partie {
 		}
 		return numeroJoueurGagnant;
 	}
-	
+
 	/**
 	 * Methode permettant de trier au hasard les cartes des pioches donjons et trésors
 	 */
@@ -435,9 +445,9 @@ public class Partie {
 		totalAttaque=getJoueurs().get(tourjoueur).getAttaque();
 
 		if(liste_participants.size()>0){
-		for(Participation p:liste_participants){
-			totalAttaque=totalAttaque+ p.getJoueur_allie().getAttaque();
-		}
+			for(Participation p:liste_participants){
+				totalAttaque=totalAttaque+ p.getJoueur_allie().getAttaque();
+			}
 		}
 
 		if (monstre_a_combattre.getAttaque()>totalAttaque) {
@@ -480,10 +490,10 @@ public class Partie {
 		changerMoment();
 	}
 
-/**
- * Méthode permettant de changer le tour de jeu . La méthode est appelé lorsque le joueur appuie sur fin de tour
- */
-public void changertour(){
+	/**
+	 * Méthode permettant de changer le tour de jeu . La méthode est appelé lorsque le joueur appuie sur fin de tour
+	 */
+	public void changertour(){
 		if(tourjoueur==chat.size()-1){
 			setTourjoueur(0);
 		}
@@ -529,6 +539,7 @@ public void changertour(){
 			getJoueurs().get(tourjoueur).setMonstrePremierePioche(false);
 			setEtatPartie("pioche1");
 		}
+		System.out.println("MOMENT DE LA PARTIEEEEEEEEEEEEEEEEEEEEEE :"+EtatPartie);
 	}
 
 
@@ -590,7 +601,7 @@ public void changertour(){
 					}
 					else if (c instanceof Equipement) {
 						Equipement equ=(Equipement)c;
-						
+
 						boolean nain=false;
 						ArrayList<Equipement> armes= new ArrayList<Equipement>();
 						ArrayList<Equipement> suppression= new ArrayList<Equipement>();
@@ -603,9 +614,9 @@ public void changertour(){
 						boolean compatible=true;
 						int arme=0;
 						int i=0;
-						
+
 						while((i<j.getEquipements().size())&&(compatible==true)){
-							
+
 							Equipement equipement=j.getEquipements().get(i);
 							System.out.println("PLACE EQUIPEMENT "+equ.getPartie_corps()+" ET "+equipement.getPartie_corps());
 							if((equipement.gros==true)&&(equ.gros==true)&&(nain==false)){
@@ -641,12 +652,15 @@ public void changertour(){
 							i++;
 						}
 						if(compatible==true){
-							
+
 							j.getEquipements().removeAll(suppression);
+							for(int k=0;k<suppression.size();k++){
+								defausse_tresors.add(suppression.get(k));
+							}
 							equ.changerCible(j);
 							equ.joueur_effets();
 							j.getEquipements().add(equ);
-							
+
 						}
 						else{
 							erreur="Impossible d'�quiper!Vous avez d�ja un �quipement gros et vous n'�tes pas un nain!";
@@ -665,6 +679,7 @@ public void changertour(){
 						mal.joueur_effets();
 						mal.setTempsRestant(mal.getTempsInitial());
 						mal.getCible().getMaledictions().add(mal);
+						defausse_tresors.add(c);
 
 					}
 					else if (c instanceof Classe) {
@@ -747,13 +762,16 @@ public void changertour(){
 							c.changerCible((Monstre)cible);
 							c.joueur_effets();
 
+
 						}
 						else{
 							c.changerCible((Joueur)cible);
 							c.joueur_effets();
 						}
 					}
+					defausse_tresors.add(c);
 					j.removeCarteMain(c);
+
 				}
 				else //pas le tour du joueur
 				{
@@ -792,11 +810,11 @@ public void changertour(){
 		System.out.println("Joueur de niveau : "+j.getNiveau());
 		System.out.println("Joueur d'attaque : "+j.getAttaque());
 		System.out.println("-----------------------------------------------------------------------");
-		
+
 		return erreur+";"+action;
-		
+
 	}
-	
+
 	/**
 	 * Méthode permettant de rafraichir l'attaque car l'attaque se constitue du niveau + des équipements liées+ bonus(pendant combat)
 	 * @param j
