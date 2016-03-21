@@ -38,6 +38,20 @@ public class ThreadJoueur {
 					writer.flush();
 				}
 			}
+			
+			public void envoi_mp(ThreadJoueur tj, String message) {
+				
+				PrintWriter writer = null;
+				try {
+					writer = new PrintWriter(tj.soc.getOutputStream());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				writer.print(message + "\n");
+				writer.flush();
+				
+			}
 
 			public void envoi_message(String message) {
 				for (ThreadJoueur tc : v.values()) {
@@ -592,16 +606,10 @@ public class ThreadJoueur {
 
 							}
 							
-							// envoi da la commande de lancement de réponse au joueu ciblé
-							PrintWriter writer = null;
-							try {
-								writer = new PrintWriter(tc.soc.getOutputStream());
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							writer.print("lancerlinterfacereponse-" + joueur + joueurCible + "-" + tresorsDemandes);
-							writer.flush();
+							// envoi da la commande de lancement de réponse au joueur ciblé
+							String message = "lancerlinterfacereponse-" + joueur + "-" + joueurCible + "-" + tresorsDemandes;
+							
+							envoi_mp(tc, message);
 							
 						}
 						

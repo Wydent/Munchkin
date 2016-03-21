@@ -191,9 +191,14 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                     if (line.contains("afficherInfobulle")) {
 
-                        String message = line.split("-")[1];
+                        final String message = line.split("-")[1];
 
-                        tvInfoBulle.setText(message);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                tvInfoBulle.setText(message);
+                            }
+                        });
 
                     }
 
@@ -297,7 +302,7 @@ public class FragmentsMainActivity extends FragmentActivity {
 
                     }
 
-                    if(line.contains("lancerlinterfacereponse")) {
+                    if (line.contains("lancerlinterfacereponse")) {
 
                         final String joueurQuiDemande = line.split("-")[1];
                         final String joueurCible = line.split("-")[2];

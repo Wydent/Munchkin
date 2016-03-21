@@ -28,8 +28,9 @@ public class ReponseAideFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String joueurQuiDemande = null;
+    private String joueurCible = null;
+    private String tresors = null;
 
     private OnFragmentInteractionListener mListener;
 
@@ -52,36 +53,35 @@ public class ReponseAideFragment extends Fragment {
     }
 
     public ReponseAideFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
 
         // récupération des paramètres
         Bundle args = getArguments();
-        String joueurQuiDemande = args.getString("joueurQuiDemande");
-        String joueurCible = args.getString("joueurCible");
-        String tresors = args.getString("tresors");
-
-        TextView tv1 = (TextView) getView().findViewById(R.id.reponseJoueur);
-        TextView tv2 = (TextView) getView().findViewById(R.id.reponseTresorsDemandes);
-
-        tv1.append(joueurQuiDemande + " requiert votre aide.");
-        tv2.append(tresors);
+        joueurQuiDemande = args.getString("joueurQuiDemande");
+        joueurCible = args.getString("joueurCible");
+        tresors = args.getString("tresors");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        View retour = inflater.inflate(R.layout.fragment_reponse_aide, container, false);
+
+        TextView tv1 = (TextView) retour.findViewById(R.id.reponseJoueur);
+        TextView tv2 = (TextView) retour.findViewById(R.id.reponseTresorsDemandes);
+
+        tv1.append(joueurQuiDemande + " requiert votre aide.");
+        tv2.append(tresors);
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_reponse_aide, container, false);
+        return retour;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -89,23 +89,6 @@ public class ReponseAideFragment extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     /**
